@@ -1,7 +1,7 @@
 
-## Nautilus Station
+## Nautilus Station 13.5
 
-Nautilus Station is a fork of Space Station 14, taking place on some derelict undersea ocean research base. It focuses maintaining a slowly dying seabase, both above and beneath the waves as the denizens try to pay off their corporate debt. Station staff will face dangers with the likes of pirates, deep-sea fauna, and the crushing depths of debt. Enjoy adventure, drama, and combat as you attempt to survive.
+Nautilus Station is a fork of Space Station 14, aiming to be closer to 13 in terms of gameplay and mechanics, with the engine being based in 14. It takes place on a set of derelict undersea ocean research bases, with a focus on maintaining a slowly dying seabase, both above and beneath the waves as the hapless denizens try to pay off their corporate debt. Station staff will face dangers with the likes of pirates, deep-sea fauna, and the crushing depths of debt. Enjoy adventure, drama, and combat as you attempt to survive.
 
 Our community discord where we announce events and playtests: N/A
 
