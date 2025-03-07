@@ -7,7 +7,7 @@ Our community discord where we announce events and playtests: N/A
 
 Nautilus Station is also open-source, so anyone is free to contribute to the project! If you have questions or need help, don't hesitate to ask on the GitHub.
 
-I also absolutely don't mind if other forks wish to use our code for their own projects. After all, SS14 is all about collaboration! As long as it's not code ported over from another fork, of course. See attributions.
+I too don't mind if other forks wish to use our code for their own projects. As long as it's not code ported over from another fork, of course. See attributions.
 
 ## Building
 
