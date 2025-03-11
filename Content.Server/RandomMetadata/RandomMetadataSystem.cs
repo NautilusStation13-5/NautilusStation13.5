@@ -1,5 +1,5 @@
 ﻿using Content.Shared.Dataset;
-using Content.Shared.Humanoid;
+using Content.Shared.Random.Helpers;
 using JetBrains.Annotations;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
@@ -24,9 +24,10 @@ public sealed class RandomMetadataSystem : EntitySystem
     {
         var meta = MetaData(uid);
 
-        if (component.NameSegments != null
-            && !HasComp<RandomMetadataExcludedComponent>(uid))
+        if (component.NameSegments != null)
+        {
             _metaData.SetEntityName(uid, GetRandomFromSegments(component.NameSegments, component.NameSeparator), meta);
+        }
 
         if (component.DescriptionSegments != null)
         {
@@ -47,13 +48,19 @@ public sealed class RandomMetadataSystem : EntitySystem
         var outputSegments = new List<string>();
         foreach (var segment in segments)
         {
-            if (_prototype.TryIndex<DatasetPrototype>(segment, out var proto)) {
+            if (_prototype.TryIndex<LocalizedDatasetPrototype>(segment, out var localizedProto))
+            {
+                outputSegments.Add(_random.Pick(localizedProto));
+            }
+            else if (_prototype.TryIndex<DatasetPrototype>(segment, out var proto))
+            {
                 var random = _random.Pick(proto.Values);
                 if (Loc.TryGetString(random, out var localizedSegment))
                     outputSegments.Add(localizedSegment);
                 else
                     outputSegments.Add(random);
-            } else if (Loc.TryGetString(segment, out var localizedSegment))
+            }
+            else if (Loc.TryGetString(segment, out var localizedSegment))
                 outputSegments.Add(localizedSegment);
             else
                 outputSegments.Add(segment);

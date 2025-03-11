@@ -35,46 +35,7 @@
     interfaces:
       enum.TransferAmountUiKey.Key:
         type: TransferAmountBoundUserInterface
-  - type: EmitSoundOnPickup
-    sound:
-      path: /Audio/SimpleStation14/Items/Handling/drinkglass_pickup.ogg
-      params:
-        volume: -2
-  - type: EmitSoundOnDrop
-    sound:
-      path: /Audio/SimpleStation14/Items/Handling/drinkglass_drop.ogg
-      params:
-        volume: -2
-  - type: EmitSoundOnLand
-    sound:
-      path: /Audio/SimpleStation14/Items/Handling/drinkglass_drop.ogg
-      params:
-        volume: -2
-  - type: Fixtures
-    fixtures:
-      fix1:
-        shape:
-          !type:PhysShapeAabb
-          bounds: "-0.25,-0.25,0.25,0.25"
-        density: 30
-        mask:
-        - ItemMask
-        layer:
-        - BulletImpassable # Ever seen a John Woo movie?
-  - type: Destructible
-    thresholds:
-    - trigger:
-        !type:DamageTrigger
-        damage: 5
-      behaviors:
-      - !type:PlaySoundBehavior
-        sound:
-          collection: MetalBreak
-          params:
-            volume: -6
-      - !type:SpillBehavior { }
-      - !type:DoActsBehavior
-        acts: [ "Destruction" ]
+  - type: DnaSubstanceTrace
 
 - type: entity
   parent: DrinkBase
@@ -124,8 +85,8 @@
 
 # Transformable container - normal glass
 - type: entity
-  name: glass cup
-  description: A glass cup, able to hold a variety of liquids for your drinking pleasure.
+  name: metamorphic glass
+  description: A metamorphic glass that automagically turns into a glass appropriate for the drink within. There's a sanded off patent number on the bottom.
   parent: DrinkGlassBase
   id: DrinkGlass
   components:
@@ -1154,18 +1115,18 @@
 
 - type: entity
   parent: DrinkGlass
-  id: DrinkIrishCarBomb
-  suffix: irish car bomb
+  id: DrinkIrishSlammer
+  suffix: irish slammer
   components:
   - type: SolutionContainerManager
     solutions:
       drink:
         maxVol: 30
         reagents:
-        - ReagentId: IrishCarBomb
+        - ReagentId: IrishSlammer
           Quantity: 30
   - type: Icon
-    sprite: Objects/Consumable/Drinks/irishcarbomb.rsi
+    sprite: Objects/Consumable/Drinks/irishslammer.rsi
     state: icon
 
 - type: entity
@@ -1261,7 +1222,7 @@
         - ReagentId: JuiceLemon
           Quantity: 30
   - type: Icon
-    sprite: Objects/Consumable/Drinks/lemonjuice.rsi
+    sprite: Objects/Consumable/Drinks/lemonjuiceglass.rsi
     state: icon
 
 - type: entity
@@ -1702,19 +1663,18 @@
     sprite: Objects/Consumable/Drinks/royrogers.rsi
     state: icon
 
-##Commented out in favor of Nyano sake/soju
-#- type: entity
-#  parent: DrinkGlass
-#  id: DrinkSakeGlass
-#  suffix: sake
-#  components:
-#  - type: SolutionContainerManager
-#    solutions:
-#      drink:
-#        maxVol: 30
-#        reagents:
-#        - ReagentId: Sake
-#          Quantity: 30
+- type: entity
+  parent: DrinkGlass
+  id: DrinkSakeGlass
+  suffix: sake
+  components:
+  - type: SolutionContainerManager
+    solutions:
+      drink:
+        maxVol: 30
+        reagents:
+        - ReagentId: Sake
+          Quantity: 30
 
 - type: entity
   parent: DrinkGlass
@@ -2039,7 +1999,7 @@
 - type: entity
   parent: DrinkGlass
   id: DrinkTheMartinez
-  suffix: The Martinez
+  suffix: the martinez
   components:
     - type: SolutionContainerManager
       solutions:
@@ -2182,7 +2142,7 @@
   parent: DrinkGlassBase
   id: DrinkWaterJug
   name: water jug
-  description: Stay hydrated
+  description: Stay hydrated.
   components:
   - type: SolutionContainerManager
     solutions:
@@ -2387,62 +2347,3 @@
     - type: Icon
       sprite: Objects/Consumable/Drinks/bloodglass.rsi
       state: icon
-
-- type: entity
-  parent: DrinkBase
-  id: DrinkBasePlastic
-  abstract: true
-  components:
-  - type: SolutionContainerManager
-    solutions:
-      drink:
-        maxVol: 50
-  - type: PhysicalComposition
-    materialComposition:
-      Plastic: 100
-
-- type: entity
-  parent: DrinkBasePlastic
-  id: DrinkFitnessShakerBlack
-  name: fitness shaker
-  description: Big enough to contain enough protein to get perfectly swole. Don't mind the bits.
-  components:
-  - type: Sprite
-    sprite: Objects/Consumable/Drinks/shakerblack.rsi
-    state: icon
-
-- type: entity
-  parent: DrinkFitnessShakerBlack
-  id: DrinkFitnessShakerRed
-  components:
-  - type: Sprite
-    sprite: Objects/Consumable/Drinks/shakerred.rsi
-    state: icon
-
-- type: entity
-  parent: DrinkFitnessShakerBlack
-  id: DrinkFitnessShakerBlue
-  components:
-  - type: Sprite
-    sprite: Objects/Consumable/Drinks/shakerblue.rsi
-    state: icon
-
-- type: reagent
-  id: MilkChoco
-  name: reagent-name-milk-choco
-  group: Drinks
-  desc: reagent-desc-milk-choco
-  physicalDesc: reagent-physical-desc-opaque
-  flavor: chocolate
-  color: "#664300"
-  recognizable: true
-  plantMetabolism:
-    - !type:PlantAdjustNutrition
-      amount: 0.1
-    - !type:PlantAdjustWater
-      amount: 0.9
-  metabolisms:
-    Drink:
-      effects:
-      - !type:SatiateThirst
-        factor: 4

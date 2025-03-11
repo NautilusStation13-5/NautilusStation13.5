@@ -7,29 +7,11 @@
   - type: StorageFill
     contents:
       - id: Hemostat
-      - id: SawElectric # Shitmed Change
+      - id: Saw
       - id: Drill
       - id: Cautery
       - id: Retractor
       - id: Scalpel
-      - id: BoneGel # Shitmed Change
-
-- type: entity
-  id: ClothingBackpackDuffelCBURNFilled
-  parent: ClothingBackpackDuffelCBURN
-  suffix: Filled
-  components:
-  - type: StorageFill
-    contents:
-    - id: BoxSurvivalEngineering
-    - id: WeaponShotgunDoubleBarreled
-    - id: BoxShotgunIncendiary
-      amount: 2
-    - id: GrenadeFlashBang
-      amount: 2
-    - id: PillAmbuzolPlus
-    - id: PillAmbuzol
-      amount: 4
 
 - type: entity
   parent: ClothingBackpackDuffelSyndicateMedicalBundle
@@ -47,7 +29,6 @@
       - id: ScalpelAdvanced
       - id: ClothingHandsGlovesNitrile
       - id: EmergencyRollerBedSpawnFolded
-      - id: BoneGel # Shitmed Change
 
 - type: entity
   parent: ClothingBackpackDuffelSyndicateBundle
@@ -147,28 +128,6 @@
         amount: 2
 
 - type: entity
-  parent: ClothingBackpackDuffel
-  id: ClothingBackpackDuffelSyndicateCostumeCentcom
-  name: CentCom official costume duffel bag
-  description: "Contains a full CentCom Official uniform set, headset and clipboard included. Encryption keys and ID access are not included."
-  suffix: DO NOT MAP
-  components:
-  - type: Tag
-    tags: [] # ignore "WhitelistChameleon" tag
-  - type: StorageFill
-    contents:
-      - id: ClothingOuterArmorBasic
-      - id: ClothingHeadHatCentcom
-      - id: ClothingEyesGlassesSunglasses
-      - id: ClothingUniformJumpsuitCentcomOfficial
-      - id: ClothingShoesBootsJack
-      - id: ClothingHandsGlovesColorBlack
-      - id: ClothingHeadsetAltCentComFake
-      - id: Paper
-      - id: Pen
-      - id: CentcomPDAFake
-
-- type: entity
   parent: ClothingBackpackDuffelClown
   id: ClothingBackpackDuffelSyndicateCostumeClown
   suffix: syndicate
@@ -200,7 +159,7 @@
   parent: ClothingBackpackDuffelSyndicateBundle
   id: ClothingBackpackDuffelSyndicatePyjamaBundle
   name: syndicate pyjama duffel bag
-  description: Contains 3 pairs of syndicate pyjamas and 3 plushies for the ultimate sleepover.
+  description: Contains 3 pairs of syndicate pyjamas and 4 plushies for the ultimate sleepover.
   components:
   - type: Storage
     grid:
@@ -228,10 +187,10 @@
   name: syndicate C-4 bundle
   description: "Contains a lot of C-4 charges."
   components:
-  - type: StorageFill
-    contents:
-      - id: C4
-        amount: 8
+    - type: StorageFill
+      contents:
+        - id: C4
+          amount: 8
 
 - type: entity
   parent: ClothingBackpackChameleon
@@ -240,6 +199,7 @@
   components:
     - type: StorageFill
       contents:
+        - id: ChameleonPDA
         - id: ClothingUniformJumpsuitChameleon
         - id: ClothingOuterChameleon
         - id: ClothingNeckChameleon
@@ -265,7 +225,19 @@
       - id: ClothingHandsGlovesColorYellowBudget
       - id: DoubleEmergencyOxygenTankFilled
       - id: DoubleEmergencyNitrogenTankFilled
-      - id: DoubleEmergencyPlasmaTankFilled
+
+- type: entity
+  parent: ClothingBackpackDuffelSyndicateBundle
+  id: ClothingBackpackDuffelSyndicateRaidBundle
+  name: syndicate raid suit bundle
+  description: "Contains the Syndicate's durable raid armor suit."
+  components:
+  - type: StorageFill
+    contents:
+      - id: ClothingOuterArmorRaid
+      - id: ClothingHeadHelmetRaid
+      - id: ClothingMaskGasSyndicate
+      - id: ClothingHandsGlovesCombat
 
 - type: entity
   parent: ClothingBackpackDuffelSyndicateBundle
@@ -280,37 +252,6 @@
       - id: ClothingHandsGlovesCombat
       - id: DoubleEmergencyOxygenTankFilled
       - id: DoubleEmergencyNitrogenTankFilled
-      - id: DoubleEmergencyPlasmaTankFilled
-
-- type: entity
-  parent: ClothingBackpackDuffelSyndicateBundle
-  id: ClothingBackpackDuffelSyndicateHardsuitCommanderBundle
-  name: syndicate commander hardsuit bundle
-  description: "Contains the Syndicate's signature blood red hardsuit."
-  components:
-  - type: StorageFill
-    contents:
-      - id: ClothingOuterHardsuitSyndieCommander
-      - id: ClothingMaskGasSyndicate
-      - id: ClothingHandsGlovesCombat
-      - id: DoubleEmergencyOxygenTankFilled
-      - id: DoubleEmergencyNitrogenTankFilled
-      - id: DoubleEmergencyPlasmaTankFilled
-
-- type: entity
-  parent: ClothingBackpackDuffelSyndicateBundle
-  id: ClothingBackpackDuffelSyndicateHardsuitMedicBundle
-  name: syndicate medic hardsuit bundle
-  description: "Contains the Syndicate's signature blood red hardsuit."
-  components:
-  - type: StorageFill
-    contents:
-      - id: ClothingOuterHardsuitSyndieMedic
-      - id: ClothingMaskGasSyndicate
-      - id: ClothingHandsGlovesCombat
-      - id: DoubleEmergencyOxygenTankFilled
-      - id: DoubleEmergencyNitrogenTankFilled
-      - id: DoubleEmergencyPlasmaTankFilled
 
 - type: entity
   parent: ClothingBackpackDuffelSyndicateBundle
@@ -325,7 +266,6 @@
       - id: ClothingHandsGlovesCombat
       - id: DoubleEmergencyOxygenTankFilled
       - id: DoubleEmergencyNitrogenTankFilled
-      - id: DoubleEmergencyPlasmaTankFilled
 
 - type: entity
   parent: ClothingBackpackDuffelSyndicateBundle
@@ -339,7 +279,6 @@
       - id: ClothingHandsGlovesCombat
       - id: DoubleEmergencyOxygenTankFilled
       - id: DoubleEmergencyNitrogenTankFilled
-      - id: DoubleEmergencyPlasmaTankFilled
 
 - type: entity
   parent: ClothingBackpackDuffelSyndicateBundle
@@ -355,39 +294,6 @@
       - id: PillAmbuzolPlus
       - id: PillAmbuzol
         amount: 3
-
-- type: entity
-  parent: ClothingBackpackDuffelSyndicateBundle
-  id: ClothingBackpackDuffelSyndicateOperative
-  name: operative duffelbag
-  components:
-  - type: StorageFill
-    contents:
-      - id: BoxSurvivalSyndicate
-      - id: WeaponPistolViper
-      - id: PinpointerSyndicateNuclear
-      - id: DeathAcidifierImplanter
-
-
-- type: entity
-  parent: ClothingBackpackDuffelSyndicateMedicalBundle
-  id: ClothingBackpackDuffelSyndicateOperativeMedic
-  name: operative medic duffelbag
-  description: A large duffel bag for holding extra medical supplies.
-  components:
-  - type: StorageFill
-    contents:
-      - id: SyndiHypo
-      - id: BoxSurvivalSyndicate
-      - id: SawAdvanced
-      - id: Cautery
-      - id: CombatKnife
-      - id: WeaponPistolViper
-      - id: PinpointerSyndicateNuclear
-      - id: HandheldHealthAnalyzer
-      - id: CombatMedipen
-      - id: DeathAcidifierImplanter
-      - id: OmnimedToolSyndie # Shitmed Change
 
 - type: entity
   parent: ClothingBackpackDuffelSyndicateMedicalBundle
@@ -432,12 +338,14 @@
 
 - type: entity
   parent: ClothingBackpackDuffelSyndicateBundle
-  id: ClothingBackpackDuffelSyndicateFilledFPA90
-  name: FPA-90 bundle
-  description: "A cheap integrally suppressed SMG. Comes bundled with three magazines."
+  id: ClothingBackpackDuffelNtCburnFilled
+  name: CBURN equipment bundle
+  description: "The label on the strap reads 'Turn and burn, Agent.'"
   components:
+  - type: Contraband
+    severity: Nanotrasen
   - type: StorageFill
     contents:
-      - id: WeaponSubMachineGunFPA90
-      - id: MagazineCaselessRifle
-        amount: 2
+      - id: WeaponShotgunDoubleBarreled
+      - id: BoxShotgunIncendiary
+      - id: CombatMedipen

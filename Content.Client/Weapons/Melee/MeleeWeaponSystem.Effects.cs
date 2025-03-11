@@ -136,7 +136,6 @@ public sealed partial class MeleeWeaponSystem
     {
         const float thrustEnd = 0.05f;
         const float length = 0.15f;
-        var rotation = sprite.Rotation + spriteRotation;
         var startOffset = sprite.Rotation.RotateVec(new Vector2(0f, -distance / 5f));
         var endOffset = sprite.Rotation.RotateVec(new Vector2(0f, -distance));
 
@@ -145,15 +144,6 @@ public sealed partial class MeleeWeaponSystem
             Length = TimeSpan.FromSeconds(length),
             AnimationTracks =
             {
-                new AnimationTrackComponentProperty()
-                {
-                    ComponentType = typeof(SpriteComponent),
-                    Property = nameof(SpriteComponent.Rotation),
-                    KeyFrames =
-                    {
-                        new AnimationTrackProperty.KeyFrame(rotation, 0f),
-                    }
-                },
                 new AnimationTrackComponentProperty()
                 {
                     ComponentType = typeof(SpriteComponent),
@@ -223,7 +213,7 @@ public sealed partial class MeleeWeaponSystem
     private void UpdateEffects()
     {
         var query = EntityQueryEnumerator<TrackUserComponent, TransformComponent>();
-        while (query.MoveNext(out var arcComponent, out var xform))
+        while (query.MoveNext(out var uid, out var arcComponent, out var xform))
         {
             if (arcComponent.User == null)
                 continue;
@@ -236,7 +226,7 @@ public sealed partial class MeleeWeaponSystem
                 targetPos += entRotation.RotateVec(arcComponent.Offset);
             }
 
-            TransformSystem.SetWorldPosition(xform, targetPos);
+            TransformSystem.SetWorldPosition(uid, targetPos);
         }
     }
 }

@@ -9,7 +9,6 @@
   components:
   - type: HumanoidAppearance
     species: Skeleton
-  - type: Carriable # Carrying system from nyanotrasen.
   - type: Icon
     sprite: Mobs/Species/Skeleton/parts.rsi
     state: full
@@ -40,8 +39,7 @@
         !type:DamageTrigger
         damage: 150
       behaviors:
-      - !type:GibBehavior
-        gibContents: Skip
+      - !type:GibBehavior { }
   - type: SlowOnDamage #modified speeds because they're so weak
     speedModifierThresholds:
       60: 0.9
@@ -103,22 +101,26 @@
           probability: 0.5
   - type: FireVisuals
     alternateState: Standing
-  - type: TypingIndicator
-    proto: skeleton
-  - type: LanguageKnowledge
-    speaks:
-    - TauCetiBasic
-    - Calcic
-    understands:
-    - TauCetiBasic
-    - Calcic
-  - type: FootPrints
-  - type: LayingDown
+  - type: FlashImmunity
+  - type: Inventory
+    femaleDisplacements:
+      jumpsuit:
+        sizeMaps:
+          32:
+            sprite: Mobs/Species/Human/displacement.rsi
+            state: jumpsuit-female
 
 - type: entity
   parent: BaseSpeciesDummy
   id: MobSkeletonPersonDummy
   categories: [ HideSpawnMenu ]
   components:
-    - type: HumanoidAppearance
-      species: Skeleton
+  - type: HumanoidAppearance
+    species: Skeleton
+  - type: Inventory
+    femaleDisplacements:
+      jumpsuit:
+        sizeMaps:
+          32:
+            sprite: Mobs/Species/Human/displacement.rsi
+            state: jumpsuit-female

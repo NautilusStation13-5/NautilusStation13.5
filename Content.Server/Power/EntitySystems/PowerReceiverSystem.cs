@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using Content.Server.Administration.Logs;
 using Content.Server.Administration.Managers;
 using Content.Server.Power.Components;
-using Content.Server.Emp;
 using Content.Shared.Administration;
 using Content.Shared.Database;
 using Content.Shared.Examine;
@@ -16,9 +15,6 @@ using Robust.Server.GameObjects;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 using Robust.Shared.Utility;
-using Content.Shared.Emp;
-using Content.Shared.Interaction;
-
 
 namespace Content.Server.Power.EntitySystems
 {
@@ -26,9 +22,7 @@ namespace Content.Server.Power.EntitySystems
     {
         [Dependency] private readonly IAdminLogManager _adminLogger = default!;
         [Dependency] private readonly IAdminManager _adminManager = default!;
-        [Dependency] private readonly AppearanceSystem _appearance = default!;
         [Dependency] private readonly AudioSystem _audio = default!;
-        [Dependency] private readonly SharedInteractionSystem _interaction = default!;
         private EntityQuery<ApcPowerReceiverComponent> _recQuery;
         private EntityQuery<ApcPowerProviderComponent> _provQuery;
 
@@ -120,13 +114,10 @@ namespace Content.Server.Power.EntitySystems
 
         private void AddSwitchPowerVerb(EntityUid uid, PowerSwitchComponent component, GetVerbsEvent<AlternativeVerb> args)
         {
-            if (!args.CanAccess || !args.CanInteract)
+            if(!args.CanAccess || !args.CanInteract)
                 return;
 
             if (!HasComp<HandsComponent>(args.User))
-                return;
-
-            if (!_interaction.SupportsComplexInteractions(args.User))
                 return;
 
             if (!_recQuery.TryGetComponent(uid, out var receiver))

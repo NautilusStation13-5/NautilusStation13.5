@@ -15,11 +15,8 @@
   - type: Sprite
     sprite: Mobs/Aliens/Argocyte/argocyte_common.rsi
   - type: SolutionContainerManager
-  - type: LanguageKnowledge
-    speaks:
-    - Xeno
-    understands:
-    - Xeno
+  - type: ReplacementAccent
+    accent: xeno
   - type: Bloodstream
     bloodReagent: FerrochromicAcid
     bloodMaxVolume: 75 #we don't want the map to become pools of blood
@@ -51,10 +48,8 @@
     sprite: Mobs/Effects/onfire.rsi
     normalState: Generic_mob_burning
   - type: Climbing
-  - type: Flashable
   - type: NameIdentifier
     group: GenericNumber
-  - type: Fauna # Lavaland Change
 
 - type: entity
   parent: BaseMobArgocyte

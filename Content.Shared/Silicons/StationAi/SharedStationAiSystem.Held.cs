@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Content.Shared.Actions.Events;
 using Content.Shared.IdentityManagement;
 using Content.Shared.Interaction.Events;
@@ -5,6 +6,10 @@ using Content.Shared.Popups;
 using Content.Shared.Verbs;
 using Robust.Shared.Serialization;
 using Robust.Shared.Utility;
+using Robust.Shared.GameObjects;
+using Content.Shared.Gravity;
+using Robust.Shared.Map;
+using System.Linq;
 
 namespace Content.Shared.Silicons.StationAi;
 
@@ -26,6 +31,7 @@ public abstract partial class SharedStationAiSystem
         SubscribeLocalEvent<StationAiHeldComponent, InteractionAttemptEvent>(OnHeldInteraction);
         SubscribeLocalEvent<StationAiHeldComponent, AttemptRelayActionComponentChangeEvent>(OnHeldRelay);
         SubscribeLocalEvent<StationAiHeldComponent, JumpToCoreEvent>(OnCoreJump);
+        SubscribeLocalEvent<StationAiHeldComponent, ChangeLevelEvent>(OnLevelChange);
         SubscribeLocalEvent<TryGetIdentityShortInfoEvent>(OnTryGetIdentityShortInfo);
     }
 
@@ -50,6 +56,20 @@ public abstract partial class SharedStationAiSystem
             return;
 
         _xforms.DropNextTo(core.Comp.RemoteEntity.Value, core.Owner) ;
+    }
+
+    private void OnLevelChange(Entity<StationAiHeldComponent> ent, ref ChangeLevelEvent args)
+    {
+
+        if (!TryGetCore(ent.Owner, out var core) || core.Comp?.RemoteEntity == null)
+            return;
+
+            var destination = EntityManager.EntityQuery<TriesteComponent>().FirstOrDefault();
+            if (destination != null)
+            {
+                // Teleport to the first destination's coordinates
+                Transform(core.Comp.RemoteEntity.Value).Coordinates = Transform(destination.Owner).Coordinates;
+            }
     }
 
     /// <summary>
@@ -90,7 +110,7 @@ public abstract partial class SharedStationAiSystem
 
     private bool TryGetCore(EntityUid ent, out Entity<StationAiCoreComponent?> core)
     {
-        if (!_containers.TryGetContainingContainer((ent, null, null), out var container) ||
+        if (!_containers.TryGetContainingContainer(ent, out var container) ||
             container.ID != StationAiCoreComponent.Container ||
             !TryComp(container.Owner, out StationAiCoreComponent? coreComp) ||
             coreComp.RemoteEntity == null)

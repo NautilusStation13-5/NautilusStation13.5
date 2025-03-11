@@ -1,10 +1,10 @@
 using Content.Shared.Access.Components;
 using Content.Shared.Access.Systems;
+using Content.Shared.ActionBlocker;
 using Content.Shared.Construction.Components;
 using Content.Shared.DoAfter;
 using Content.Shared.Emag.Systems;
 using Content.Shared.Examine;
-using Content.Shared.Hands.Components;
 using Content.Shared.IdentityManagement;
 using Content.Shared.Interaction;
 using Content.Shared.Popups;
@@ -26,6 +26,7 @@ namespace Content.Shared.Lock;
 public sealed class LockSystem : EntitySystem
 {
     [Dependency] private readonly AccessReaderSystem _accessReader = default!;
+    [Dependency] private readonly ActionBlockerSystem _actionBlocker = default!;
     [Dependency] private readonly ActivatableUISystem _activatableUI = default!;
     [Dependency] private readonly SharedAppearanceSystem _appearanceSystem = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
@@ -68,8 +69,6 @@ public sealed class LockSystem : EntitySystem
         // Only attempt an unlock by default on Activate
         if (lockComp.Locked && lockComp.UnlockOnClick)
         {
-            if (!lockComp.UnlockOnClick)
-                return;
             TryUnlock(uid, args.User, lockComp);
             args.Handled = true;
         }
@@ -128,13 +127,29 @@ public sealed class LockSystem : EntitySystem
                 {
                     BreakOnDamage = true,
                     BreakOnMove = true,
-                    RequireCanInteract = true,
-                    NeedHand = true
+                    NeedHand = true,
+                    BreakOnDropItem = false,
                 });
         }
 
-        _sharedPopupSystem.PopupClient(Loc.GetString("lock-comp-do-lock-success",
+        Lock(uid, user, lockComp);
+        return true;
+    }
+
+    /// <summary>
+    ///     Forces a given entity to be locked, does not activate a do-after.
+    /// </summary>
+    public void Lock(EntityUid uid, EntityUid? user, LockComponent? lockComp = null)
+    {
+        if (!Resolve(uid, ref lockComp))
+            return;
+
+        if (user is { Valid: true })
+        {
+            _sharedPopupSystem.PopupClient(Loc.GetString("lock-comp-do-lock-success",
                 ("entityName", Identity.Name(uid, EntityManager))), uid, user);
+        }
+
         _audio.PlayPredicted(lockComp.LockSound, uid, user);
 
         lockComp.Locked = true;
@@ -143,7 +158,6 @@ public sealed class LockSystem : EntitySystem
 
         var ev = new LockToggledEvent(true);
         RaiseLocalEvent(uid, ref ev, true);
-        return true;
     }
 
     /// <summary>
@@ -206,8 +220,8 @@ public sealed class LockSystem : EntitySystem
                 {
                     BreakOnDamage = true,
                     BreakOnMove = true,
-                    RequireCanInteract = true,
-                    NeedHand = true
+                    NeedHand = true,
+                    BreakOnDropItem = false,
                 });
         }
 
@@ -233,14 +247,20 @@ public sealed class LockSystem : EntitySystem
     /// </summary>
     public bool CanToggleLock(EntityUid uid, EntityUid user, bool quiet = true)
     {
-        if (!HasComp<HandsComponent>(user))
+        if (!_actionBlocker.CanComplexInteract(user))
             return false;
 
         var ev = new LockToggleAttemptEvent(user, quiet);
         RaiseLocalEvent(uid, ref ev, true);
-        return !ev.Cancelled;
+        if (ev.Cancelled)
+            return false;
+
+        var userEv = new UserLockToggleAttemptEvent(uid, quiet);
+        RaiseLocalEvent(user, ref userEv, true);
+        return !userEv.Cancelled;
     }
 
+    // TODO: this should be a helper on AccessReaderSystem since so many systems copy paste it
     private bool HasUserAccess(EntityUid uid, EntityUid user, AccessReaderComponent? reader = null, bool quiet = true)
     {
         // Not having an AccessComponent means you get free access. woo!
@@ -370,7 +390,7 @@ public sealed class LockSystem : EntitySystem
         {
             args.Cancel();
             if (lockComp.Locked)
-                _sharedPopupSystem.PopupEntity(Loc.GetString("entity-storage-component-locked-message"), uid, args.User);
+                _sharedPopupSystem.PopupClient(Loc.GetString("entity-storage-component-locked-message"), uid, args.User);
         }
     }
 
@@ -382,4 +402,3 @@ public sealed class LockSystem : EntitySystem
         _activatableUI.CloseAll(uid);
     }
 }
-

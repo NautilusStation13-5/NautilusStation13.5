@@ -6,15 +6,20 @@
   description: job-description-cmo
   playTimeTracker: JobChiefMedicalOfficer
   requirements:
-    - !type:CharacterTraitRequirement
-      inverted: true
-      traits:
-        - Foreigner
-        - ForeignerLight
+    - !type:RoleTimeRequirement
+      role: JobChemist
+      time: 3600 #1 hrs
+    - !type:RoleTimeRequirement
+      role: JobMedicalDoctor
+      time: 3600 #1 hrs
+    - !type:DepartmentTimeRequirement
+      department: Medical
+      time: 3600 #1 hrs
+    - !type:OverallPlaytimeRequirement
+      time: 7200 #2 hrs
   weight: 10
   startingGear: CMOGear
   icon: "JobIconChiefMedicalOfficer"
-  requireAdminNotify: true
   supervisors: job-supervisors-captain
   canBeAntag: false
   access:
@@ -23,9 +28,7 @@
   - Maintenance
   - Chemistry
   - ChiefMedicalOfficer
-  - Paramedic # DeltaV - Add Paramedic access
-  - External # DeltaV - Paramedics need this access
-  - Psychologist # DeltaV - Add Psychologist access
+  - Brig
   - Cryogenics
   special:
   - !type:AddImplantSpecial
@@ -33,35 +36,13 @@
   - !type:AddComponentSpecial
     components:
       - type: CommandStaff
-  - !type:AddComponentSpecial
-    components:
-    - type: CPRTraining
-    - type: SurgerySpeedModifier
-      speedModifier: 2.5
-  afterLoadoutSpecial:
-  - !type:ModifyEnvirosuitSpecial
-    charges: 8
-  - !type:ModifyEnvirohelmSpecial
-    powerCell: PowerCellHigh
 
 - type: startingGear
   id: CMOGear
-  subGear:
-  - CMOPlasmamanGear
   equipment:
-    jumpsuit: ClothingUniformJumpsuitCMO
-    back: ClothingBackpackCMOFilled
-    shoes: ClothingShoesColorBrown
     id: CMOPDA
     ears: ClothingHeadsetCMO
-  innerClothingSkirt: ClothingUniformJumpskirtCMO
-  satchel: ClothingBackpackSatchelCMOFilled
-  duffelbag: ClothingBackpackDuffelCMOFilled
-
-- type: startingGear
-  id: CMOPlasmamanGear
-  parent: BasePlasmamanGear
-  equipment:
-    jumpsuit: ClothingUniformEnvirosuitCMO
-    head: ClothingHeadEnvirohelmCMO
-    gloves: ClothingHandsGlovesEnviroglovesWhite
+    belt: ClothingBeltMedicalFilled
+  storage:
+    back:
+    - Flash

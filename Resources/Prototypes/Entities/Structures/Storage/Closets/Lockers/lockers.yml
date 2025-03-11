@@ -18,20 +18,6 @@
     openSound:
       path: /Audio/Effects/woodenclosetopen.ogg
 
-# Bartender
-- type: entity
-  id: LockerBartender
-  parent: LockerBase
-  name: bartender's locker
-  components:
-  - type: Appearance
-  - type: EntityStorageVisuals
-    stateBaseClosed: bartender
-    stateDoorOpen: bartender_open
-    stateDoorClosed: bartender_door
-  - type: AccessReader
-    access: [ [ "Bar" ] ]
-
 # Basic
 - type: entity
   id: LockerSteel
@@ -43,17 +29,12 @@
     stateBaseClosed: secure
     stateDoorOpen: secure_open
     stateDoorClosed: secure_door
-  - type: DamageOtherOnHit
-    damage:
-      types:
-        Blunt: 15
-    staminaCost: 50
 
 # Cargo
 - type: entity
   id: LockerQuarterMaster
   parent: LockerBaseSecure
-  name: logistics officer's locker # DeltaV - Logistics Department replacing Cargo
+  name: quartermaster's locker
   components:
   - type: Appearance
   - type: EntityStorageVisuals
@@ -189,6 +170,11 @@
   - type: ExplosionResistance
     damageCoefficient: 0.50
   - type: AntiRottingContainer
+  - type: Construction
+    graph: ClosetFreezer
+    node: done
+    containers:
+    - entity_storage
 
 - type: entity
   id: LockerFreezer
@@ -212,20 +198,6 @@
     stateDoorClosed: hydro_door
   - type: AccessReader
     access: [ [ "Hydroponics" ] ]
-
-# Janitor
-- type: entity
-  id: LockerJanitor
-  parent: LockerBase
-  name: janitor locker
-  components:
-  - type: Appearance
-  - type: EntityStorageVisuals
-    stateBaseClosed: jan
-    stateDoorOpen: jan_open
-    stateDoorClosed: jan_door
-  - type: AccessReader
-    access: [ [ "Janitor" ] ]
 
 # Medicine
 - type: entity
@@ -268,7 +240,7 @@
     stateDoorOpen: paramed_open
     stateDoorClosed: paramed_door
   - type: AccessReader
-    access: [ [ "Paramedic" ] ] # DeltaV - Change Medical access to Paramedic
+    access: [ [ "Medical" ] ]
 
 
 # Chemical
@@ -303,7 +275,7 @@
 - type: entity
   id: LockerResearchDirector
   parent: LockerBase
-  name: mystagogue's locker # DeltaV - Epistemics Department replacing Science
+  name: research director's locker
   components:
   - type: Appearance
   - type: EntityStorageVisuals
@@ -358,7 +330,7 @@
 - type: entity
   id: LockerBrigmedic
   parent: LockerBaseSecure
-  name: corpsman locker # DeltaV - rename brigmedic to corpsman
+  name: brigmedic locker
   components:
   - type: Appearance
   - type: EntityStorageVisuals
@@ -366,7 +338,7 @@
     stateDoorOpen: armory_open
     stateDoorClosed: brigmedic_door
   - type: AccessReader
-    access: [["Corpsman"]] # DeltaV - add corpsman access
+    access: [["Medical"]]
 
 # Security Officer
 - type: entity
@@ -392,6 +364,20 @@
     stateBaseClosed: shotguncase
     stateDoorOpen: shotguncase_open
     stateDoorClosed: shotguncase_door
+  - type: AccessReader
+  - type: Construction
+    graph: GunSafe
+    node: done
+    containers:
+    - entity_storage
+  - type: StaticPrice
+    price: 660
+
+- type: entity
+  id: GunSafeBaseSecure
+  parent: GunSafe
+  suffix: Armory, Locked
+  components:
   - type: AccessReader
     access: [["Armory"]]
 
@@ -427,20 +413,6 @@
     stateDoorOpen: syndicate_open
     stateDoorClosed: syndicate_door
 
-- type: entity
-  id: LockerSyndicateAgentLocker
-  name: syndicate agent locker
-  parent: LockerBase
-  description: It's a personal storage unit for agent gear.
-  components:
-  - type: Appearance
-  - type: EntityStorageVisuals
-    stateBaseClosed: syndicate1
-    stateDoorOpen: syndicate1_open
-    stateDoorClosed: syndicate1_door
-  - type: AccessReader
-    access: [ [ "SyndicateAgent" ] ]
-
 # Bluespace
 - type: entity
   id: LockerBluespaceStation
@@ -449,6 +421,7 @@
   parent: LockerSyndicatePersonal
   description: Advanced locker technology.
   components:
+    - type: ArrivalsBlacklist
     - type: BluespaceLocker
       minBluespaceLinks: 1
       behaviorProperties:

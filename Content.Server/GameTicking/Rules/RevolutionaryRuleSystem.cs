@@ -28,8 +28,6 @@ using Content.Shared.Zombies;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 using Content.Shared.Cuffs.Components;
-using Content.Shared.Revolutionary;
-
 
 namespace Content.Server.GameTicking.Rules;
 
@@ -61,7 +59,7 @@ public sealed class RevolutionaryRuleSystem : GameRuleSystem<RevolutionaryRuleCo
         base.Initialize();
         SubscribeLocalEvent<CommandStaffComponent, MobStateChangedEvent>(OnCommandMobStateChanged);
 
-        SubscribeLocalEvent<HeadRevolutionaryComponent, RevolutionaryConverterSystem.AfterConvertedEvent>(OnPostConvert);
+        SubscribeLocalEvent<HeadRevolutionaryComponent, AfterFlashedEvent>(OnPostFlash);
         SubscribeLocalEvent<HeadRevolutionaryComponent, MobStateChangedEvent>(OnHeadRevMobStateChanged);
 
         SubscribeLocalEvent<RevolutionaryRoleComponent, GetBriefingEvent>(OnGetBriefing);
@@ -127,9 +125,9 @@ public sealed class RevolutionaryRuleSystem : GameRuleSystem<RevolutionaryRuleCo
     }
 
     /// <summary>
-    /// Called when a Head Rev uses a Revolutionary Manifesto to convert somebody else.
+    /// Called when a Head Rev uses a flash in melee to convert somebody else.
     /// </summary>
-    private void OnPostConvert(EntityUid uid, HeadRevolutionaryComponent comp, ref RevolutionaryConverterSystem.AfterConvertedEvent ev)
+    private void OnPostFlash(EntityUid uid, HeadRevolutionaryComponent comp, ref AfterFlashedEvent ev)
     {
         var alwaysConvertible = HasComp<AlwaysRevolutionaryConvertibleComponent>(ev.Target);
 

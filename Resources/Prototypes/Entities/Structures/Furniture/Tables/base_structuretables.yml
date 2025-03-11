@@ -6,7 +6,7 @@
   abstract: true
   components:
   - type: Damageable
-    damageContainer: Inorganic
+    damageContainer: StructuralInorganic
     damageModifierSet: Metallic
   - type: PlaceableSurface
   - type: Fixtures
@@ -20,7 +20,6 @@
         - TableMask
         layer:
         - TableLayer
-        - BulletImpassable
   - type: SpriteFade
   - type: Sprite
   - type: Icon
@@ -37,8 +36,6 @@
   - type: FootstepModifier
     footstepSoundCollection:
       collection: FootstepHull
-  - type: RequireProjectileTarget
-  - type: ThrownItemImmune
 
 - type: entity
   id: CounterBase

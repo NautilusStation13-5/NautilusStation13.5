@@ -5,6 +5,7 @@
   - MobDamageable
   - MobPolymorphable
   - MobCombat
+  - StripableInventoryBase
   id: BaseMobSpecies
   abstract: true
   components:
@@ -14,13 +15,10 @@
     - map: [ "enum.HumanoidVisualLayers.Head" ]
     - map: [ "enum.HumanoidVisualLayers.Snout" ]
     - map: [ "enum.HumanoidVisualLayers.Eyes" ]
-    - map: [ "enum.HumanoidVisualLayers.Face" ]
     - map: [ "enum.HumanoidVisualLayers.RArm" ]
     - map: [ "enum.HumanoidVisualLayers.LArm" ]
     - map: [ "enum.HumanoidVisualLayers.RLeg" ]
     - map: [ "enum.HumanoidVisualLayers.LLeg" ]
-    - map: [ "enum.HumanoidVisualLayers.Underwear" ]
-    - map: [ "enum.HumanoidVisualLayers.Undershirt" ]
     - map: ["jumpsuit"]
     - map: ["enum.HumanoidVisualLayers.LFoot"]
     - map: ["enum.HumanoidVisualLayers.RFoot"]
@@ -29,8 +27,6 @@
     - map: [ "gloves" ]
     - map: [ "shoes" ]
     - map: [ "ears" ]
-    - map: [ "innerBelt" ]
-    - map: [ "innerNeck" ]
     - map: [ "outerClothing" ]
     - map: [ "eyes" ]
     - map: [ "belt" ]
@@ -42,7 +38,6 @@
     - map: [ "enum.HumanoidVisualLayers.HeadSide" ]
     - map: [ "enum.HumanoidVisualLayers.HeadTop" ]
     - map: [ "enum.HumanoidVisualLayers.Tail" ]
-    - map: [ "enum.HumanoidVisualLayers.Wings" ]
     - map: [ "mask" ]
     - map: [ "head" ]
     - map: [ "pocket1" ]
@@ -86,8 +81,8 @@
     species: Human
   - type: SlowOnDamage
     speedModifierThresholds:
-      60: 0.75
-      80: 0.55
+      60: 0.7
+      80: 0.5
   - type: Fixtures
     fixtures: # TODO: This needs a second fixture just for mob collisions.
       fix1:
@@ -101,7 +96,6 @@
         layer:
         - MobLayer
   - type: FloorOcclusion
-  - type: Mood
   - type: RangedDamageSound
     soundGroups:
       Brute:
@@ -141,8 +135,7 @@
     - Flashed
     - RadiationProtection
     - Drowsiness
-    - PsionicsDisabled
-    - PsionicallyInsulated
+    - Adrenaline
   - type: Body
     prototype: Human
     requiredLegs: 2
@@ -151,8 +144,6 @@
   - type: Hands
   - type: ComplexInteraction
   - type: Internals
-  - type: Inventory
-  - type: InventorySlots
   - type: FloatingVisuals
   - type: Climbing
   - type: Cuffable
@@ -172,17 +163,10 @@
     damage:
       types:
         Blunt: 5
-    heavyRateModifier: 1
-    heavyDamageBaseModifier: 1
-    heavyPartDamageMultiplier: 1
-    heavyStaminaCost: 0
-    maxTargets: 1
   - type: SleepEmitSound
   - type: SSDIndicator
   - type: StandingState
-  - type: Fingerprint
   - type: Dna
-  - type: Scent
   - type: MindContainer
     showExamineInfo: true
   - type: CanEnterCryostorage
@@ -197,26 +181,23 @@
     - NanoTrasen
   - type: CreamPied
   - type: Stripping
-  - type: Strippable
   - type: UserInterface
     interfaces:
       enum.HumanoidMarkingModifierKey.Key:
         type: HumanoidMarkingModifierBoundUserInterface
       enum.StrippingUiKey.Key:
         type: StrippableBoundUserInterface
-      enum.InstrumentUiKey.Key:
-        type: InstrumentBoundUserInterface
-        requireInputValidation: false
-      enum.RadialSelectorUiKey.Key:
-        type: RadialSelectorMenuBUI
-      enum.ListViewSelectorUiKey.Key:
-        type: ListViewSelectorBUI
-      enum.SurgeryUIKey.Key:
-        type: SurgeryBui
   - type: Puller
   - type: Speech
     speechSounds: Alto
   - type: DamageForceSay
+  - type: InGas
+    gasId: 9 # short-circuits in water
+    damagedByGas: false
+    gasThreshold: 9999
+    damage:
+      types:
+        Shock: 5
   - type: Vocal
     sounds:
       Male: MaleHuman
@@ -231,19 +212,12 @@
   - type: MobPrice
     price: 1500 # Kidnapping a living person and selling them for cred is a good move.
     deathPenalty: 0.01 # However they really ought to be living and intact, otherwise they're worth 100x less.
-  - type: CanEscapeInventory # Carrying system from nyanotrasen.
-  - type: LanguageKnowledge # This is here so even if species doesn't have a defined language, they at least speak GC
-    speaks:
-    - TauCetiBasic
-    understands:
-    - TauCetiBasic
   - type: Tag
     tags:
     - CanPilot
     - FootstepSound
     - DoorBumpOpener
-  - type: Targeting
-  - type: SurgeryTarget
+    - AnomalyHost
 
 - type: entity
   save: false
@@ -256,11 +230,11 @@
   id: BaseMobSpeciesOrganic
   abstract: true
   components:
-  - type: Flashable
   - type: Barotrauma
     damage:
       types:
-        Blunt: 0.55 #per second, scales with pressure and other constants.
+        Blunt: 0.50 #per second, scales with pressure and other constants.
+        Heat: 0.1
   - type: PassiveDamage # Slight passive regen. Assuming one damage type, comes out to about 4 damage a minute.
     allowedStates:
     - Alive
@@ -270,28 +244,7 @@
         Heat: -0.07
       groups:
         Brute: -0.07
-  # Organs
-  - type: StatusEffects
-    allowed:
-    - Stun
-    - KnockedDown
-    - SlowedDown
-    - Stutter
-    - SeeingRainbows
-    - Electrocution
-    - ForcedSleep
-    - TemporaryBlindness
-    - Drunk
-    - SlurredSpeech
-    - RatvarianLanguage
-    - PressureImmunity
-    - Muted
-    - Pacified
-    - StaminaModifier
-    - PsionicsDisabled
-    - PsionicallyInsulated
-    - RadiationProtection
-    - Drowsiness
+  - type: Fingerprint
   - type: Blindable
   # Other
   - type: Temperature
@@ -307,9 +260,9 @@
         Heat: 1.5 #per second, scales with temperature & other constants
   - type: TemperatureSpeed
     thresholds:
-      293: 0.8
-      280: 0.6
-      260: 0.4
+      293: 1
+      280: 1
+      260: 1
   - type: ThermalRegulator
     metabolismHeat: 800
     radiatedHeat: 100
@@ -333,20 +286,15 @@
         Asphyxiation: -1.0
   - type: FireVisuals
     alternateState: Standing
-  - type: OfferItem
-  - type: LayingDown
-  - type: BloodstreamAffectedByMass
-    power: 0.6 # A minimum size felinid will have 30% blood, a minimum size vulp will have 60%, a maximum size oni will have ~200%
 
 - type: entity
   save: false
   id: BaseSpeciesDummy
+  parent: InventoryBase
   abstract: true
   components:
   - type: Hands
   - type: ComplexInteraction
-  - type: Inventory
-  - type: InventorySlots
   - type: ContainerContainer
   - type: Icon
     sprite: Mobs/Species/Human/parts.rsi
@@ -360,13 +308,10 @@
     - map: [ "enum.HumanoidVisualLayers.Head" ]
     - map: [ "enum.HumanoidVisualLayers.Snout" ]
     - map: [ "enum.HumanoidVisualLayers.Eyes" ]
-    - map: [ "enum.HumanoidVisualLayers.Face" ]
     - map: [ "enum.HumanoidVisualLayers.RArm" ]
     - map: [ "enum.HumanoidVisualLayers.LArm" ]
     - map: [ "enum.HumanoidVisualLayers.RLeg" ]
     - map: [ "enum.HumanoidVisualLayers.LLeg" ]
-    - map: [ "enum.HumanoidVisualLayers.Underwear" ]
-    - map: [ "enum.HumanoidVisualLayers.Undershirt" ]
     - map: ["jumpsuit"]
     - map: ["enum.HumanoidVisualLayers.LFoot"]
     - map: ["enum.HumanoidVisualLayers.RFoot"]
@@ -380,8 +325,6 @@
     - map: [ "gloves" ]
     - map: [ "shoes" ]
     - map: [ "ears" ]
-    - map: [ "innerBelt" ]
-    - map: [ "innerNeck" ]
     - map: [ "outerClothing" ]
     - map: [ "eyes" ]
     - map: [ "belt" ]

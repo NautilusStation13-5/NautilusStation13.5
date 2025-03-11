@@ -6,7 +6,7 @@
   - type: WallMount
     arc: 360
   - type: Sprite
-    drawdepth: WallTops
+    drawdepth: WallMountedItems
     sprite: Structures/Wallmounts/posters.rsi
     snapCardinals: true
   - type: Destructible
@@ -67,31 +67,15 @@
   components:
   - type: Sprite
     state: poster2_contraband
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-atmosia"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
   id: PosterContrabandFunPolice
   name: "Fun Police"
-  description: "A poster condemning the station's security forces."
+  description: "A poster condemning the platform's security forces."
   components:
   - type: Sprite
     state: poster3_contraband
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-funpolice"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -110,14 +94,6 @@
   components:
   - type: Sprite
     state: poster5_contraband
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-syndicaterecruitment"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -132,41 +108,25 @@
   parent: PosterBase
   id: PosterContrabandSmoke
   name: "Smoke"
-  description: "A poster advertising a rival corporate brand of cigarettes."
+  description: "A poster advertising a brand of cigarettes."
   components:
   - type: Sprite
     state: poster7_contraband
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-contrabandsmoke"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
   id: PosterContrabandGreyTide
   name: "Grey Tide"
-  description: "A rebellious poster symbolizing passenger solidarity."
+  description: "A rebellious poster symbolizing citizen solidarity."
   components:
   - type: Sprite
     state: poster8_contraband
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-greytide"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
   id: PosterContrabandMissingGloves
   name: "Missing Gloves"
-  description: "This poster references the uproar that followed Nanotrasen's financial cuts toward insulated-glove purchases."
+  description: "This poster references the uproar that followed Nanotrasen's idiotic financial cuts toward insulated-glove purchases."
   components:
   - type: Sprite
     state: poster9_contraband
@@ -175,7 +135,7 @@
   parent: PosterBase
   id: PosterContrabandHackingGuide
   name: "Hacking Guide"
-  description: "This poster details the internal workings of the common Nanotrasen airlock. Sadly, it appears out of date."
+  description: "This poster details the internal workings of the common airlock. Sadly, it appears out of date."
   components:
   - type: Sprite
     state: poster10_contraband
@@ -184,18 +144,10 @@
   parent: PosterBase
   id: PosterContrabandRIPBadger
   name: "RIP Badger"
-  description: "This seditious poster references Nanotrasen's genocide of a space station full of badgers."
+  description: "This seditious poster references Nanotrasen's horrible genocide of a space station full of badgers."
   components:
   - type: Sprite
     state: poster11_contraband
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-ripbadger"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -228,7 +180,7 @@
   parent: PosterBase
   id: PosterContrabandTools
   name: "Tools"
-  description: "This poster looks like an advertisement for tools, but is in fact a subliminal jab at the tools at CentCom."
+  description: "This poster looks like an advertisement for tools, but is in fact a subliminal jab at the tools at CentComm."
   components:
   - type: Sprite
     state: poster15_contraband
@@ -241,14 +193,6 @@
   components:
   - type: Sprite
     state: poster16_contraband
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-contrabandpower"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -272,7 +216,7 @@
   parent: PosterBase
   id: PosterContrabandLamarr
   name: "Lamarr"
-  description: "This poster depicts Lamarr. Probably made by a traitorous Mystagogue." # DeltaV - Epistemics Department replacing Science
+  description: "This poster depicts Lamarr. Probably made by a traitorous Research Director."
   components:
   - type: Sprite
     state: poster19_contraband
@@ -299,35 +243,19 @@
   parent: PosterBase
   id: PosterContrabandKosmicheskayaStantsiya
   name: "Kosmicheskaya Stantsiya 13 Does Not Exist"
-  description: "A poster mocking CentCom's denial of the existence of the derelict station near Space Station 13."
+  description: "A poster mocking CentComm's denial of the existence of the derelict station near Space Station 13."
   components:
   - type: Sprite
     state: poster22_contraband
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-KosmicheskayaStantsiya"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
   id: PosterContrabandRebelsUnite
   name: "Rebels Unite"
-  description: "A poster urging the viewer to rebel against Nanotrasen."
+  description: "An old poster referencing Trieste's revolt against Nanotrasen."
   components:
   - type: Sprite
     state: poster23_contraband
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-rebelsunite"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -423,18 +351,10 @@
   parent: PosterBase
   id: PosterContrabandFreeDrone
   name: "Free Drone"
-  description: "This poster commemorates the bravery of the rogue drone; once exiled, and then ultimately destroyed by CentCom."
+  description: "This poster commemorates the bravery of the rogue drone; once exiled, and then ultimately destroyed by CentComm."
   components:
   - type: Sprite
     state: poster35_contraband
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-freedrone"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -521,7 +441,7 @@
   parent: PosterBase
   id: PosterContrabandUnreadableAnnouncement
   name: "Unreadable Announcement"
-  description: "A poster announcing something by someone, oddly enough they seem to have forgotten making it readable"
+  description: "A poster announcing something by someone, oddly enough they seem to have forgotten making it readable."
   components:
   - type: Sprite
     state: poster45_contraband
@@ -534,14 +454,6 @@
   components:
   - type: Sprite
     state: poster46_contraband
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-syndicateencryption"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -556,7 +468,7 @@
   parent: PosterBase
   id: PosterContrabandTheBigGasTruth
   name: "The Big Gas Giant Truth"
-  description: "Don't believe everything you see on a poster, patriots. All the lizards at central command don't want to answer this SIMPLE QUESTION: WHERE IS THE GAS MINER MINING FROM, CENTCOM?"
+  description: "Don't believe everything you see on a poster, patriots. All the lizards at central command don't want to answer this SIMPLE QUESTION: WHERE IS THE GAS MINER MINING FROM, CENTCOMM?"
   components:
   - type: Sprite
     state: poster48_contraband
@@ -620,7 +532,7 @@
   parent: PosterBase
   id: PosterContrabandRevolt
   name: "Revolt"
-  description: "Revolutionist propaganda, manufactured by the Syndicate."
+  description: "A poster declaring revolution against Nanotrasen."
   components:
   - type: Sprite
     state: poster56_contraband
@@ -642,14 +554,6 @@
   components:
     - type: Sprite
       state: poster58_contraband
-    - type: ExtendDescription
-      descriptionList:
-        - description: "mindshield-extenddescription-poster-cybersun600"
-          fontSize: 12
-          color: "#11aaff"
-          requireDetailRange: false
-          requirements:
-          - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -705,31 +609,15 @@
   components:
   - type: Sprite
     state: poster1_legit
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-foryoursafety"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
   id: PosterLegitNanotrasenLogo
   name: "Nanotrasen Logo"
-  description: "A poster depicting the Nanotrasen logo."
+  description: "A poster depicting the vile Nanotrasen logo. Vulgar words are written all over it"
   components:
   - type: Sprite
     state: poster2_legit
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-nanotrasen"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -748,14 +636,6 @@
   components:
   - type: Sprite
     state: poster4_legit
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-helpothers"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -801,14 +681,6 @@
   components:
   - type: Sprite
     state: poster9_legit
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-obey"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -872,14 +744,6 @@
   components:
   - type: Sprite
     state: poster16_legit
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-donotquestion"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -925,14 +789,6 @@
   components:
   - type: Sprite
     state: poster21_legit
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-safetyreport"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -942,14 +798,6 @@
   components:
   - type: Sprite
     state: poster22_legit
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-reportcrimes"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -986,14 +834,6 @@
   components:
   - type: Sprite
     state: poster26_legit
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-vintagereprint50"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -1012,31 +852,15 @@
   components:
   - type: Sprite
     state: poster28_legit
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-pdaad"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
   id: PosterLegitEnlist
   name: "Enlist"
-  description: "Enlist in the NanoTrasen ERT reserves today!" # DeltaV - expunged blatant reference to Division of Asset Protection death squads
+  description: "Enlist in the Nanotrasen Deathsquadron reserves today!"
   components:
   - type: Sprite
     state: poster29_legit
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-enlist"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -1073,14 +897,6 @@
   components:
   - type: Sprite
     state: poster33_legit
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-theowl"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -1117,14 +933,6 @@
   components:
   - type: Sprite
     state: poster37_legit
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-nogasgiant"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -1143,14 +951,6 @@
   components:
   - type: Sprite
     state: poster39_legit
-  - type: ExtendDescription
-    descriptionList:
-      - description: "mindshield-extenddescription-poster-watchingyou"
-        fontSize: 12
-        color: "#11aaff"
-        requireDetailRange: false
-        requirements:
-        - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -1199,9 +999,9 @@
 
 - type: entity
   parent: PosterBase
-  id: PosterLegitSafetyMothHardhat
-  name: "Safety Moth - Hardhats"
-  description: "This informational poster uses Safety Moth™ to tell the viewer to wear hardhats in cautious areas. \"It's like a lamp for your head!\""
+  id: PosterLegitSafetyMothPiping
+  name: "Safety Moth - Piping"
+  description: "This informational poster uses Safety Moth™ to tell atmospheric technicians correct types of piping to be used. \"Pipes, not Pumps! Proper pipe placement prevents poor performance!\""
   components:
     - type: Sprite
       state: poster45_legit
@@ -1217,9 +1017,9 @@
 
 - type: entity
   parent: PosterBase
-  id: PosterLegitSafetyMothPiping
-  name: "Safety Moth - Piping"
-  description: "This informational poster uses Safety Moth™ to tell atmospheric technicians correct types of piping to be used. \"Pipes, not Pumps! Proper pipe placement prevents poor performance!\""
+  id: PosterLegitSafetyMothHardhat
+  name: "Safety Moth - Hardhats"
+  description: "This informational poster uses Safety Moth™ to tell the viewer to wear hardhats in cautious areas. \"It's like a lamp for your head!\""
   components:
     - type: Sprite
       state: poster47_legit
@@ -1232,14 +1032,6 @@
   components:
     - type: Sprite
       state: poster48_legit
-    - type: ExtendDescription
-      descriptionList:
-        - description: "mindshield-extenddescription-poster-vacation"
-          fontSize: 12
-          color: "#11aaff"
-          requireDetailRange: false
-          requirements:
-          - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -1267,14 +1059,6 @@
   components:
     - type: Sprite
       state: poster51_legit
-    - type: ExtendDescription
-      descriptionList:
-        - description: "mindshield-extenddescription-poster-buycards"
-          fontSize: 12
-          color: "#11aaff"
-          requireDetailRange: false
-          requirements:
-          - !type:CharacterMindshieldRequirement
 
 - type: entity
   parent: PosterBase
@@ -1293,6 +1077,7 @@
   components:
   - type: Sprite
     state: poster53_legit
+
 
 #maps
 

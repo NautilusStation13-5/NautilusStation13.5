@@ -30,9 +30,6 @@
       behaviors:
       - !type:DoActsBehavior
         acts: ["Destruction"]
-  - type: Tag
-    tags:
-      - Cable
   - type: SubFloorHide
   - type: CollideOnAnchor
   - type: Appearance
@@ -49,7 +46,7 @@
   - type: RCDDeconstructable
     cost: 2
     delay: 0
-    fx: EffectRCDConstruct0  
+    fx: EffectRCDConstruct0
 
 - type: entity
   parent: CableBase

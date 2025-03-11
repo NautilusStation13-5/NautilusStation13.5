@@ -14,9 +14,6 @@
     blacklist:
       tags:
       - Catwalk
-    triggerGroups:
-      types:
-      - Chasm
   - type: Transform
     anchored: true
   - type: Clickable
@@ -78,3 +75,15 @@
     sprite: Tiles/Planet/Chasms/snow_chasm.rsi
   - type: Icon
     sprite: Tiles/Planet/Chasms/snow_chasm.rsi
+
+- type: entity
+  parent: FloorChasmEntity
+  id: FloorPlatformEntity
+  suffix: Platform
+  components:
+  - type: Sprite
+    sprite: Tiles/Planet/Chasms/platform_chasm.rsi
+  - type: Icon
+    sprite: Tiles/Planet/Chasms/platform_chasm.rsi
+
+    # Tiles/Planet/Chasms/platform_chasm.rsi

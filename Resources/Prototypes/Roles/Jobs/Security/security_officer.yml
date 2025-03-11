@@ -4,25 +4,16 @@
   description: job-description-security
   playTimeTracker: JobSecurityOfficer
   requirements:
-    - !type:CharacterDepartmentTimeRequirement
+    - !type:DepartmentTimeRequirement
       department: Security
-      min: 36000 # 10 hours
-    - !type:CharacterTraitRequirement
-      inverted: true
-      traits:
-        - Foreigner
-        - ForeignerLight
-        - Muted
-        - Blindness
-        - Pacifist
-        - BrittleBoneDisease
+      time: 36000 #10 hrs
   startingGear: SecurityOfficerGear
   icon: "JobIconSecurityOfficer"
   supervisors: job-supervisors-hos
   canBeAntag: false
   access:
   - Security
-  #- Brig # Delta V: Removed
+  - Brig
   - Maintenance
   - Service
   - External
@@ -30,34 +21,13 @@
   special:
   - !type:AddImplantSpecial
     implants: [ MindShieldImplant ]
-  afterLoadoutSpecial:
-  - !type:ModifyEnvirosuitSpecial
-    charges: 6
-  - !type:ModifyEnvirohelmSpecial
-    powerCell: PowerCellHigh
 
 - type: startingGear
   id: SecurityOfficerGear
-  subGear:
-  - SecurityOfficerPlasmamanGear
   equipment:
-    jumpsuit: ClothingUniformJumpsuitSec
-    back: ClothingBackpackSecurity
-    shoes: ClothingShoesBootsCombatFilled
-    eyes: ClothingEyesGlassesSunglasses
-    head: ClothingHeadHelmetBasic
-    outerClothing: ClothingOuterArmorPlateCarrier # DeltaV - ClothingOuterArmorBasic replaced in favour of plate carrier
-    id: SecurityPDA
+    eyes: ClothingEyesGlassesSecurity
     ears: ClothingHeadsetSecurity
-    belt: ClothingBeltSecurityFilled
-  innerClothingSkirt: ClothingUniformJumpskirtSec
-  satchel: ClothingBackpackSatchelSecurity
-  duffelbag: ClothingBackpackDuffelSecurity
-
-- type: startingGear
-  id: SecurityOfficerPlasmamanGear
-  parent: BasePlasmamanSecurityGear
-  equipment:
-    jumpsuit: ClothingUniformEnvirosuitSec
-    head: ClothingHeadEnvirohelmSec
-    gloves: ClothingHandsGlovesEnviroglovesBlack
+    pocket1: CombatKnife
+  storage:
+    back:
+    - Flash

@@ -44,8 +44,6 @@
       - FoodPieCherry
       - FoodPieMeat
       - FoodPieFrosty
-      - FoodPiePumpkin # DeltaV - Pumpkin Pie
-      - FoodMothCheesecakeBalls # Nyanotrasen - Moth Recipes
       - FoodBakedBrownieBatch
     chance: 0.8
     offset: 0.0
@@ -61,6 +59,5 @@
       - FoodPiePlump
       - FoodBreadMeatXeno
       - FoodPieXeno
-      - FoodMothMothmallow # Nyanotrasen - Moth Recipes
-      - FoodBakedCannabisBrownieBatch # Nyanotrasen - Canabis Brownie
+      - FoodBakedCannabisBrownieBatch
     rareChance: 0.05

@@ -190,9 +190,6 @@ binds:
 - function: OpenEmotesMenu
   type: State
   key: Y
-- function: OpenLanguageMenu
-  type: State
-  key: L
 - function: TextCursorSelect
   # TextCursorSelect HAS to be above ExamineEntity
   # So that LineEdit receives it correctly.
@@ -261,16 +258,6 @@ binds:
   type: State
   key: V
   mod1: Shift
-- function: OfferItem
-  type: State
-  key: F
-- function: ToggleStanding
-  type: State
-  key: R
-- function: ToggleCrawlingUnder
-  type: State
-  mod1: Shift
-  key: R
 - function: ShowDebugConsole
   type: State
   key: Tilde
@@ -282,6 +269,16 @@ binds:
   type: State
   key: MouseMiddle
   canFocus: true
+- function: RotateObjectClockwise
+  type: State
+  key: R
+- function: RotateObjectCounterclockwise
+  type: State
+  key: R
+  mod1: Shift
+- function: FlipObject
+  type: State
+  key: F
 - function: TextCursorLeft
   type: State
   key: Left
@@ -468,6 +465,9 @@ binds:
 - function: OpenDecalSpawnWindow
   type: State
   key: F8
+- function: ToggleRoundEndSummaryWindow
+  type: Toggle
+  key: F9
 - function: OpenSandboxWindow
   type: State
   key: B
@@ -499,15 +499,19 @@ binds:
 - function: ArcadeUp
   type: State
   key: Up
+  priority: -1
 - function: ArcadeDown
   type: State
   key: Down
+  priority: -1
 - function: ArcadeLeft
   type: State
   key: Left
+  priority: -1
 - function: ArcadeRight
   type: State
   key: Right
+  priority: -1
 - function: Arcade1
   type: State
   key: Space
@@ -550,49 +554,6 @@ binds:
 - function: Hotbar9
   type: State
   key: Num9
-- function: Loadout0
-  type: State
-  key: Num0
-  mod1: Shift
-- function: Loadout1
-  type: State
-  key: Num1
-  mod1: Shift
-- function: Loadout2
-  type: State
-  key: Num2
-  mod1: Shift
-- function: Loadout3
-  type: State
-  key: Num3
-  mod1: Shift
-- function: Loadout4
-  type: State
-  key: Num4
-  mod1: Shift
-- function: Loadout5
-  type: State
-  key: Num5
-  mod1: Shift
-- function: Loadout6
-  type: State
-  key: Num6
-  mod1: Shift
-- function: Loadout7
-  type: State
-  key: Num7
-  mod1: Shift
-- function: Loadout8
-  type: State
-  key: Num8
-  mod1: Shift
-- function: Loadout9
-  type: State
-  key: Num9
-  mod1: Shift
-- function: LookUp
-  type: State
-  key: Space
 - function: MappingUnselect
   type: State
   key: MouseRight
@@ -601,9 +562,6 @@ binds:
   type: State
   key: S
   mod1: Control
-- function: MappingEnableDecalPick
-  type: State
-  key: Num4
 - function: MappingEnablePick
   type: State
   key: Num5
@@ -626,4 +584,3 @@ binds:
   type: State
   key: MouseRight
   canFocus: true
-

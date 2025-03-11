@@ -144,7 +144,7 @@
   - type: SolutionContainerManager
     solutions:
       food:
-        maxVol: 7
+        maxVol: 13
         reagents:
         - ReagentId: Nutriment
           Quantity: 3
@@ -276,7 +276,7 @@
     flavors:
       - banana
   - type: Food
-    trash: 
+    trash:
     - TrashBananaPeel
   - type: SolutionContainerManager
     solutions:
@@ -316,7 +316,7 @@
       - banana
       - nothing
   - type: Food
-    trash: 
+    trash:
     - TrashMimanaPeel
   - type: SolutionContainerManager
     solutions:
@@ -358,12 +358,8 @@
     sprite: Objects/Specific/Hydroponics/banana.rsi
     heldPrefix: peel
   - type: Slippery
-    launchForwardsMultiplier: 1.5
   - type: StepTrigger
     intersectRatio: 0.2
-    triggerGroups:
-      types:
-      - SlipEntity
   - type: CollisionWake
     enabled: false
   - type: Physics
@@ -438,7 +434,6 @@
       path: /Audio/Effects/slip.ogg
       params:
         volume: -100
-    launchForwardsMultiplier: 1.6
 
 - type: entity
   name: bananium peel
@@ -452,8 +447,6 @@
     sprite: Objects/Materials/materials.rsi
     heldPrefix: peel
   - type: Slippery
-    paralyzeTime: 4
-    launchForwardsMultiplier: 2
 
 - type: entity
   name: carrot
@@ -605,7 +598,7 @@
   - type: SolutionContainerManager
     solutions:
       food:
-        maxVol: 18
+        maxVol: 20
         reagents:
         - ReagentId: Vitamin
           Quantity: 4
@@ -1097,7 +1090,7 @@
     flavors:
       - corn
   - type: Food
-    trash: 
+    trash:
     - FoodCornTrash
   - type: SolutionContainerManager
     solutions:
@@ -1443,7 +1436,7 @@
   name: poppy
   parent: FoodProduceBase
   id: FoodPoppy
-  description: A flower with extracts often used in the production of medicine
+  description: A flower with extracts often used in the production of medicine.
   components:
   - type: Clothing
     slots:
@@ -1474,14 +1467,6 @@
     entries:
       Taco: Poppy
       Burger: Poppy
-
-- type: entity
-  name: hairflower
-  id: FoodPoppyWhite
-  parent: FoodPoppy
-  components:
-  - type: Sprite
-    sprite: Objects/Specific/Hydroponics/poppywhite.rsi
 
 - type: entity
   name: lily
@@ -1664,12 +1649,12 @@
   name: glasstle
   parent: FoodProduceBase
   id: FoodGlasstle
-  description: A fragile crystal plant with lot of spiky thorns. 
+  description: A fragile crystal plant with lot of spiky thorns.
   components:
   - type: Item
     size: Small
     sprite: Objects/Specific/Hydroponics/glasstle.rsi
-    heldPrefix: produce  
+    heldPrefix: produce
   - type: FlavorProfile
     flavors:
       - sharp
@@ -1686,7 +1671,7 @@
     seedId: glasstle
   - type: Extractable
     grindableSolutionName: food
-  - type: Damageable 
+  - type: Damageable
     damageContainer: Inorganic
   - type: ToolRefinable
     refineResult:
@@ -1709,7 +1694,7 @@
             max: 1
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
-  - type: DamageOnHit 
+  - type: DamageOnHit
     damage:
       types:
         Blunt: 10
@@ -1760,7 +1745,7 @@
 
 - type: entity
   name: gatfruit
-  parent: FoodProduceBase
+  parent: [ FoodProduceBase, BaseSyndicateContraband ]
   id: FoodGatfruit
   description: A delicious, gun-shaped fruit with a thick wooden stem.
   components:
@@ -1781,7 +1766,7 @@
   - type: Produce
     seedId: gatfruit
   - type: Food
-    trash: 
+    trash:
     - WeaponRevolverPython
   - type: Tag
     tags:
@@ -2069,7 +2054,7 @@
           Quantity: 10
         - ReagentId: Vitamin
           Quantity: 5
-        - ReagentId: HolyWater
+        - ReagentId: Holywater
           Quantity: 10
   - type: Sprite
     sprite: Objects/Specific/Hydroponics/holymelon.rsi
@@ -2134,7 +2119,7 @@
           Quantity: 2
         - ReagentId: Vitamin
           Quantity: 1
-        - ReagentId: HolyWater
+        - ReagentId: Holywater
           Quantity: 2
   - type: Extractable
     juiceSolution:
@@ -2227,7 +2212,7 @@
     flavors:
       - bungo
   - type: Food
-    trash: 
+    trash:
     - FoodBungoPit
   - type: SolutionContainerManager
     solutions:
@@ -2242,6 +2227,11 @@
     sprite: Objects/Specific/Hydroponics/bungo.rsi
   - type: Produce
     seedId: bungo
+  - type: Extractable
+    juiceSolution:
+      reagents:
+      - ReagentId: JuiceBungo
+        Quantity: 10
   - type: Tag
     tags:
     - Fruit
@@ -2303,6 +2293,10 @@
   - type: Tag
     tags:
     - Vegetable
+  - type: FoodSequenceElement
+    entries:
+      Taco: Pea
+      Burger: Pea
 
 - type: entity
   parent: FoodProduceBase
@@ -2333,8 +2327,8 @@
     - Vegetable
   - type: FoodSequenceElement
     entries:
-      Taco: Pea
-      Burger: Pea
+      Taco: WorldPea
+      Burger: WorldPeaBurger
 
 - type: entity
   name: pumpkin
@@ -2384,6 +2378,56 @@
     tags:
     - Fruit
     - Vegetable
+
+- type: entity
+  name: blue pumpkin
+  parent: FoodProduceBase
+  id: FoodBluePumpkin
+  description: A large, blue... berry. Seriously.
+  components:
+  - type: Item
+    size: Small
+  - type: FlavorProfile
+    flavors:
+      - bluepumpkin
+  - type: SolutionContainerManager
+    solutions:
+      food:
+        maxVol: 25
+        reagents:
+        - ReagentId: Ammonia
+          Quantity: 10
+        - ReagentId: Chlorine
+          Quantity: 5
+        - ReagentId: Vitamin
+          Quantity: 10
+  - type: Extractable
+    juiceSolution:
+      reagents:
+      - ReagentId: JuiceBluePumpkin
+        Quantity: 10
+  - type: Sprite
+    sprite: Objects/Specific/Hydroponics/blue_pumpkin.rsi
+  - type: Produce
+    seedId: bluePumpkin
+  - type: Damageable
+    damageContainer: Biological
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 16
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: desecration
+      - !type:SpillBehavior
+        solution: food
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Tag
+    tags:
+    - Fruit
 
 - type: entity
   name: cotton boll
@@ -2513,3 +2557,39 @@
     seedId: cherry
   - type: SpaceGarbage
   - type: BadFood
+
+- type: entity
+  name: anomaly berry
+  description: A strange blue fruit. Something about it doesn't seem right.
+  parent: FoodProduceBase
+  id: FoodAnomalyBerry
+  components:
+  - type: FlavorProfile
+    flavors:
+      - strange
+  - type: Sprite
+    sprite: Objects/Specific/Hydroponics/anomaly_berry.rsi
+    state: produce
+  - type: Produce
+    seedId: anomalyBerry
+  - type: Food
+    trash:
+    - EffectAnomalyFloraBulb # Random loot
+  - type: SolutionContainerManager
+    solutions:
+      food:
+        maxVol: 5
+        reagents:
+        - ReagentId: Nutriment
+          Quantity: 2
+        - ReagentId: Vitamin
+          Quantity: 2
+        - ReagentId: Artifexium
+          Quantity: 1
+  - type: Tag
+    tags:
+    - Fruit
+  - type: FoodSequenceElement
+    entries:
+      Taco: AnomalyBerry
+      Burger: AnomalyBerryBurger

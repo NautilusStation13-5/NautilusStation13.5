@@ -63,11 +63,16 @@ public partial class StatusIconData : IComparable<StatusIconData>
     public StatusIconLayer Layer = StatusIconLayer.Base;
 
     /// <summary>
+    /// Offset of the status icon, up and down only.
+    /// </summary>
+    [DataField]
+    public int Offset = 0;
+
+    /// <summary>
     /// Sets if the icon should be rendered with or without the effect of lighting.
     /// </summary>
     [DataField]
     public bool IsShaded = false;
-
     public int CompareTo(StatusIconData? other)
     {
         return Priority.CompareTo(other?.Priority ?? int.MaxValue);
@@ -155,22 +160,6 @@ public sealed partial class SecurityIconPrototype : StatusIconPrototype, IInheri
 {
     /// <inheritdoc />
     [ParentDataField(typeof(AbstractPrototypeIdArraySerializer<SecurityIconPrototype>))]
-    public string[]? Parents { get; }
-
-    /// <inheritdoc />
-    [NeverPushInheritance]
-    [AbstractDataField]
-    public bool Abstract { get; }
-}
-
-/// <summary>
-/// StatusIcons for showing the psionics status on the epi HUD
-/// </summary>
-[Prototype]
-public sealed partial class PsionicsIconPrototype : StatusIconPrototype, IInheritingPrototype
-{
-    /// <inheritdoc />
-    [ParentDataField(typeof(AbstractPrototypeIdArraySerializer<PsionicsIconPrototype>))]
     public string[]? Parents { get; }
 
     /// <inheritdoc />

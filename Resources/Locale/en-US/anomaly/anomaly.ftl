@@ -3,7 +3,6 @@ anomaly-component-contact-damage = The anomaly sears off your skin!
 anomaly-vessel-component-anomaly-assigned = Anomaly assigned to vessel.
 anomaly-vessel-component-not-assigned = This vessel is not assigned to any anomaly. Try using a scanner on it.
 anomaly-vessel-component-assigned = This vessel is currently assigned to an anomaly.
-anomaly-vessel-component-upgrade-output = point output
 
 anomaly-particles-delta = Delta particles
 anomaly-particles-epsilon = Epsilon particles
@@ -12,7 +11,6 @@ anomaly-particles-omega = Omega particles
 anomaly-particles-sigma = Sigma particles
 
 anomaly-scanner-component-scan-complete = Scan complete!
-anomaly-scanner-scan-copied = Copied anomaly scan data!
 
 anomaly-scanner-ui-title = anomaly scanner
 anomaly-scanner-no-anomaly = No anomaly currently scanned.
@@ -80,7 +78,7 @@ anomaly-generator-flavor-right = v1.1
 anomaly-behavior-unknown = [color=red]ERROR. Cannot be read.[/color]
 
 anomaly-behavior-title = behavior deviation analysis:
-anomaly-behavior-point =[color=gold]Anomaly produces {$mod}% of the points[/color]
+anomaly-behavior-point =[color=gold]Anomaly produces {$mod}% of the points[/color] 
 
 anomaly-behavior-safe = [color=forestgreen]The anomaly is extremely stable. Extremely rare pulsations.[/color]
 anomaly-behavior-slow = [color=forestgreen]The frequency of pulsations is much less frequent.[/color]
@@ -91,6 +89,7 @@ anomaly-behavior-rapid = The frequency of the pulsation is much higher, but its 
 anomaly-behavior-reflect = A protective coating was detected.
 anomaly-behavior-nonsensivity = A weak reaction to particles was detected.
 anomaly-behavior-sensivity = Amplified reaction to particles was detected.
+anomaly-behavior-invisibility = Light wave distortion has been detected.
 anomaly-behavior-secret = Interference detected. Some data cannot be read
 anomaly-behavior-inconstancy = [color=crimson]Impermanence has been detected. Particle types can change over time.[/color]
 anomaly-behavior-fast = [color=crimson]The pulsation frequency is strongly increased.[/color]

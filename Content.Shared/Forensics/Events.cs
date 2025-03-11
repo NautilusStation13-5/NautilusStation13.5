@@ -11,7 +11,7 @@ public sealed partial class ForensicScannerDoAfterEvent : SimpleDoAfterEvent
 [Serializable, NetSerializable]
 public sealed partial class ForensicPadDoAfterEvent : DoAfterEvent
 {
-    [DataField("sample", required: true)] public string Sample = default!;
+    [DataField("sample", required: true)] public  string Sample = default!;
 
     private ForensicPadDoAfterEvent()
     {
@@ -24,9 +24,6 @@ public sealed partial class ForensicPadDoAfterEvent : DoAfterEvent
 
     public override DoAfterEvent Clone() => this;
 }
-
-[Serializable, NetSerializable]
-public sealed partial class ScentTrackerDoAfterEvent : SimpleDoAfterEvent { }
 
 [Serializable, NetSerializable]
 public sealed partial class CleanForensicsDoAfterEvent : SimpleDoAfterEvent
@@ -53,4 +50,21 @@ public record struct TransferDnaEvent()
     /// Can the DNA be cleaned off?
     /// </summary>
     public bool CanDnaBeCleaned = true;
+}
+
+/// <summary>
+/// An event to generate and act upon new DNA for an entity.
+/// </summary>
+[ByRefEvent]
+public record struct GenerateDnaEvent()
+{
+    /// <summary>
+    /// The entity getting new DNA.
+    /// </summary>
+    public EntityUid Owner;
+
+    /// <summary>
+    /// The generated DNA.
+    /// </summary>
+    public required string DNA;
 }

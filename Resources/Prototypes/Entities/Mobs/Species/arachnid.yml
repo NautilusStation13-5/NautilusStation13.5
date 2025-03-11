@@ -11,8 +11,6 @@
   - type: HumanoidAppearance
     species: Arachnid
   - type: Hunger
-    baseDecayRate: 0.0125 # Spiders have slow metabolisms all things considered, so I decided to just make their hunger drain slower.
-  - type: Carriable # Carrying system from nyanotrasen.
   - type: Thirst
   - type: Sericulture
     action: ActionSericulture
@@ -25,13 +23,12 @@
     - FootstepSound
     - DoorBumpOpener
     - SpiderCraft
+    - AnomalyHost
   - type: Butcherable
     butcheringType: Spike
     spawned:
       - id: FoodMeatSpider
         amount: 5
-  - type: Inventory
-    templateId: arachnid
   - type: Reactive
     reactions:
     - reagents: [Water]
@@ -44,9 +41,6 @@
       methods: [Touch]
       effects:
       - !type:WashCreamPieReaction
-  - type: BloodSucker
-    webRequired: true
-  - type: Cocooner
   # Damage (Self)
   - type: Bloodstream
     bloodReagent: CopperBlood
@@ -64,10 +58,12 @@
       Brute:
         sprite: Mobs/Effects/brute_damage.rsi
         color: "#162581"
+      Burn:
+        sprite: Mobs/Effects/burn_damage.rsi
   - type: Speech
     speechVerb: Arachnid
     speechSounds: Arachnid
-    allowedEmotes: ['Click', 'Chitter', 'Hiss'] # DeltaV: Added Hiss
+    allowedEmotes: ['Click', 'Chitter']
   - type: Vocal
     sounds:
       Male: UnisexArachnid
@@ -81,13 +77,10 @@
       - map: [ "enum.HumanoidVisualLayers.Head" ]
       - map: [ "enum.HumanoidVisualLayers.Snout" ]
       - map: [ "enum.HumanoidVisualLayers.Eyes" ]
-      - map: [ "enum.HumanoidVisualLayers.Face" ]
       - map: [ "enum.HumanoidVisualLayers.RArm" ]
       - map: [ "enum.HumanoidVisualLayers.LArm" ]
       - map: [ "enum.HumanoidVisualLayers.RLeg" ]
       - map: [ "enum.HumanoidVisualLayers.LLeg" ]
-      - map: [ "enum.HumanoidVisualLayers.Underwear" ]
-      - map: [ "enum.HumanoidVisualLayers.Undershirt" ]
       - map: ["jumpsuit"]
       - map: ["enum.HumanoidVisualLayers.LFoot"]
       - map: ["enum.HumanoidVisualLayers.RFoot"]
@@ -96,8 +89,6 @@
       - map: [ "gloves" ]
       - map: [ "shoes" ]
       - map: [ "ears" ]
-      - map: [ "innerBelt" ]
-      - map: [ "innerNeck" ]
       - map: [ "outerClothing" ]
       - map: [ "eyes" ]
       - map: [ "belt" ]
@@ -122,11 +113,9 @@
         sprite: "Effects/creampie.rsi"
         state: "creampie_arachnid"
         visible: false
-  - type: Spider
-  - type: IgnoreSpiderWeb
-  - type: FootPrints
-    leftBarePrint: "footprint-left-bare-spider"
-    rightBarePrint: "footprint-right-bare-spider"
+  - type: Inventory
+    templateId: arachnid
+
 
 - type: entity
   parent: BaseSpeciesDummy
@@ -136,4 +125,5 @@
   - type: HumanoidAppearance
     species: Arachnid
 
-#88w88
+
+#>88w88<

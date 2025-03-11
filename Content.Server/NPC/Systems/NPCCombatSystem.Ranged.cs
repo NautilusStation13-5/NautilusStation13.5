@@ -3,7 +3,6 @@ using Content.Shared.CombatMode;
 using Content.Shared.Interaction;
 using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Weapons.Ranged.Events;
-using Robust.Server.GameObjects;
 using Robust.Shared.Map;
 using Robust.Shared.Physics.Components;
 
@@ -13,7 +12,6 @@ public sealed partial class NPCCombatSystem
 {
     [Dependency] private readonly SharedCombatModeSystem _combat = default!;
     [Dependency] private readonly RotateToFaceSystem _rotate = default!;
-    [Dependency] private readonly MapSystem _map = default!;
 
     private EntityQuery<CombatModeComponent> _combatQuery;
     private EntityQuery<NPCSteeringComponent> _steeringQuery;
@@ -189,9 +187,13 @@ public sealed partial class NPCCombatSystem
             EntityCoordinates targetCordinates;
 
             if (_mapManager.TryFindGridAt(xform.MapID, targetPos, out var gridUid, out var mapGrid))
+            {
                 targetCordinates = new EntityCoordinates(gridUid, mapGrid.WorldToLocal(targetSpot));
+            }
             else
+            {
                 targetCordinates = new EntityCoordinates(xform.MapUid!.Value, targetSpot);
+            }
 
             comp.Status = CombatStatus.Normal;
 

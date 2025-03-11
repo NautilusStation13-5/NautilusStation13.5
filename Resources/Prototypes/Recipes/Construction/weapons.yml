@@ -9,6 +9,17 @@
   icon: { sprite: Clothing/Head/Hats/greyflatcap.rsi, state: icon }
   objectType: Item
 
+#- type: construction
+ # name: static harpoon
+ # id: PiezoHarpoon
+ # graph: PiezoHarpoon
+#  startNode: start
+ # targetNode: icon
+#  category: construction-category-weapons
+ # description: A harpoon with a piezo crystal shoddily fastened to the end.
+#  icon: { sprite: Objects/Weapons/Guns/Projectiles/explosive_harpoons.rsi, state: explosive }
+#  objectType: Item
+
 - type: construction
   name: brown bladed flatcap
   id: BladedFlatcapBrown
@@ -149,6 +160,28 @@
   targetNode: ImprovisedArrow
   category: construction-category-weapons
   description: An arrow tipped with pieces of a glass shard, for use with a bow.
+  icon: { sprite: Objects/Weapons/Guns/Bow/bow.rsi, state: wielded-arrow }
+  objectType: Item
+
+- type: construction
+  name: plasma glass shard arrow
+  id: ImprovisedArrowPlasma
+  graph: ImprovisedArrowPlasma
+  startNode: start
+  targetNode: ImprovisedArrowPlasma
+  category: construction-category-weapons
+  description: An arrow tipped with pieces of a plasma glass shard, for use with a bow.
+  icon: { sprite: Objects/Weapons/Guns/Bow/bow.rsi, state: wielded-arrow }
+  objectType: Item
+
+- type: construction
+  name: uranium glass shard arrow
+  id: ImprovisedArrowUranium
+  graph: ImprovisedArrowUranium
+  startNode: start
+  targetNode: ImprovisedArrowUranium
+  category: construction-category-weapons
+  description: An arrow tipped with pieces of a uranium glass shard, for use with a bow.
   icon: { sprite: Objects/Weapons/Guns/Bow/bow.rsi, state: wielded-arrow }
   objectType: Item
 

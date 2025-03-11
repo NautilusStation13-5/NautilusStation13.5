@@ -79,12 +79,11 @@
   id: CrateMaterialPlasma
   parent: CratePlasma
   name: solid plasma crate
-  description: 90 sheets of plasma.
+  description: 30 sheets of plasma.
   components:
   - type: StorageFill
     contents:
       - id: SheetPlasma
-        amount: 3
 
 - type: entity
   id: CrateMaterialCardboard
@@ -127,33 +126,3 @@
 #    contents:
 #      - id: WaterTankFull
 #        amount: 1
-
-- type: entity
-  id: CrateMaterialUranium
-  name: uranium crate
-  parent: CrateUranium
-  components:
-  - type: StorageFill
-    contents:
-      - id: SheetUranium
-        amount: 3
-
-- type: entity
-  id: CrateMaterialGold
-  name: gold crate
-  parent: CrateGenericSteel
-  components:
-  - type: StorageFill
-    contents:
-      - id: IngotGold
-        amount: 3
-
-- type: entity
-  id: CrateMaterialSilver
-  name: silver crate
-  parent: CrateGenericSteel
-  components:
-  - type: StorageFill
-    contents:
-      - id: IngotSilver
-        amount: 3

@@ -11,28 +11,20 @@
     sprite: Objects/Weapons/Melee/pickaxe.rsi
     state: pickaxe
   - type: MeleeWeapon
-    attackRate: 0.85
-    range: 1.5
+    attackRate: 0.7
     wideAnimationRotation: -135
     soundHit:
       path: "/Audio/Weapons/smash.ogg"
       params:
         volume: -3
     damage:
-      types:
-        Blunt: 6
-        Piercing: 3
-    bluntStaminaDamageFactor: 2.0
-    heavyDamageBaseModifier: 1.75
-    maxTargets: 5
-    angle: 80
-  - type: DamageOtherOnHit
-    staminaCost: 5
+      groups:
+        Brute: 5
   - type: Wieldable
   - type: IncreaseDamageOnWield
     damage:
       groups:
-        Brute: 5
+        Brute: 10
       types:
         Structural: 30
   - type: Item
@@ -64,23 +56,12 @@
     wideAnimationRotation: -90
     soundHit:
       path: "/Audio/Items/drill_hit.ogg"
-    attackRate: 0.25
-    range: 1.5
-    heavyStaminaCost: 0.7
+    attackRate: 4
     damage:
       groups:
         Brute: 3
       types:
         Structural: 15
-  - type: DamageOtherOnHit
-    staminaCost: 9
-    damage:
-      groups:
-        Brute: 9
-      types:
-        Structural: 15
-  - type: ThrowingAngle
-    angle: 270
 
 - type: entity
   name: diamond tipped mining drill
@@ -97,18 +78,13 @@
     wideAnimationRotation: -90
     soundHit:
       path: "/Audio/Items/drill_hit.ogg"
-    heavyStaminaCost: 0.55 # More efficient so less stamina needed to use
+    attackRate: 4
     damage:
       groups:
         Brute: 6
       types:
         Structural: 30
-  - type: DamageOtherOnHit
-    damage:
-      groups:
-        Brute: 18
-      types:
-        Structural: 30
+
 
 - type: entity
   abstract: true
@@ -123,10 +99,9 @@
     color: "#ffeead"
     enabled: false
     radius: 4
-  - type: PressureDamageChange # Lavaland Change: Pressure damage change for kinetic weapons
 
 - type: entity
-  parent: BaseWeaponCrusher
+  parent: [BaseWeaponCrusher, BaseSecurityCargoContraband]
   id: WeaponCrusher
   components:
   - type: Tag
@@ -139,6 +114,10 @@
   - type: UseDelayOnShoot
   - type: UseDelay
     delay: 0.9
+  - type: LeechOnMarker
+    leech:
+      groups:
+        Brute: -10
   - type: Gun
     soundGunshot: /Audio/Weapons/plasma_cutter.ogg
     fireRate: 1
@@ -152,46 +131,30 @@
     capacity: 1
     count: 1
   - type: MeleeWeapon
-    attackRate: 0.65 # Lavaland/Eris Change
-    range: 1.65
+    attackRate: 1.5
     wideAnimationRotation: -135
     damage:
       types:
-        Blunt: 13 # Lavaland Change: no damage when unwielded
-        Slash: 7
-    bluntStaminaDamageFactor: 2.0
-    heavyRateModifier: 0.75
-    heavyDamageBaseModifier: 1.2
-    heavyStaminaCost: 7.5
-    angle: 120
+        Blunt: 10
+        Slash: 5
     soundHit:
       collection: MetalThud
-  - type: DamageOtherOnHit
-    staminaCost: 8
   - type: Wieldable
+  - type: IncreaseDamageOnWield
+    damage:
+      types:
+        Blunt: 2.5
+        Slash: 2.5
+        Structural: 30
   - type: GunRequiresWield
   - type: Item
     size: Ginormous
+    sprite: Objects/Weapons/Melee/crusher-inhands.rsi
   - type: DisarmMalus
-  - type: Tool
-    qualities:
-      - Prying
   - type: Prying
-  # Lavaland Change Start
-  - type: MeleeRequiresWield
-    fumbleOnAttempt: true
-  - type: DamageBoostOnMarker
-    boost:
-      types: # Totals to 70 damage when hitting marked targets
-        Blunt: 34
-        Slash: 16
-    backstabBoost: # And 30 extra for a backstab. Adding up to 100
-      types:
-        Blunt: 19
-        Slash: 11
 
 - type: entity
-  parent: BaseWeaponCrusher
+  parent: [ BaseWeaponCrusher, BaseSecurityCargoContraband]
   id: WeaponCrusherDagger
   name: crusher dagger
   description: A scaled down version of a proto-kinetic crusher. Uses kinetic energy to vibrate the blade at high speeds.
@@ -202,28 +165,17 @@
   - type: MeleeWeapon
     autoAttack: true
     wideAnimationRotation: -135
-    attackRate: 1.25
-    range: 1.4
+    attackRate: 2
     damage:
       types:
-        Slash: 9
-    heavyRateModifier: 0.9
-    heavyDamageBaseModifier: 1.2
-    maxTargets: 2
-    angle: 20
-  - type: DamageOtherOnHit
-    staminaCost: 5
-  - type: EmbeddableProjectile
-  - type: EmbedPassiveDamage
-  - type: ThrowingAngle
-    angle: 225
+        Slash: 15
   - type: Tag
     tags:
     - Knife
 
 # Like a crusher... but better
 - type: entity
-  parent: WeaponCrusher
+  parent: [ WeaponCrusher, BaseSecurityCargoContraband]
   id: WeaponCrusherGlaive
   name: crusher glaive
   description: An early design of the proto-kinetic accelerator, in glaive form.
@@ -237,10 +189,9 @@
       groups:
         Brute: -21
   - type: MeleeWeapon
-  - type: EmbeddableProjectile
-  - type: EmbedPassiveDamage
-  - type: ThrowingAngle
-    angle: 225
   - type: Tag
     tags:
       - Pickaxe
+  - type: Item
+    size: Ginormous
+    sprite: Objects/Weapons/Melee/crusher_glaive-inhands.rsi

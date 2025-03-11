@@ -92,7 +92,7 @@
   id: ClockworkGrille
   parent: Grille
   name: clockwork grille
-  description: a flimsy framework of iron rods assembled in traditional Ratvarian fashion.
+  description: A flimsy framework of iron rods assembled in traditional Ratvarian fashion.
   components:
     - type: Sprite
       drawdepth: Walls
@@ -134,7 +134,7 @@
       bodyType: Static
       canCollide: false
     - type: Damageable
-      damageContainer: Inorganic
+      damageContainer: StructuralInorganic
       damageModifierSet: FlimsyMetallic
     - type: Destructible
       thresholds:
@@ -194,7 +194,7 @@
           mask:
           - FullTileMask
           layer:
-          - GlassLayer # WWDP fix
+          - WallLayer
     - type: Construction
       graph: GrilleDiagonal
       node: grilleDiagonal
@@ -229,7 +229,7 @@
           mask:
           - FullTileMask
           layer:
-          - GlassLayer # WWDP fix
+          - WallLayer
     - type: Construction
       graph: GrilleDiagonal
       node: clockworkGrilleDiagonal

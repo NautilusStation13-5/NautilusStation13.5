@@ -7,24 +7,22 @@
   - type: StorageFill
     contents:
       - id: CrowbarRed
-      - id: ClothingMaskBreath
-      - id: ClothingMaskBreath
-        prob: 0.5
-      - id: EmergencyOxygenTankFilled
-      - id: EmergencyOxygenTankFilled
-        prob: 0.5
-      - id: FoodTinMRE
-      - id: FoodTinMRE
-        prob: 0.5
-      - id: DrinkWaterBottleFull
-      - id: DrinkWaterBottleFull
-        prob: 0.5
+      - id: RadioHandheld
+      - id: WelderMini
+      - id: FireExtinguisherMini
+      # Random lighting item orGroup
       - id: FlashlightLantern
-      - id: FlashlightLantern
-        prob: 0.5
+        orGroup: LightingItem
+      - id: Flare
+        orGroup: LightingItem
+      - id: GlowstickBase
+        orGroup: LightingItem
+      # Low-chance items
+      - id: FoodSnackChocolate
+        prob: 0.15
       - id: HarmonicaInstrument
         prob: 0.15
-
+ 
 - type: entity
   id: ToolboxElectricalFilled
   name: electrical toolbox
@@ -34,7 +32,7 @@
   - type: StorageFill
     contents:
       - id: Screwdriver
-      - id: Crowbar
+      - id: CrowbarOrange
       - id: Wirecutter
       - id: CableApcStack10
       - id: CableMVStack10
@@ -55,7 +53,7 @@
   - type: StorageFill
     contents:
       - id: Screwdriver
-      - id: Crowbar
+      - id: CrowbarOrange
       - id: Wirecutter
       - id: CableApcStack10
       - id: CableMVStack10
@@ -87,8 +85,6 @@
       amount: 2 
     - id: CrayonMime
     - id: CrayonRainbow
-    - id: CrayonMagic # Delta V - A construction graph was made, but still can find in the wild
-      prob: .10
 
 - type: entity
   id: ToolboxMechanicalFilled
@@ -98,7 +94,7 @@
   components:
   - type: StorageFill
     contents:
-      - id: Crowbar
+      - id: CrowbarOrange
       - id: Wrench
       - id: Welder
       - id: Wirecutter
@@ -108,6 +104,23 @@
         prob: 0.7
       - id: ClothingHeadHatHardhatBlue
         prob: 0.5
+
+- type: entity
+  parent: ToolboxMechanical
+  id: ToolboxNanotrasenFilled
+  suffix: Filled
+  components:
+  - type: StorageFill
+    contents:
+    - id: Crowbar
+    - id: Wrench
+    - id: Screwdriver
+    - id: Wirecutter
+    - id: Welder
+    - id: Multitool
+    - id: ClothingHandsGlovesCombat
+    - id: ClothingEyesGlassesMeson
+    - id: CableApcStack10
 
 - type: entity
   parent: ToolboxSyndicate

@@ -31,14 +31,14 @@
   - accent-words-mouse-6
   - accent-words-mouse-7
 
-#- type: accent
-#  id: mothroach
-#  fullReplacements:
-#  - accent-words-mothroach-1
-#  - accent-words-mouse-1
-#  - accent-words-mouse-2
-#  - accent-words-mouse-3
-#  - accent-words-mouse-4
+- type: accent
+  id: mothroach
+  fullReplacements:
+  - accent-words-mothroach-1
+  - accent-words-mouse-1
+  - accent-words-mouse-2
+  - accent-words-mouse-3
+  - accent-words-mouse-4
 
 - type: accent
   id: mumble
@@ -174,3 +174,12 @@
   - accent-words-nymph-2
   - accent-words-nymph-3
   - accent-words-nymph-4
+
+- type: accent
+  id: tomatoKiller
+  fullReplacements:
+  - accent-words-tomato-1
+  - accent-words-tomato-2
+  - accent-words-tomato-3
+  - accent-words-tomato-4
+  - accent-words-tomato-5

@@ -122,9 +122,6 @@ public abstract partial class SharedStationAiSystem : EntitySystem
             Category = VerbCategory.Debug,
             Act = () =>
             {
-                if (!_containers.TryGetContainer(ent, StationAiCoreComponent.Container, out _))
-                    return;
-
                 var brain = SpawnInContainerOrDrop(DefaultAi, ent.Owner, StationAiCoreComponent.Container);
                 _mind.ControlMob(user, brain);
             },
@@ -288,7 +285,7 @@ public abstract partial class SharedStationAiSystem : EntitySystem
             BreakOnDamage = true,
             BreakOnMove = true,
             NeedHand = true,
-            BreakOnHandChange = true
+            BreakOnDropItem = true
         };
 
         _doAfter.TryStartDoAfter(doAfterArgs);
@@ -425,6 +422,7 @@ public abstract partial class SharedStationAiSystem : EntitySystem
 
         if (TryComp(user, out EyeComponent? eyeComp))
         {
+            _eye.SetDrawFov(user, false, eyeComp);
             _eye.SetTarget(user, ent.Comp.RemoteEntity.Value, eyeComp);
         }
 
@@ -474,6 +472,7 @@ public abstract partial class SharedStationAiSystem : EntitySystem
 
         if (TryComp(args.Entity, out EyeComponent? eyeComp))
         {
+            _eye.SetDrawFov(args.Entity, true, eyeComp);
             _eye.SetTarget(args.Entity, null, eyeComp);
         }
 
@@ -564,6 +563,11 @@ public abstract partial class SharedStationAiSystem : EntitySystem
 }
 
 public sealed partial class JumpToCoreEvent : InstantActionEvent
+{
+
+}
+
+public sealed partial class ChangeLevelEvent : InstantActionEvent
 {
 
 }

@@ -29,9 +29,9 @@ namespace Content.Client.Credits
 
         private static readonly Dictionary<string, int> PatronTierPriority = new()
         {
-            ["Central Commander"] = 1,
-            ["Captain"] = 2,
-            ["Assistant"] = 3
+            ["Nuclear Operative"] = 1,
+            ["Syndicate Agent"] = 2,
+            ["Revolutionary"] = 3
         };
 
         public CreditsWindow()
@@ -145,7 +145,7 @@ namespace Content.Client.Credits
                 var text = _resourceManager.ContentFileReadAllText($"/Credits/{path}");
                 if (markup)
                 {
-                    label.SetMessage(FormattedMessage.FromMarkup(text.Trim()));
+                    label.SetMessage(FormattedMessage.FromMarkupOrThrow(text.Trim()));
                 }
                 else
                 {

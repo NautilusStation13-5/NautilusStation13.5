@@ -14,19 +14,14 @@
     tags:
       - Cigar
       - Trash
-  - type: SolutionContainerManager
-    solutions:
-      smokable:
-        maxVol: 50
-        reagents:
-          - ReagentId: Nicotine
-            Quantity: 25
   - type: Clothing
     sprite: Objects/Consumable/Smokeables/Cigars/cigar.rsi
     slots: [ mask ]
     equippedPrefix: unlit
   - type: Item
     size: Tiny
+    sprite: Objects/Consumable/Smokeables/Cigars/cigar.rsi
+    heldPrefix: unlit
 
 - type: entity
   id: CigarSpent
@@ -40,7 +35,7 @@
   - type: SolutionContainerManager
     solutions:
       smokable:
-        maxVol: 50
+        maxVol: 20
   - type: Tag
     tags:
       - Cigar
@@ -62,15 +57,6 @@
     equippedPrefix: unlit
   - type: Item
     size: Tiny
-  - type: SolutionContainerManager
-    solutions:
-      smokable:
-        maxVol: 50
-        reagents:
-          - ReagentId: Nicotine
-            Quantity: 25
-          - ReagentId: Gold
-            Quantity: 5
 
 - type: entity
   id: CigarGoldSpent
@@ -84,41 +70,4 @@
   - type: SolutionContainerManager
     solutions:
       smokable:
-        maxVol: 50
-
-- type: entity
-  id: CigarRobust
-  parent: Cigar
-  name: Cohiba Robusto cigar
-  description: There's little more you could want from a cigar.
-  components:
-  - type: Sprite
-    sprite: Objects/Consumable/Smokeables/Cigars/cigar-gold.rsi
-    state: unlit-icon
-  - type: Clothing
-    sprite: Objects/Consumable/Smokeables/Cigars/cigar-gold.rsi
-    slots: [ mask ]
-    equippedPrefix: unlit
-  - type: Item
-    size: Tiny
-  - type: SolutionContainerManager
-    solutions:
-      smokable:
-        maxVol: 50
-        reagents:
-          - ReagentId: Nicotine
-            Quantity: 40 # infinite cancer works
-
-- type: entity
-  id: CigarRobustSpent
-  parent: CigarRobust
-  suffix: spent
-  components:
-  - type: Sprite
-    state: burnt-icon
-  - type: Smokable
-    state: Burnt
-  - type: SolutionContainerManager
-    solutions:
-      smokable:
-        maxVol: 50
+        maxVol: 20

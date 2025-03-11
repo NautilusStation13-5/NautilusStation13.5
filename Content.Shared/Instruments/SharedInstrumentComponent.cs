@@ -6,6 +6,7 @@ using Robust.Shared.Serialization;
 namespace Content.Shared.Instruments;
 
 [NetworkedComponent]
+[Access(typeof(SharedInstrumentSystem))]
 public abstract partial class SharedInstrumentComponent : Component
 {
     [ViewVariables]

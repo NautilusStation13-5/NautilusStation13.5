@@ -79,6 +79,39 @@
             Poison: 1.5
 
 - type: reagent
+  id: DrifterToxin
+  name: reagent-name-drifter-toxin
+  group: Toxins
+  desc: reagent-desc-drifter-toxin
+  flavor: sour
+  color: "#000067"
+  physicalDesc: reagent-physical-desc-nondescript
+  metabolisms:
+    Poison:
+      effects:
+      - !type:PopupMessage
+        conditions:
+        - !type:ReagentThreshold
+          reagent: DrifterToxin
+          min: 0.5
+        type: Local
+        visualType: Medium
+        messages: [ "effect-drifter" ]
+        probability: 0.1
+      - !type:MovespeedModifier
+        walkSpeedModifier: 0.65
+        sprintSpeedModifier: 0.65
+      - !type:GenericStatusEffect
+        conditions:
+        - !type:ReagentThreshold
+          reagent: DrifterToxin
+          min: 7 #More efficient than Chloral Hydrate, and it doesn't OD you. Could be useful.
+        key: ForcedSleep
+        component: ForcedSleeping
+        refresh: false
+        type: Add
+
+- type: reagent
   id: GastroToxin
   name: reagent-name-gastrotoxin
   group: Toxins
@@ -328,6 +361,27 @@
             Airloss: 10
 
 - type: reagent
+  id: SeagullToxin
+  name: reagent-name-seagulltoxin
+  group: Toxins
+  desc: reagent-desc-seagulltoxin
+  flavor: bitter
+  color: "#F0ead6"
+  physicalDesc: reagent-physical-desc-putrid
+  metabolisms:
+    Poison:
+      effects:
+        - !type:HealthChange
+          damage:
+            types:
+              Poison: 4
+        - !type:ChemVomit
+          conditions:
+          - !type:ReagentThreshold
+            min: 2
+          probability: 0.4
+
+- type: reagent
   id: MindbreakerToxin
   name: reagent-name-mindbreaker-toxin
   group: Toxins
@@ -347,11 +401,6 @@
         type: Add
         time: 10
         refresh: false
-      - !type:ChemRemovePsionic #Nyano - Summary: removes psionics from the user at 20u.
-        conditions:
-          - !type:ReagentThreshold
-            reagent: MindbreakerToxin
-            min: 20
   # TODO: PROPER hallucinations
 
 - type: reagent
@@ -407,8 +456,6 @@
       effects:
       - !type:HealthChange
         conditions:
-        - !type:ReagentThreshold
-          min: 1
         - !type:OrganType
           type: Animal # Applying damage to the mobs with lower metabolism capabilities
         damage:
@@ -417,8 +464,6 @@
       - !type:ChemVomit
         probability: 0.04 #Scaled for time, not metabolismrate.
         conditions:
-          - !type:ReagentThreshold
-            min: 3
           - !type:OrganType
             type: Animal
 
@@ -512,12 +557,6 @@
           shouldHave: true
         reagent: Protein
         amount: 0.5
-      - !type:AdjustReagent
-        conditions:
-        - !type:OrganType
-          type: Shadowkin
-        reagent: Protein
-        amount: 0.5
 
 - type: reagent
   id: Allicin
@@ -554,8 +593,8 @@
       - !type:GenericStatusEffect
         key: Pacified
         component: Pacified
-        refresh: false
         type: Add
+        time: 4
 
 - type: reagent
   id: Honk
@@ -674,3 +713,46 @@
             Poison: 2
       - !type:SatiateHunger
         factor: -6
+
+# inspired by the spider neurotoxin GsMtx-4
+# poisons non-spiders and slows you down at high doses
+- type: reagent
+  id: Mechanotoxin
+  name: reagent-name-mechanotoxin
+  group: Toxins
+  desc: reagent-desc-mechanotoxin
+  flavor: sweet
+  color: "#00b408"
+  physicalDesc: reagent-physical-desc-nondescript
+  metabolisms:
+    Poison:
+      metabolismRate: 0.2 # Slower metabolism so it can build up over time for slowdown
+      effects:
+      - !type:HealthChange
+        conditions:
+        - !type:OrganType
+          type: Arachnid
+          shouldHave: false
+        damage:
+          types:
+            Poison: 1.6
+      - !type:MovespeedModifier
+        conditions:
+        - !type:ReagentThreshold
+          reagent: Mechanotoxin
+          min: 2
+        - !type:OrganType
+          type: Arachnid
+          shouldHave: false
+        walkSpeedModifier: 0.8
+        sprintSpeedModifier: 0.8
+      - !type:MovespeedModifier
+        conditions:
+        - !type:ReagentThreshold
+          reagent: Mechanotoxin
+          min: 4
+        - !type:OrganType
+          type: Arachnid
+          shouldHave: false
+        walkSpeedModifier: 0.4
+        sprintSpeedModifier: 0.4

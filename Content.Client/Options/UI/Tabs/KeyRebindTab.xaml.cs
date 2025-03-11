@@ -97,27 +97,9 @@ namespace Content.Client.Options.UI.Tabs
             _deferCommands.Add(_inputManager.SaveToUserData);
         }
 
-        private void HandleHoldLookUp(BaseButton.ButtonToggledEventArgs args)
-        {
-            _cfg.SetCVar(CCVars.HoldLookUp, args.Pressed);
-            _cfg.SaveToFile();
-        }
-
-        private void HandleDefaultWalk(BaseButton.ButtonToggledEventArgs args)
-        {
-            _cfg.SetCVar(CCVars.DefaultWalk, args.Pressed);
-            _cfg.SaveToFile();
-        }
-
         private void HandleStaticStorageUI(BaseButton.ButtonToggledEventArgs args)
         {
             _cfg.SetCVar(CCVars.StaticStorageUI, args.Pressed);
-            _cfg.SaveToFile();
-        }
-
-        private void HandleToggleAutoGetUp(BaseButton.ButtonToggledEventArgs args)
-        {
-            _cfg.SetCVar(CCVars.AutoGetUp, args.Pressed);
             _cfg.SaveToFile();
         }
 
@@ -179,7 +161,6 @@ namespace Content.Client.Options.UI.Tabs
             AddButton(EngineKeyFunctions.MoveRight);
             AddButton(EngineKeyFunctions.Walk);
             AddCheckBox("ui-options-hotkey-toggle-walk", _cfg.GetCVar(CCVars.ToggleWalk), HandleToggleWalk);
-            AddCheckBox("ui-options-hotkey-default-walk", _cfg.GetCVar(CCVars.DefaultWalk), HandleDefaultWalk);
             InitToggleWalk();
 
             AddHeader("ui-options-header-camera");
@@ -202,13 +183,7 @@ namespace Content.Client.Options.UI.Tabs
             AddButton(ContentKeyFunctions.SwapHands);
             AddButton(ContentKeyFunctions.MoveStoredItem);
             AddButton(ContentKeyFunctions.RotateStoredItem);
-            AddButton(ContentKeyFunctions.OfferItem);
             AddButton(ContentKeyFunctions.SaveItemLocation);
-            AddButton(ContentKeyFunctions.ToggleStanding);
-            AddButton(ContentKeyFunctions.ToggleCrawlingUnder);
-            AddButton(ContentKeyFunctions.LookUp);
-            AddCheckBox("ui-options-function-auto-get-up", _cfg.GetCVar(CCVars.AutoGetUp), HandleToggleAutoGetUp);
-            AddCheckBox("ui-options-function-hold-look-up", _cfg.GetCVar(CCVars.HoldLookUp), HandleHoldLookUp);
 
             AddHeader("ui-options-header-interaction-adv");
             AddButton(ContentKeyFunctions.SmartEquipBackpack);
@@ -220,6 +195,9 @@ namespace Content.Client.Options.UI.Tabs
             AddButton(ContentKeyFunctions.MovePulledObject);
             AddButton(ContentKeyFunctions.ReleasePulledObject);
             AddButton(ContentKeyFunctions.Point);
+            AddButton(ContentKeyFunctions.RotateObjectClockwise);
+            AddButton(ContentKeyFunctions.RotateObjectCounterclockwise);
+            AddButton(ContentKeyFunctions.FlipObject);
 
             AddHeader("ui-options-header-ui");
             AddButton(ContentKeyFunctions.FocusChat);
@@ -238,9 +216,9 @@ namespace Content.Client.Options.UI.Tabs
             AddButton(ContentKeyFunctions.OpenCraftingMenu);
             AddButton(ContentKeyFunctions.OpenGuidebook);
             AddButton(ContentKeyFunctions.OpenInventoryMenu);
-            AddButton(ContentKeyFunctions.OpenLanguageMenu);
             AddButton(ContentKeyFunctions.OpenAHelp);
             AddButton(ContentKeyFunctions.OpenActionsMenu);
+            AddButton(ContentKeyFunctions.OpenEmotesMenu);
             AddButton(ContentKeyFunctions.ToggleRoundEndSummaryWindow);
             AddButton(ContentKeyFunctions.OpenEntitySpawnWindow);
             AddButton(ContentKeyFunctions.OpenSandboxWindow);
@@ -252,20 +230,6 @@ namespace Content.Client.Options.UI.Tabs
             AddButton(EngineKeyFunctions.EscapeMenu);
             AddButton(ContentKeyFunctions.EscapeContext);
 
-            // Shitmed Change Start - TODO: Add groin targeting.
-            AddHeader("ui-options-header-targeting");
-            AddButton(ContentKeyFunctions.TargetHead);
-            AddButton(ContentKeyFunctions.TargetTorso);
-            AddButton(ContentKeyFunctions.TargetLeftArm);
-            AddButton(ContentKeyFunctions.TargetLeftHand);
-            AddButton(ContentKeyFunctions.TargetRightArm);
-            AddButton(ContentKeyFunctions.TargetRightHand);
-            AddButton(ContentKeyFunctions.TargetLeftLeg);
-            AddButton(ContentKeyFunctions.TargetLeftFoot);
-            AddButton(ContentKeyFunctions.TargetRightLeg);
-            AddButton(ContentKeyFunctions.TargetRightFoot);
-            // Shitmed Change End
-
             AddHeader("ui-options-header-misc");
             AddButton(ContentKeyFunctions.TakeScreenshot);
             AddButton(ContentKeyFunctions.TakeScreenshotNoUI);
@@ -273,9 +237,9 @@ namespace Content.Client.Options.UI.Tabs
 
             AddHeader("ui-options-header-hotbar");
             foreach (var boundKey in ContentKeyFunctions.GetHotbarBoundKeys())
+            {
                 AddButton(boundKey);
-            foreach (var boundKey in ContentKeyFunctions.GetLoadoutBoundKeys())
-                AddButton(boundKey);
+            }
 
             AddHeader("ui-options-header-shuttle");
             AddButton(ContentKeyFunctions.ShuttleStrafeUp);
@@ -294,9 +258,6 @@ namespace Content.Client.Options.UI.Tabs
             AddButton(EngineKeyFunctions.EditorRotateObject);
             AddButton(ContentKeyFunctions.EditorFlipObject);
             AddButton(ContentKeyFunctions.EditorCopyObject);
-            AddButton(ContentKeyFunctions.MappingEnablePick);
-            AddButton(ContentKeyFunctions.MappingEnableDecalPick);
-            AddButton(ContentKeyFunctions.MappingEnableDelete);
 
             AddHeader("ui-options-header-dev");
             AddButton(EngineKeyFunctions.ShowDebugConsole);
@@ -519,7 +480,7 @@ namespace Content.Client.Options.UI.Tabs
 
                 BindButton1 = new BindButton(parent, this, StyleBase.ButtonOpenRight);
                 BindButton2 = new BindButton(parent, this, StyleBase.ButtonOpenLeft);
-                ResetButton = new Button { Text = Loc.GetString("ui-options-bind-reset"), StyleClasses = { StyleBase.ButtonDanger } };
+                ResetButton = new Button { Text = Loc.GetString("ui-options-bind-reset"), StyleClasses = { StyleBase.ButtonCaution } };
 
                 var hBox = new BoxContainer
                 {

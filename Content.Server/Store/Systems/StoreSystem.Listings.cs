@@ -47,7 +47,7 @@ public sealed partial class StoreSystem
         var clones = new HashSet<ListingDataWithCostModifiers>();
         foreach (var prototype in _proto.EnumeratePrototypes<ListingPrototype>())
         {
-            clones.Add(new(prototype));
+            clones.Add(new ListingDataWithCostModifiers(prototype));
         }
 
         return clones;

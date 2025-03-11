@@ -6,8 +6,7 @@
   components:
     - type: MachineBoard
       prototype: Holopad
-      requirements:
+      stackRequirements:
         Capacitor: 4
-      materialRequirements:
         Cable: 4
         Glass: 2

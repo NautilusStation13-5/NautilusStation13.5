@@ -18,7 +18,6 @@
     selectedMode: SemiAuto
     availableModes:
     - SemiAuto
-    fireOnDropChance: 0.15
     soundGunshot:
       path: /Audio/Weapons/Guns/Gunshots/laser.ogg
   - type: Battery
@@ -31,30 +30,6 @@
   - type: Appearance
   - type: StaticPrice
     price: 500
-  - type: MeleeWeapon
-    attackRate: 1.3333
-    damage:
-      types:
-        Blunt: 8.5
-    bluntStaminaDamageFactor: 1.25
-    swapKeys: true
-    disableHeavy: true
-    animation: WeaponArcThrust
-    wideAnimationRotation: 180
-    soundHit:
-      collection: MetalThud
-  - type: IncreaseDamageOnWield
-    damage:
-      types:
-        Blunt: 2.5
-  - type: DamageOtherOnHit
-    staminaCost: 7
-  # Shitmed Change
-  - type: Cautery
-    speed: 0.9
-  - type: SurgeryTool
-    endSound:
-      path: /Audio/Weapons/Guns/Gunshots/laser.ogg
 
 - type: entity
   id: BaseWeaponPowerCell
@@ -77,43 +52,18 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: PowerCellSmall
+        startingItem: TP14BaseMagCell
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
           tags:
-            - PowerCell
-            - PowerCellSmall
+            - MagCell
   - type: Appearance
   - type: StaticPrice
     price: 500
   - type: ContainerContainer
     containers:
       gun_magazine: !type:ContainerSlot
-  - type: MeleeWeapon
-    attackRate: 1.3333
-    damage:
-      types:
-        Blunt: 9.0
-    bluntStaminaDamageFactor: 1.25
-    swapKeys: true
-    disableHeavy: true
-    animation: WeaponArcThrust
-    wideAnimationRotation: 180
-    soundHit:
-      collection: MetalThud
-  - type: IncreaseDamageOnWield
-    damage:
-      types:
-        Blunt: 2.5
-  - type: DamageOtherOnHit
-    staminaCost: 7
-  # Shitmed Change
-  - type: Cautery
-    speed: 0.9
-  - type: SurgeryTool
-    endSound:
-      path: /Audio/Weapons/Guns/Gunshots/laser.ogg
 
 - type: entity
   id: BaseWeaponBatterySmall
@@ -134,15 +84,6 @@
     slots:
     - Belt
     - suitStorage
-  - type: MeleeWeapon
-    attackRate: 1.2
-    damage:
-      types:
-        Blunt: 7.5
-    bluntStaminaDamageFactor: 1.0
-    wideAnimationRotation: 135
-  - type: DamageOtherOnHit
-    staminaCost: 5
 
 - type: entity
   id: BaseWeaponPowerCellSmall
@@ -159,19 +100,10 @@
     quickEquip: false
     slots:
     - Belt
-  - type: MeleeWeapon
-    attackRate: 1.2
-    damage:
-      types:
-        Blunt: 7.5
-    bluntStaminaDamageFactor: 1.0
-    wideAnimationRotation: 135
-  - type: DamageOtherOnHit
-    staminaCost: 5
 
 - type: entity
   name: svalinn laser pistol
-  parent: BaseWeaponPowerCellSmall
+  parent: [ BaseWeaponPowerCellSmall, BaseRestrictedContraband ]
   id: WeaponLaserSvalinn
   description: A cheap and widely used laser pistol.
   components:
@@ -192,7 +124,7 @@
 
 - type: entity
   name: retro laser blaster
-  parent: BaseWeaponBatterySmall
+  parent: [ BaseWeaponBatterySmall, BaseMajorContraband ]
   id: WeaponLaserGun
   description: A weapon using light amplified by the stimulated emission of radiation.
   components:
@@ -266,10 +198,10 @@
   - type: Appearance
 
 - type: entity
-  name: laser rifle
+  name: practice laser rifle
   parent: [BaseWeaponBattery, BaseGunWieldable]
-  id: WeaponLaserCarbine
-  description: Favoured by Nanotrasen Security for being cheap and easy to use.
+  id: WeaponLaserCarbinePractice
+  description: This modified laser rifle fires nearly harmless beams in the 40-watt range, for target practice.
   components:
   - type: Sprite
     sprite: Objects/Weapons/Guns/Battery/laser_gun.rsi
@@ -281,31 +213,27 @@
       shader: unshaded
   - type: Clothing
     sprite: Objects/Weapons/Guns/Battery/laser_gun.rsi
-  - type: StaticPrice
-    price: 420
   - type: Gun
     selectedMode: SemiAuto
     availableModes:
     - SemiAuto
   - type: HitscanBatteryAmmoProvider
-    proto: RedLaser
-    fireCost: 62.5
-
-- type: entity
-  name: practice laser rifle
-  parent: WeaponLaserCarbine
-  id: WeaponLaserCarbinePractice
-  description: This modified laser rifle fires nearly harmless beams in the 40-watt range, for target practice.
-  components:
-  - type: HitscanBatteryAmmoProvider
     proto: RedLaserPractice
     fireCost: 62.5
   - type: StaticPrice
     price: 300
-  - type: MeleeWeapon
-    damage:
-      types:
-        Blunt: 4
+
+- type: entity
+  name: laser rifle
+  parent: [WeaponLaserCarbinePractice, BaseGunWieldable, BaseRestrictedContraband]
+  id: WeaponLaserCarbine
+  description: Favoured by Nanotrasen Security for being cheap and easy to use.
+  components:
+  - type: StaticPrice
+    price: 420
+  - type: HitscanBatteryAmmoProvider
+    proto: RedLaser
+    fireCost: 62.5
 
 - type: entity
   name: pulse pistol
@@ -337,26 +265,8 @@
     startingCharge: 2000
 
 - type: entity
-  name: antique pulse pistol
-  parent: WeaponPulsePistol
-  id: WeaponPulsePistolHoS
-  description: One of the many weapons belonging to the Head of Security's private collection. This pistol is engraved with the words, "Forgive Us, Mother Sol'"
-  components:
-  - type: StealTarget
-    stealGroup: HoSAntiqueWeapon
-
-- type: entity
-  name: captain's pulse pistol
-  parent: WeaponPulsePistol
-  id: WeaponPulsePistolCaptain
-  description: A rare and exotic handgun gifted to the station's Captain. Its ivory grip has been engraved with the words, "Glory to the Company, Glory to Mother Sol. Phoron will make us all rich."
-  components:
-  - type: StealTarget
-    stealGroup: WeaponCaptain
-
-- type: entity
   name: pulse carbine
-  parent: [BaseWeaponBattery, BaseGunWieldable]
+  parent: [BaseWeaponBattery, BaseGunWieldable, BaseCentcommContraband]
   id: WeaponPulseCarbine
   description: A high tech energy carbine favoured by the NT-ERT operatives.
   components:
@@ -414,7 +324,7 @@
 
 - type: entity
   name: laser cannon
-  parent: [BaseWeaponBattery, BaseGunWieldable]
+  parent: [BaseWeaponBattery, BaseGunWieldable, BaseRestrictedContraband]
   id: WeaponLaserCannon
   description: A heavy duty, high powered laser weapon.
   components:
@@ -435,14 +345,6 @@
   - type: HitscanBatteryAmmoProvider
     proto: RedHeavyLaser
     fireCost: 100
-  - type: MeleeWeapon
-    attackRate: 1.4
-    damage:
-      types:
-        Blunt: 10
-    bluntStaminaDamageFactor: 1.3333
-  - type: DamageOtherOnHit
-    staminaCost: 9.5
 
 - type: entity
   name: portable particle decelerator
@@ -474,26 +376,10 @@
     - type: Battery
       maxCharge: 10000
       startingCharge: 10000
-    - type: MeleeWeapon
-      attackRate: 1.6
-      damage: # This is super expensive, low attack rate, slows down the user and high stam cost so it can be high
-        types:
-          Blunt: 34
-          Structural: 10
-      swapKeys: false
-      disableHeavy: false
-      disableClick: true
-      bluntStaminaDamageFactor: 1.5
-      heavyRateModifier: 1.0
-      heavyDamageBaseModifier: 1.0
-      heavyStaminaCost: 21
-      wideAnimationRotation: 270
-    - type: DamageOtherOnHit
-      staminaCost: 48
 
 - type: entity
   name: x-ray cannon
-  parent: [BaseWeaponBattery, BaseGunWieldable]
+  parent: [BaseWeaponBattery, BaseGunWieldable, BaseSecurityContraband]
   id: WeaponXrayCannon
   description: An experimental weapon that uses concentrated x-ray energy against its target.
   components:
@@ -520,141 +406,165 @@
   - type: Appearance
 
 - type: entity
-  name: civilian disabler
+  name: practice disabler
   parent: BaseWeaponBatterySmall
-  id: WeaponCivilianDisabler
-  description: The original prototype disablers refitted for civilian self defence use and put in a shiny new shell. It has a much lower power output than the modern disabler in use by Security, and as such requires no license to carry.
+  id: WeaponDisablerPractice
+  description: A self-defense weapon that exhausts organic targets, weakening them until they collapse. This one has been undertuned for cadets making it mostly harmless.
   components:
-    - type: Tag
-      tags:
-        - Taser
-        - Sidearm
-    - type: Item
-      size: Small
-      shape:
-      - 0,0,1,1
-    - type: Sprite
-      sprite: Objects/Weapons/Guns/Battery/civilian-disabler.rsi
-      layers:
-        - state: base
-          map: ["enum.GunVisualLayers.Base"]
-        - state: mag-unshaded-0
-          map: ["enum.GunVisualLayers.MagUnshaded"]
-          shader: unshaded
-    - type: Clothing
-      sprite: Objects/Weapons/Guns/Battery/civilian-disabler.rsi
-      quickEquip: false
-      slots:
-        - suitStorage
-        - Belt
-    - type: Gun
-      fireRate: 2
-      soundGunshot:
-        path: /Audio/Weapons/Guns/Gunshots/taser2.ogg
-    - type: ProjectileBatteryAmmoProvider
-      proto: BulletCivilianDisabler
-      fireCost: 100
-    - type: MagazineVisuals
-      magState: mag
-      steps: 5
-      zeroVisible: true
-    - type: Appearance
-    - type: ExtendDescription
-      descriptionList:
-      - description: "civiliandisabler-extenddescription-security"
-        fontSize: 12
-        color: "#ff0000"
-        requireDetailRange: true
-        requirements:
-        - !type:CharacterDepartmentRequirement
-          departments:
-            - Security
-    - type: MeleeWeapon
-      damage:
-        types:
-          Blunt: 3.0
-      bluntStaminaDamageFactor: 2
-      wideAnimationRotation: 90
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Battery/practice_disabler.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-unshaded-0
+      map: ["enum.GunVisualLayers.MagUnshaded"]
+      shader: unshaded
+  - type: Clothing
+    sprite: Objects/Weapons/Guns/Battery/practice_disabler.rsi
+    quickEquip: false
+    slots:
+    - Belt
+  - type: Appearance
+  - type: MagazineVisuals
+    magState: mag
+    steps: 5
+    zeroVisible: true
+  - type: StaticPrice
+    price: 100
+  - type: Gun
+    fireRate: 2
+    soundGunshot:
+      path: /Audio/Weapons/Guns/Gunshots/taser2.ogg
+  - type: ProjectileBatteryAmmoProvider
+    proto: BulletDisablerPractice
+    fireCost: 100
+  - type: Tag
+    tags:
+    - Taser
+    - Sidearm
 
 - type: entity
   name: disabler
-  parent: BaseWeaponBatterySmall
+  parent: [ WeaponDisablerPractice, BaseSecurityCommandContraband ]
   id: WeaponDisabler
   description: A self-defense weapon that exhausts organic targets, weakening them until they collapse.
   components:
-    - type: Tag
-      tags:
-        - Taser
-        - Sidearm
-        - WeaponDisabler
-    - type: Sprite
-      sprite: Objects/Weapons/Guns/Battery/disabler.rsi
-      layers:
-        - state: base
-          map: ["enum.GunVisualLayers.Base"]
-        - state: mag-unshaded-0
-          map: ["enum.GunVisualLayers.MagUnshaded"]
-          shader: unshaded
-    - type: Clothing
-      sprite: Objects/Weapons/Guns/Battery/disabler.rsi
-      quickEquip: false
-      slots:
-        - suitStorage
-        - Belt
-    - type: Gun
-      fireRate: 2
-      soundGunshot:
-        path: /Audio/Weapons/Guns/Gunshots/taser2.ogg
-    - type: ProjectileBatteryAmmoProvider
-      proto: BulletDisabler
-      fireCost: 100
-    - type: MagazineVisuals
-      magState: mag
-      steps: 5
-      zeroVisible: true
-    - type: Appearance
-    - type: GuideHelp
-      guides:
-      - Security
-    - type: MeleeWeapon
-      damage:
-        types:
-          Blunt: 5.0
-      bluntStaminaDamageFactor: 2.5
-      wideAnimationRotation: 135
-
-- type: entity
-  name: CentCom disabler
-  parent: WeaponDisabler
-  id: WeaponCCDisabler
-  description: An improved self-defense weapon that exhausts organic targets, weakening them until they collapse. Only for the finest officers that we don't trust with lethals.
-  components:
-  - type: BatterySelfRecharger
-    autoRecharge: true
-    autoRechargeRate: 20
-  - type: StealTarget
-    stealGroup: NTRepWeapon
-  - type: Gun
-    fireRate: 3
-    soundGunshot:
-      path: /Audio/Weapons/Guns/Gunshots/taser2.ogg
   - type: Sprite
-    sprite: Objects/Weapons/Guns/Battery/ccdisabler.rsi
+    sprite: Objects/Weapons/Guns/Battery/disabler.rsi
     layers:
       - state: base
         map: ["enum.GunVisualLayers.Base"]
       - state: mag-unshaded-0
         map: ["enum.GunVisualLayers.MagUnshaded"]
         shader: unshaded
+  - type: Clothing
+    sprite: Objects/Weapons/Guns/Battery/disabler.rsi
+    quickEquip: false
+    slots:
+      - suitStorage
+      - Belt
+  - type: ProjectileBatteryAmmoProvider
+    proto: BulletDisabler
+    fireCost: 100
+  - type: GuideHelp
+    guides:
+    - Security
+    - Antagonists
+
+- type: entity
+  name: TX-220 particle pistol
+  parent: BaseWeaponBatterySmall
+  id: TP14WeaponBlaster
+  description: A reliable energy weapon found across the frontier sectors of the galaxy.
+  components:
+    - type: Tag
+      tags:
+        - Sidearm
+    - type: Sprite
+      sprite: Objects/Weapons/Guns/Battery/svalinn.rsi
+      layers:
+        - state: base
+          map: ["enum.GunVisualLayers.Base"]
+        - state: mag-unshaded-4
+          map: ["enum.GunVisualLayers.MagUnshaded"]
+          shader: unshaded
+    - type: Item
+      sprite: Objects/Weapons/Guns/Battery/svalinn.rsi
+    - type: Clothing
+      quickEquip: false
+      slots:
+        - suitStorage
+        - Belt
+    - type: Gun
+      fireRate: 1.5
+      soundGunshot:
+        path: /Audio/Weapons/Guns/Gunshots/taser2.ogg
+    - type: ProjectileBatteryAmmoProvider
+      proto: WatcherBoltMagmawing
+      fireCost: 60
+
+- type: entity
+  parent: BaseWeaponPowerCellSmall
+  id: TP14WeaponNtBlaster
+  name: BM-138 power blaster
+  description: A Nanotrasen blaster pistol, utilized by operatives and agents. Contains a magazine port for power cells.
+  components:
+    - type: Sprite
+      sprite: Objects/Weapons/Guns/Battery/pulse_pistol.rsi
+      layers:
+        - state: base
+          map: ["enum.GunVisualLayers.Base"]
+        - state: mag-unshaded-4
+          map: ["enum.GunVisualLayers.MagUnshaded"]
+          shader: unshaded
+    - type: Gun
+      fireRate: 3
+      soundGunshot:
+        path: /Audio/Weapons/Guns/Gunshots/taser2.ogg
+    - type: Contraband
+      severity: Nanotrasen
+
+- type: entity
+  name: NT-331 energy carbine
+  parent: [ TP14WeaponNtBlaster, BaseGunWieldable ]
+  id: TP14WeaponEnergyCarbine
+  description: An advanced particle machine gun used by NT operatives. It has a slot for power cells.
+  components:
+  - type: Item
+    size: Large
   - type: Tag
     tags:
-    - HighRiskItem
-    - Taser
-    - Sidearm
+      - Sidearm
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Battery/pulse_carbine.rsi
+    layers:
+    - state: base
+      map: ["enum.GunVisualLayers.Base"]
+    - state: mag-unshaded-4
+      map: ["enum.GunVisualLayers.MagUnshaded"]
+      shader: unshaded
+  - type: Clothing
+    sprite: Objects/Weapons/Guns/Battery/pulse_carbine.rsi
+  - type: Gun
+    selectedMode: FullAuto
+    fireRate: 4
+    availableModes:
+      - SemiAuto
+      - FullAuto
+    soundGunshot:
+      path: /Audio/Weapons/Guns/Gunshots/taser2.ogg
+  - type: ProjectileBatteryAmmoProvider
+    proto: NtBolt
+    fireCost: 33
+  - type: StaticPrice
+    price: 260
+  - type: Contraband
+    severity: Nanotrasen
+
 
 - type: entity
   name: disabler SMG
-  parent: BaseWeaponBattery
+  parent: [ BaseWeaponBattery, BaseRestrictedContraband ]
   id: WeaponDisablerSMG
   description: Advanced weapon that exhausts organic targets, weakening them until they collapse.
   components:
@@ -663,7 +573,6 @@
   - type: Tag
     tags:
       - Taser
-      - Sidearm
   - type: Sprite
     sprite: Objects/Weapons/Guns/Battery/disabler_smg.rsi
     layers:
@@ -689,46 +598,10 @@
     zeroVisible: true
   - type: StaticPrice
     price: 260
-  - type: MeleeWeapon
-    damage:
-      types:
-        Blunt: 6.5
-    bluntStaminaDamageFactor: 2.5
-    wideAnimationRotation: 180
-
-- type: entity
-  name: practice disabler
-  parent: WeaponDisabler
-  id: WeaponDisablerPractice
-  description: A self-defense weapon that exhausts organic targets, weakening them until they collapse. This one has been undertuned for cadets making it mostly harmless.
-  components:
-    - type: Sprite
-      sprite: Objects/Weapons/Guns/Battery/practice_disabler.rsi
-      layers:
-        - state: base
-          map: ["enum.GunVisualLayers.Base"]
-        - state: mag-unshaded-0
-          map: ["enum.GunVisualLayers.MagUnshaded"]
-          shader: unshaded
-    - type: Clothing
-      sprite: Objects/Weapons/Guns/Battery/practice_disabler.rsi
-      quickEquip: false
-      slots:
-        - Belt
-    - type: StaticPrice
-      price: 100
-    - type: ProjectileBatteryAmmoProvider
-      proto: BulletDisablerPractice
-      fireCost: 100
-    - type: MeleeWeapon
-      damage:
-        types:
-          Blunt: 3
-      bluntStaminaDamageFactor: 1.0
 
 - type: entity
   name: taser
-  parent: BaseWeaponBatterySmall
+  parent: [ BaseWeaponBatterySmall, BaseRestrictedContraband ]
   id: WeaponTaser
   description: A low-capacity, energy-based stun gun used by security teams to subdue targets at range.
   components:
@@ -764,7 +637,7 @@
 
 - type: entity
   name: antique laser pistol
-  parent: BaseWeaponBatterySmall
+  parent: [BaseWeaponBatterySmall, BaseGrandTheftContraband]
   id: WeaponAntiqueLaser
   description: This is an antique laser pistol. All craftsmanship is of the highest quality. It is decorated with assistant leather and chrome. The object menaces with spikes of energy.
   components:
@@ -801,15 +674,6 @@
     price: 750
   - type: StealTarget
     stealGroup: WeaponAntiqueLaser
-  - type: MeleeWeapon
-    attackRate: 1.3333
-    damage:
-      types:
-        Blunt: 9
-    bluntStaminaDamageFactor: 1.25
-    wideAnimationRotation: 135
-  - type: DamageOtherOnHit
-    staminaCost: 5
   - type: SentienceTarget # I hope this is only the captain's gun
     flavorKind: station-event-random-sentience-flavor-inanimate
     weight: 0.0002 # 5,000 times less likely than 1 regular animal
@@ -817,7 +681,7 @@
 
 - type: entity
   name: advanced laser pistol
-  parent: BaseWeaponBatterySmall
+  parent: [ BaseWeaponBatterySmall, BaseRestrictedContraband]
   id: WeaponAdvancedLaser
   description: An experimental high-energy laser pistol with a self-charging nuclear battery.
   components:
@@ -849,16 +713,10 @@
   - type: Appearance
   - type: StaticPrice
     price: 63
-  - type: MeleeWeapon
-    damage:
-      types:
-        Blunt: 8
-  - type: DamageOtherOnHit
-    staminaCost: 6
 
 - type: entity
   name: C.H.I.M.P. handcannon
-  parent: BaseWeaponBatterySmall
+  parent: [BaseWeaponBatterySmall, BaseScienceContraband]
   id: WeaponPistolCHIMP
   description: Just because it's a little C.H.I.M.P. doesn't mean it can't punch like an A.P.E.
   components:
@@ -879,7 +737,7 @@
   - type: Clothing
     sprite: Objects/Weapons/Guns/Revolvers/chimp.rsi
   - type: Gun
-    projectileSpeed: 4
+    projectileSpeed: 10
     fireRate: 1.5
     soundGunshot:
       path: /Audio/Weapons/Guns/Gunshots/taser2.ogg
@@ -904,7 +762,7 @@
 
 - type: entity
   name: experimental C.H.I.M.P. handcannon
-  parent: WeaponPistolCHIMP
+  parent: [WeaponPistolCHIMP, BaseSyndicateContraband]
   id: WeaponPistolCHIMPUpgraded
   description: This C.H.I.M.P. seems to have a greater punch than is usual...
   components:
@@ -952,9 +810,9 @@
 
 - type: entity
   name: energy shotgun
-  parent: [BaseWeaponBattery, BaseGunWieldable]
+  parent: [BaseWeaponBattery, BaseGunWieldable, BaseGrandTheftContraband]
   id: WeaponEnergyShotgun
-  description: A one-of-a-kind prototype energy weapon that uses various shotgun configurations. It offers the possibility of both lethal and non-lethal shots, making it a versatile weapon.
+  description: A one-of-a-kind prototype energy weapon that uses various shotgun configurations. Stolen directly from a drunk HOS.
   components:
   - type: Sprite
     sprite: Objects/Weapons/Guns/Battery/energy_shotgun.rsi
@@ -977,8 +835,8 @@
     fireModes:
     - proto: BulletLaserSpread
       fireCost: 150
-    - proto: BulletLaserSpreadSlug
-      fireCost: 300
+    - proto: BulletLaserSpreadNarrow
+      fireCost: 200
     - proto: BulletDisablerSmgSpread
       fireCost: 120
   - type: Item
@@ -990,12 +848,56 @@
   - type: Tag
     tags:
     - HighRiskItem
+  - type: StealTarget
+    stealGroup: WeaponEnergyShotgun
   - type: GunRequiresWield #remove when inaccuracy on spreads is fixed
   - type: Battery
-    maxCharge: 1210
-    startingCharge: 1210
+    maxCharge: 1200
+    startingCharge: 1200
   - type: BatterySelfRecharger
     autoRecharge: true
-    autoRechargeRate: 48
+    autoRechargeRate: 24
     autoRechargePause: true
-    autoRechargePauseTime: 5
+    autoRechargePauseTime: 30
+
+- type: entity
+  name: old repeater
+  parent: [BaseWeaponBattery, BaseGunWieldable]
+  id: TP14WeaponRifleEnergyRepeater
+  description: An ancient energy repeater used by the old space cowboys. Severely underpowered by modern standards. Uses a hand crank to recharge its power cell.
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Battery/old_repeater.rsi
+    layers:
+    - state: base
+      map: [ "enum.GunVisualLayers.Base" ]
+  - type: Clothing
+    sprite: Objects/Weapons/Guns/Battery/old_repeater.rsi
+  - type: Item
+    sprite: Objects/Weapons/Guns/Battery/inhands_repeater.rsi
+    size: Large
+    shape:
+    - 0,0,3,1
+    heldPrefix: energy
+  - type: ProjectileBatteryAmmoProvider
+    proto: BulletLaser
+    fireCost: 100
+  - type: HandCrankRecharger
+    amountRechargedPerCrank: 10
+    timeToCrank: 1
+  - type: Battery
+    maxCharge: 500
+    startingCharge: 500
+  - type: GunRequiresWield #remove when inaccuracy on spreads is fixed
+  - type: Contraband
+    severity: Major
+  - type: Gun
+    fireRate: 0.8
+    projectileSpeed: 30
+    selectedMode: SemiAuto
+    availableModes:
+    - SemiAuto
+    soundGunshot:
+      path: /Audio/Weapons/Guns/Gunshots/laser_cannon.ogg
+    soundEmpty:
+      path: /Audio/Weapons/Guns/Empty/empty.ogg

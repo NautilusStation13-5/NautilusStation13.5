@@ -18,6 +18,8 @@
     equippedPrefix: unlit
   - type: Item
     size: Tiny
+    sprite: Objects/Consumable/Smokeables/Cigarettes/cigarette.rsi
+    heldPrefix: unlit
   - type: Construction
     graph: smokeableCigarette
     node: cigarette
@@ -80,7 +82,7 @@
           - ReagentId: Nicotine
             Quantity: 10
           - ReagentId: Omnizine
-            Quantity: 5
+            Quantity: 30
 
 - type: entity
   id: CigaretteOmnizine

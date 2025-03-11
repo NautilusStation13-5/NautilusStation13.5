@@ -40,9 +40,6 @@
         params:
             maxDistance: 10
   - type: StepTrigger
-    triggerGroups:
-      types:
-      - Landmine
     requiredTriggeredSpeed: 0
     stepOn: true
 

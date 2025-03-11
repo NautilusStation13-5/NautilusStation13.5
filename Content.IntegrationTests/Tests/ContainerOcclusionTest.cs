@@ -100,12 +100,10 @@ namespace Content.IntegrationTests.Tests
 
             await pair.RunTicksSync(5);
 
-            EntityUid clientEnt = default!;
+            var clientEnt = clientEntManager.GetEntity(serverEntManager.GetNetEntity(dummy));
 
             await client.WaitAssertion(() =>
             {
-                clientEnt = clientEntManager.GetEntity(serverEntManager.GetNetEntity(dummy));
-
                 var sprite = clientEntManager.GetComponent<SpriteComponent>(clientEnt);
                 var light = clientEntManager.GetComponent<PointLightComponent>(clientEnt);
                 Assert.Multiple(() =>

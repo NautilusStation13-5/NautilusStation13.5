@@ -9,9 +9,7 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
-using Content.Shared.Mood;
-using Robust.Shared.Configuration;
-using Content.Shared.CCVar;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Content.Shared.Nutrition.EntitySystems;
 
@@ -24,7 +22,6 @@ public sealed class ThirstSystem : EntitySystem
     [Dependency] private readonly AlertsSystem _alerts = default!;
     [Dependency] private readonly MovementSpeedModifierSystem _movement = default!;
     [Dependency] private readonly SharedJetpackSystem _jetpack = default!;
-    [Dependency] private readonly IConfigurationManager _config = default!;
 
     [ValidatePrototypeId<SatiationIconPrototype>]
     private const string ThirstIconOverhydratedId = "ThirstIconOverhydrated";
@@ -35,17 +32,9 @@ public sealed class ThirstSystem : EntitySystem
     [ValidatePrototypeId<SatiationIconPrototype>]
     private const string ThirstIconParchedId = "ThirstIconParched";
 
-    private SatiationIconPrototype? _thirstIconOverhydrated = null;
-    private SatiationIconPrototype? _thirstIconThirsty = null;
-    private SatiationIconPrototype? _thirstIconParched = null;
-
     public override void Initialize()
     {
         base.Initialize();
-
-        DebugTools.Assert(_prototype.TryIndex(ThirstIconOverhydratedId, out _thirstIconOverhydrated) &&
-                          _prototype.TryIndex(ThirstIconThirstyId, out _thirstIconThirsty) &&
-                          _prototype.TryIndex(ThirstIconParchedId, out _thirstIconParched));
 
         SubscribeLocalEvent<ThirstComponent, RefreshMovementSpeedModifiersEvent>(OnRefreshMovespeed);
         SubscribeLocalEvent<ThirstComponent, MapInitEvent>(OnMapInit);
@@ -74,8 +63,7 @@ public sealed class ThirstSystem : EntitySystem
     private void OnRefreshMovespeed(EntityUid uid, ThirstComponent component, RefreshMovementSpeedModifiersEvent args)
     {
         // TODO: This should really be taken care of somewhere else
-        if (_config.GetCVar(CCVars.MoodEnabled)
-            || _jetpack.IsUserFlying(uid))
+        if (_jetpack.IsUserFlying(uid))
             return;
 
         var mod = component.CurrentThirstThreshold <= ThirstThreshold.Parched ? 0.75f : 1.0f;
@@ -114,7 +102,8 @@ public sealed class ThirstSystem : EntitySystem
             component.ThirstThresholds[ThirstThreshold.Dead],
             component.ThirstThresholds[ThirstThreshold.OverHydrated]
         );
-        Dirty(uid, component);
+
+        EntityManager.DirtyField(uid, component, nameof(ThirstComponent.CurrentThirst));
     }
 
     private bool IsMovementThreshold(ThirstThreshold threshold)
@@ -133,33 +122,34 @@ public sealed class ThirstSystem : EntitySystem
         }
     }
 
-    public bool TryGetStatusIconPrototype(ThirstComponent component, out SatiationIconPrototype? prototype)
+    public bool TryGetStatusIconPrototype(ThirstComponent component, [NotNullWhen(true)] out SatiationIconPrototype? prototype)
     {
         switch (component.CurrentThirstThreshold)
         {
             case ThirstThreshold.OverHydrated:
-                prototype = _thirstIconOverhydrated;
-                return true;
+                _prototype.TryIndex(ThirstIconOverhydratedId, out prototype);
+                break;
 
             case ThirstThreshold.Thirsty:
-                prototype = _thirstIconThirsty;
-                return true;
+                _prototype.TryIndex(ThirstIconThirstyId, out prototype);
+                break;
 
             case ThirstThreshold.Parched:
-                prototype = _thirstIconParched;
-                return true;
+                _prototype.TryIndex(ThirstIconParchedId, out prototype);
+                break;
 
             default:
                 prototype = null;
-                return false;
+                break;
         }
+
+        return prototype != null;
     }
 
     private void UpdateEffects(EntityUid uid, ThirstComponent component)
     {
-        if (!_config.GetCVar(CCVars.MoodEnabled)
-            && IsMovementThreshold(component.LastThirstThreshold) != IsMovementThreshold(component.CurrentThirstThreshold)
-            && TryComp(uid, out MovementSpeedModifierComponent? movementSlowdownComponent))
+        if (IsMovementThreshold(component.LastThirstThreshold) != IsMovementThreshold(component.CurrentThirstThreshold) &&
+                TryComp(uid, out MovementSpeedModifierComponent? movementSlowdownComponent))
         {
             _movement.RefreshMovementSpeedModifiers(uid, movementSlowdownComponent);
         }
@@ -173,9 +163,6 @@ public sealed class ThirstSystem : EntitySystem
         {
             _alerts.ClearAlertCategory(uid, component.ThirstyCategory);
         }
-
-        var ev = new MoodEffectEvent("Thirst" + component.CurrentThirstThreshold);
-        RaiseLocalEvent(uid, ev);
 
         switch (component.CurrentThirstThreshold)
         {

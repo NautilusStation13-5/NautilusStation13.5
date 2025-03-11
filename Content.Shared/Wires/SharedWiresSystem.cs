@@ -2,12 +2,9 @@ using Content.Shared.Administration.Logs;
 using Content.Shared.Database;
 using Content.Shared.Examine;
 using Content.Shared.Interaction;
-using Content.Shared.Popups;
 using Content.Shared.Tools.Systems;
 using Content.Shared.UserInterface;
 using Robust.Shared.Audio.Systems;
-using Robust.Shared.Network;
-
 
 namespace Content.Shared.Wires;
 
@@ -18,8 +15,6 @@ public abstract class SharedWiresSystem : EntitySystem
     [Dependency] protected readonly SharedAppearanceSystem Appearance = default!;
     [Dependency] protected readonly SharedAudioSystem Audio = default!;
     [Dependency] protected readonly SharedToolSystem Tool = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly INetManager _netManager = default!;
 
     public override void Initialize()
     {
@@ -164,10 +159,7 @@ public abstract class SharedWiresSystem : EntitySystem
             return;
 
         if (component.RequireOpen != wires.Open)
-        {
-            _popup.PopupPredicted(Loc.GetString("base-computer-ui-component-not-opened", ("machine", uid)), uid, uid);
             args.Cancel();
-        }
     }
 
     private void OnActivatableUIPanelChanged(EntityUid uid, ActivatableUIRequiresPanelComponent component, ref PanelChangedEvent args)

@@ -2,7 +2,7 @@
   parent: Clothing
   id: IDCardStandard
   name: identification card
-  description: A card necessary to access various areas aboard the station.
+  description: A card necessary to access various areas aboard the platform.
   abstract: true
   components:
   - type: Sprite
@@ -22,26 +22,33 @@
     tags:
     - DoorBumpOpener
     - WhitelistChameleon
+    - WhitelistChameleonIdCard
   - type: StealTarget
     stealGroup: IDCard
-  - type: NanoChatCard # DeltaV
-  - type: MiningPoints # DeltaV
 
 #IDs with layers
 
 - type: entity
   parent: IDCardStandard
   id: PassengerIDCard
-  name: passenger ID card
+  name: citizen ID card
   components:
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#878787"
-    - state: subdepartment
-      color: "#878787"
-    - state: passenger
+    - state: idpassenger
+  - type: PresetIdCard
+    job: Passenger
+
+- type: entity
+  parent: IDCardStandard
+  id: SettlerIDCard
+  name: Settler ID card
+  components:
+  - type: Sprite
+    layers:
+    - state: default
+    - state: idpassenger
   - type: PresetIdCard
     job: Passenger
 
@@ -55,11 +62,7 @@
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#F39F27"
-    - state: subdepartment
-      color: "#F39F27"
-    - state: assistant
+    - state: idintern-tech
 
 - type: entity
   parent: PassengerIDCard
@@ -71,11 +74,7 @@
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#5B97BC"
-    - state: subdepartment
-      color: "#5B97BC"
-    - state: assistant
+    - state: idintern-med
 
 - type: entity
   parent: PassengerIDCard
@@ -87,11 +86,7 @@
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#C96DBF"
-    - state: subdepartment
-      color: "#C96DBF"
-    - state: assistant
+    - state: idintern-sci
 
 - type: entity
   parent: PassengerIDCard
@@ -103,11 +98,7 @@
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#CB0000"
-    - state: subdepartment
-      color: "#CB0000"
-    - state: assistant
+    - state: idintern-cadet
 
 - type: entity
   parent: PassengerIDCard
@@ -119,25 +110,17 @@
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#58C800"
-    - state: subdepartment
-      color: "#58C800"
-    - state: assistant
+    - state: idintern-service
 
 - type: entity
-  parent: IDCardStandard
+  parent: [IDCardStandard, BaseGrandTheftContraband]
   id: CaptainIDCard
-  name: captain ID card
+  name: overseer ID card
   components:
   - type: Sprite
     layers:
     - state: gold
-    - state: departmenthead
-      color: "#1B67A5"
-    - state: subdepartment
-      color: "#1B67A5"
-    - state: captain
+    - state: idcaptain
   - type: Item
     heldPrefix: gold
   - type: PresetIdCard
@@ -146,6 +129,7 @@
     tags:
     - DoorBumpOpener
     - WhitelistChameleon
+    - WhitelistChameleonIdCard
     - HighRiskItem
   - type: StealTarget
     stealGroup: CaptainIDCard
@@ -158,11 +142,7 @@
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#CB0000"
-    - state: subdepartment
-      color: "#CB0000"
-    - state: securityofficer
+    - state: idsecurityofficer
   - type: PresetIdCard
     job: SecurityOfficer
 
@@ -171,16 +151,12 @@
   id: WardenIDCard
   name: warden ID card
   components:
-  - type: Sprite
-    layers:
-    - state: default
-    - state: department
-      color: "#CB0000"
-    - state: subdepartment
-      color: "#CB0000"
-    - state: warden
-  - type: PresetIdCard
-    job: Warden
+    - type: Sprite
+      layers:
+        - state: default
+        - state: idwarden
+    - type: PresetIdCard
+      job: Warden
 
 - type: entity
   parent: IDCardStandard
@@ -190,11 +166,7 @@
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#F39F27"
-    - state: subdepartment
-      color: "#F39F27"
-    - state: stationengineer
+    - state: idstationengineer
   - type: PresetIdCard
     job: StationEngineer
 
@@ -206,11 +178,7 @@
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#5B97BC"
-    - state: subdepartment
-      color: "#5B97BC"
-    - state: medicaldoctor
+    - state: idmedicaldoctor
   - type: PresetIdCard
     job: MedicalDoctor
 
@@ -222,11 +190,7 @@
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#5B97BC"
-    - state: subdepartment
-      color: "#5B97BC"
-    - state: paramedic
+    - state: idparamedic
   - type: PresetIdCard
     job: Paramedic
 
@@ -238,63 +202,71 @@
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#5B97BC"
-    - state: subdepartment
-      color: "#5B97BC"
-    - state: chemist
+    - state: idchemist
   - type: PresetIdCard
     job: Chemist
 
 - type: entity
   parent: IDCardStandard
   id: CargoIDCard
-  name: logistics ID card # DeltaV - Logistics Department replacing Cargo
+  name: cargo ID card
   components:
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#B18644"
-    - state: subdepartment
-      color: "#B18644"
-    - state: cargotechnician
+    - state: idcargotechnician
   - type: PresetIdCard
     job: CargoTechnician
 
 - type: entity
   parent: IDCardStandard
   id: SalvageIDCard
-  name: salvage ID card
+  name: expeditioneer ID card
   components:
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#B18644"
-    - state: subdepartment
-      color: "#C96DBF"
-    - state: shaftminer
+    - state: idshaftminer
   - type: PresetIdCard
     job: SalvageSpecialist
 
 - type: entity
   parent: IDCardStandard
-  id: QuartermasterIDCard
-  name: logistics officer ID card # DeltaV - Logistics Department replacing Cargo
+  id: PilotIDCard
+  name: pilot ID card
   components:
   - type: Sprite
     layers:
-      - state: silver
-      - state: departmenthead
-        color: "#1B67A5"
-      - state: subdepartment
-        color: "#B18644"
-      - state: cargotechnician
-  - type: Item
-    heldPrefix: silver
+    - state: default
+    - state: idshaftminer
   - type: PresetIdCard
-    job: Quartermaster
+    job: Pilot
+
+- type: entity
+  parent: IDCardStandard
+  id: BasinTechIDCard
+  name: basin technician ID card
+  components:
+  - type: Sprite
+    layers:
+    - state: default
+    - state: idshaftminer
+  - type: PresetIdCard
+    job: BasinEngi
+
+- type: entity
+  parent: IDCardStandard
+  id: QuartermasterIDCard
+  name: harbormaster ID card
+  components:
+    - type: Sprite
+      layers:
+        - state: silver
+        - state: idquartermaster
+    - type: Item
+      heldPrefix: silver
+    - type: PresetIdCard
+      job: Quartermaster
 
 - type: entity
   parent: IDCardStandard
@@ -304,29 +276,9 @@
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#C96DBF"
-    - state: subdepartment
-      color: "#C96DBF"
-    - state: scientist
+    - state: idscientist
   - type: PresetIdCard
     job: Scientist
-
-- type: entity
-  parent: IDCardStandard
-  id: RoboticsIDCard
-  name: robotics ID card
-  components:
-  - type: Sprite
-    layers:
-    - state: default
-    - state: department
-      color: "#C96DBF"
-    - state: subdepartment
-      color: "#952004"
-    - state: scientist
-  - type: PresetIdCard
-    job: Roboticist
 
 - type: entity
   parent: IDCardStandard
@@ -335,12 +287,8 @@
   components:
   - type: Sprite
     layers:
-    - state: rainbow
-    - state: department
-      color: "#FF00FF"
-    - state: subdepartment
-      color: "#58C800"
-    - state: clown
+    - state: default
+    - state: idclown
   - type: PresetIdCard
     job: Clown
 
@@ -352,10 +300,7 @@
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#878787"
-    - state: subdepartment
-    - state: mime
+    - state: idmime
   - type: PresetIdCard
     job: Mime
 
@@ -364,14 +309,10 @@
   id: ChaplainIDCard
   name: chaplain ID card
   components:
-  - type: Sprite
-    layers:
-    - state: default
-    - state: department
-      color: "#C96DBF"
-    - state: subdepartment
-      color: "#58C800"
-    - state: chaplain
+    - type: Sprite
+      layers:
+        - state: default
+        - state: idchaplain
     - type: PresetIdCard
       job: Chaplain
 
@@ -383,11 +324,7 @@
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#58C800"
-    - state: subdepartment
-      color: "#58C800"
-    - state: janitor
+    - state: idjanitor
   - type: PresetIdCard
     job: Janitor
 
@@ -399,22 +336,25 @@
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#58C800"
-    - state: subdepartment
-      color: "#58C800"
-    - state: bartender
+    - state: idbartender
   - type: PresetIdCard
     job: Bartender
 
 - type: entity
-  parent: BartenderIDCard
+  parent: IDCardStandard
   id: PunPunIDCard
   name: pun pun ID card
   components:
-  - type: PresetIdCard
-    job: Bartender
-    name: Pun Pun
+    - type: Sprite
+      layers:
+        - state: default
+        - state: idbartender
+    - type: PresetIdCard
+      job: Bartender
+      name: Pun Pun
+    - type: Tag #  Ignore Chameleon tags
+      tags:
+      - DoorBumpOpener
 
 - type: entity
   parent: IDCardStandard
@@ -424,11 +364,7 @@
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#58C800"
-    - state: subdepartment
-      color: "#58C800"
-    - state: cook
+    - state: idcook
   - type: PresetIdCard
     job: Chef
 
@@ -437,97 +373,36 @@
   id: BotanistIDCard
   name: botanist ID card
   components:
-  - type: Sprite
-    layers:
-    - state: default
-    - state: department
-      color: "#58C800"
-    - state: subdepartment
-      color: "#58C800"
-    - state: botanist
-  - type: PresetIdCard
-    job: Botanist
+    - type: Sprite
+      layers:
+        - state: default
+        - state: idbotanist
+    - type: PresetIdCard
+      job: Botanist
 
 - type: entity
   parent: IDCardStandard
   id: LibrarianIDCard
   name: librarian ID card
   components:
-  - type: Sprite
-    layers:
-    - state: default
-    - state: department
-      color: "#58C800"
-    - state: subdepartment
-      color: "#58C800"
-    - state: curator
-  - type: PresetIdCard
-    job: Librarian
+    - type: Sprite
+      layers:
+        - state: default
+        - state: idcurator
+    - type: PresetIdCard
+      job: Librarian
 
 - type: entity
   parent: IDCardStandard
   id: LawyerIDCard
-  name: attorney ID card # DeltaV - Changed Lawyer to Attorney
+  name: lawyer ID card
   components:
-  - type: Sprite
-    layers:
-    - state: default
-    - state: department
-      color: "#878787"
-    - state: subdepartment
-      color: "#CB0000"
-    - state: lawyer
-  - type: PresetIdCard
-    job: Lawyer
-
-- type: entity
-  parent: IDCardStandard
-  id: ChiefJusticeIDCard
-  name: chief justice ID card
-  components:
-    - type: PresetIdCard
-      job: ChiefJustice
     - type: Sprite
       layers:
-      - state: default
-      - state: department
-        color: "#878787"
-      - state: subdepartment
-        color: "#CB0000"
-      - state: lawyer
-
-
-- type: entity
-  parent: IDCardStandard
-  id: ClerkIDCard
-  name: clerk ID card
-  components:
+        - state: default
+        - state: idlawyer
     - type: PresetIdCard
-      job: Clerk
-    - type: Sprite
-      layers:
-      - state: default
-      - state: department
-        color: "#878787"
-      - state: subdepartment
-        color: "#CB0000"
-      - state: lawyer
-
-- type: entity
-  parent: IDCardStandard
-  id: ProsecutorIDCard
-  name: presecutor ID card
-  components:
-    - type: PresetIdCard
-      job: Prosecutor
-    - type: Sprite
-      layers:
-      - state: default
-      - state: department
-        color: "#878787"
-      - state: subdepartment
-        color: "#CB0000"
-      - state: lawyer
+      job: Lawyer
 
 - type: entity
   parent: IDCardStandard
@@ -537,11 +412,7 @@
   - type: Sprite
     layers:
     - state: silver
-    - state: departmenthead
-      color: "#1B67A5"
-    - state: subdepartment
-      color: "#58C800"
-    - state: headofpersonnel
+    - state: idheadofpersonnel
   - type: Item
     heldPrefix: silver
   - type: PresetIdCard
@@ -555,11 +426,7 @@
   - type: Sprite
     layers:
     - state: silver
-    - state: departmenthead
-      color: "#1B67A5"
-    - state: subdepartment
-      color: "#F39F27"
-    - state: stationengineer
+    - state: idchiefengineer
   - type: Item
     heldPrefix: silver
   - type: PresetIdCard
@@ -573,11 +440,7 @@
   - type: Sprite
     layers:
     - state: silver
-    - state: departmenthead
-      color: "#1B67A5"
-    - state: subdepartment
-      color: "#5B97BC"
-    - state: medicaldoctor
+    - state: idchiefmedicalofficer
   - type: Item
     heldPrefix: silver
   - type: PresetIdCard
@@ -586,16 +449,12 @@
 - type: entity
   parent: IDCardStandard
   id: RDIDCard
-  name: mystagogue ID card # DeltaV - Epistemics Department replacing Science
+  name: research director ID card
   components:
   - type: Sprite
     layers:
     - state: silver
-    - state: departmenthead
-      color: "#1B67A5"
-    - state: subdepartment
-      color: "#C96DBF"
-    - state: scientist
+    - state: idresearchdirector
   - type: Item
     heldPrefix: silver
   - type: PresetIdCard
@@ -604,16 +463,12 @@
 - type: entity
   parent: IDCardStandard
   id: HoSIDCard
-  name: head of security ID card
+  name: marshall ID card
   components:
   - type: Sprite
     layers:
     - state: silver
-    - state: departmenthead
-      color: "#1B67A5"
-    - state: subdepartment
-      color: "#CB0000"
-    - state: securityofficer
+    - state: idheadofsecurity
   - type: Item
     heldPrefix: silver
   - type: PresetIdCard
@@ -621,19 +476,28 @@
 
 - type: entity
   parent: IDCardStandard
-  id: BrigmedicIDCard
-  name: corpsman ID card # DeltaV - rename brigmedic to corpsman
+  id: VisitorIDCard
+  name: visitor ID card
   components:
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#CB0000"
-    - state: subdepartment
-      color: "#5B97BC"
-    - state: medicaldoctor
-  - type: PresetIdCard # Delta V - Brigmedic, see Prototypes/DeltaV/Roles/Jobs/Security/brigmedic.yml
-    job: Brigmedic
+    - state: idvisitor
+  - type: IdCard
+    jobTitle: job-title-visitor
+    jobIcon: JobIconVisitor
+  - type: PresetIdCard
+    job: Visitor
+
+- type: entity
+  parent: IDCardStandard
+  id: BrigmedicIDCard
+  name: brigmedic ID card
+  components:
+  - type: Sprite
+    layers:
+    - state: default
+    - state: idbrigmedic
 
 - type: entity
   parent: IDCardStandard
@@ -643,6 +507,7 @@
   - type: Sprite
     layers:
     - state: centcom
+    - state: idcentcom
   - type: Item
     heldPrefix: blue
   - type: PresetIdCard
@@ -655,12 +520,8 @@
   components:
   - type: Sprite
     layers:
-    - state: centcom
-    - state: departmenthead
-      color: "#1B67A5"
-    - state: subdepartment
-      color: "#1B67A5"
-    - state: captain
+    - state: gold
+    - state: ert_commander
   - type: PresetIdCard
     job: ERTLeader
   - type: Item
@@ -673,12 +534,8 @@
   components:
   - type: Sprite
     layers:
-    - state: centcom
-    - state: departmenthead
-      color: "#1B67A5"
-    - state: subdepartment
-      color: "#1B67A5"
-    - state: chaplain
+    - state: gold
+    - state: ert_chaplain # we have the sprite for the id but dont have chaplain ERT equipment for now.
   - type: PresetIdCard
     job: ERTChaplain
   - type: Item
@@ -691,12 +548,8 @@
   components:
   - type: Sprite
     layers:
-    - state: centcom
-    - state: departmenthead
-      color: "#1B67A5"
-    - state: subdepartment
-      color: "#F39F27"
-    - state: stationengineer
+    - state: gold
+    - state: ert_engineer
   - type: PresetIdCard
     job: ERTEngineer
 
@@ -707,12 +560,8 @@
   components:
   - type: Sprite
     layers:
-    - state: centcom
-    - state: departmenthead
-      color: "#1B67A5"
-    - state: subdepartment
-      color: "#58C800"
-    - state: janitor
+    - state: gold
+    - state: ert_janitor
   - type: PresetIdCard
     job: ERTJanitor
 
@@ -723,12 +572,8 @@
   components:
   - type: Sprite
     layers:
-    - state: centcom
-    - state: departmenthead
-      color: "#1B67A5"
-    - state: subdepartment
-      color: "#5B97BC"
-    - state: medicaldoctor
+    - state: gold
+    - state: ert_medic
   - type: PresetIdCard
     job: ERTMedical
 
@@ -739,73 +584,38 @@
   components:
   - type: Sprite
     layers:
-    - state: centcom
-    - state: departmenthead
-      color: "#1B67A5"
-    - state: subdepartment
-      color: "#1B67A5"
-    - state: cc
+    - state: gold
+    - state: ert_security
   - type: PresetIdCard
     job: ERTSecurity
-
-- type: entity
-  parent: IDCardStandard
-  id: CentcomIDCardSyndie
-  name: command officer ID card
-  suffix: Fake
-  components:
-  - type: Sprite
-    layers:
-    - state: centcom
-    - state: departmenthead
-      color: "#1B67A5"
-    - state: subdepartment
-      color: "#1B67A5"
-    - state: cc
-  - type: Item
-    heldPrefix: blue
-  - type: PresetIdCard
-    job: CentralCommandOfficial
-  - type: Access
-    tags:
-    - Maintenance
 
 - type: entity
   parent: IDCardStandard
   id: MusicianIDCard
   name: musician ID card
   components:
-  - type: Sprite
-    layers:
-    - state: default
-    - state: department
-      color: "#878787"
-    - state: subdepartment
-      color: "#878787"
-    - state: musician
-  - type: PresetIdCard
-    job: Musician
+    - type: Sprite
+      layers:
+        - state: default
+        - state: idmusician
+    - type: PresetIdCard
+      job: Musician
 
 - type: entity
-  parent: CentcomIDCard
+  parent: IDCardStandard
   id: CentcomIDCardDeathsquad
   name: death squad ID card
   components:
   - type: Sprite
     layers:
     - state: centcom
-    - state: departmenthead
-      color: "#CB0000"
-    - state: subdepartment
-      color: "#CB0000"
-    - state: death
   - type: Item
     heldPrefix: blue
   - type: PresetIdCard
     job: DeathSquad
 
 - type: entity
-  name: passenger ID card
+  name: citizen ID card
   parent: IDCardStandard
   id: AgentIDCard
   suffix: Agent
@@ -819,11 +629,7 @@
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#878787"
-    - state: subdepartment
-      color: "#878787"
-    - state: passenger
+    - state: idpassenger
   - type: AgentIDCard
   - type: ActivatableUI
     key: enum.AgentIDCardUiKey.Key
@@ -834,17 +640,16 @@
   - type: ChameleonClothing
     slot: [idcard]
     default: PassengerIDCard
+    requireTag: WhitelistChameleonIdCard
   - type: UserInterface
     interfaces:
       enum.AgentIDCardUiKey.Key:
         type: AgentIDCardBoundUserInterface
       enum.ChameleonUiKey.Key:
         type: ChameleonBoundUserInterface
-  - type: ClothingAddFaction
-    faction: Syndicate
 
 - type: entity
-  name: passenger ID card
+  name: citizen ID card
   parent: AgentIDCard
   id: NukieAgentIDCard
   suffix: Nukie
@@ -854,8 +659,6 @@
     - Maintenance
     - SyndicateAgent
     - NuclearOperative
-  - type: ClothingAddFaction
-    faction: Syndicate
 
 - type: entity
   parent: IDCardStandard
@@ -864,12 +667,8 @@
   components:
   - type: Sprite
     layers:
-    - state: default
-    - state: department
-      color: "#F39F27"
-    - state: subdepartment
-      color: "#F39F27"
-    - state: atmospherictechnician
+    - state: orange
+    - state: idatmospherictechnician
   - type: PresetIdCard
     job: AtmosphericTechnician
 
@@ -880,18 +679,11 @@
   components:
   - type: Sprite
     layers:
-    - state: black
-    - state: department
-      color: "#CB0000"
-    - state: subdepartment
-      color: "#CB0000"
-    - state: syndicate
+    - state: syndie
   - type: Access
     tags:
     - NuclearOperative
     - SyndicateAgent
-  - type: ClothingAddFaction
-    faction: Syndicate
 
 - type: entity
   parent: IDCardStandard
@@ -900,18 +692,11 @@
   components:
   - type: Sprite
     layers:
-    - state: black
-    - state: department
-      color: "#878787"
-    - state: subdepartment
-      color: "#878787"
-    - state: death
+    - state: pirate
   - type: Access
     tags:
     - NuclearOperative
     - SyndicateAgent
-  - type: ClothingAddFaction
-    faction: Syndicate
 
 - type: entity
   parent: IDCardStandard
@@ -921,27 +706,19 @@
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#5B97BC"
-    - state: subdepartment
-      color: "#5B97BC"
-    - state: psychologist
+    - state: idpsychologist
   - type: PresetIdCard
     job: Psychologist
 
 - type: entity
   parent: IDCardStandard
   id: ReporterIDCard
-  name: reporter ID card
+  name: journalist ID card
   components:
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#58C800"
-    - state: subdepartment
-      color: "#58C800"
-    - state: headofpersonnel
+    - state: idreporter
   - type: PresetIdCard
     job: Reporter
 
@@ -953,11 +730,7 @@
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#878787"
-    - state: subdepartment
-      color: "#878787"
-    - state: boxer
+    - state: idboxer
   - type: PresetIdCard
     job: Boxer
 
@@ -969,11 +742,7 @@
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#58C800"
-    - state: subdepartment
-      color: "#58C800"
-    - state: zookeeper
+    - state: idzookeeper
   - type: PresetIdCard
     job: Zookeeper
 
@@ -985,11 +754,7 @@
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#CB0000"
-    - state: subdepartment
-      color: "#CB0000"
-    - state: detective
+    - state: iddetective
   - type: PresetIdCard
     job: Detective
 
@@ -1002,11 +767,6 @@
   - type: Sprite
     layers:
     - state: centcom
-    - state: departmenthead
-      color: "#CB0000"
-    - state: subdepartment
-      color: "#CB0000"
-    - state: cc
   - type: Item
     heldPrefix: blue
   - type: PresetIdCard
@@ -1020,92 +780,79 @@
   components:
   - type: Sprite
     layers:
-    - state: rainbow
-    - state: department
-      color: "#5DC574"
-    - state: subdepartment
-      color: "#5DC574"
-    - state: clown
-      color: "#7C0A0A"
+    - state: default
+    - state: idcluwne
   - type: IdCard
     jobTitle: job-title-cluwne
   - type: Unremoveable
 
 - type: entity
-  parent: IDCardStandard
+  parent: EngineeringIDCard
   id: SeniorEngineerIDCard
   name: senior engineer ID card
   components:
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#F39F27"
-    - state: subdepartment
-      color: "#F39F27"
-    - state: senior
-  - type: PresetIdCard
-    job: SeniorEngineer
+    - state: idseniorengineer
 
 - type: entity
-  parent: IDCardStandard
+  parent: ResearchIDCard
   id: SeniorResearcherIDCard
   name: senior researcher ID card
   components:
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#C96DBF"
-    - state: subdepartment
-      color: "#C96DBF"
-    - state: senior
-  - type: PresetIdCard
-    job: SeniorResearcher
+    - state: idseniorresearcher
 
 - type: entity
-  parent: IDCardStandard
+  parent: MedicalIDCard
   id: SeniorPhysicianIDCard
   name: senior physician ID card
   components:
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#5B97BC"
-    - state: subdepartment
-      color: "#5B97BC"
-    - state: senior
-  - type: PresetIdCard
-    job: SeniorPhysician
+    - state: idseniorphysician
 
 - type: entity
-  parent: IDCardStandard
+  parent: SecurityIDCard
   id: SeniorOfficerIDCard
   name: senior officer ID card
   components:
   - type: Sprite
     layers:
     - state: default
-    - state: department
-      color: "#CB0000"
-    - state: subdepartment
-      color: "#CB0000"
-    - state: senior
-  - type: PresetIdCard
-    job: SeniorOfficer
+    - state: idseniorofficer
 
 - type: entity
   parent: IDCardStandard
-  id: AdminAssistantIDCard
-  name: administrative assistant ID card
+  id: UniversalIDCard
+  name: universal ID card
+  suffix: Admin
+  description: An ID card that gives you access beyond your wildest dreams.
   components:
   - type: Sprite
+    sprite: Objects/Misc/id_cards.rsi
     layers:
-    - state: silver
-    - sprite: DeltaV/Objects/Misc/id_cards.rsi
-      state: idadminassistant
+    - state: admin
+    - state: idadmin
+  - type: Clothing
+    sprite: Objects/Misc/id_cards.rsi
   - type: Item
-    heldPrefix: silver
-  - type: PresetIdCard
-    job: AdministrativeAssistant
+    heldPrefix: green
+  - type: IdCard
+    jobTitle: job-title-universal
+    jobIcon: JobIconAdmin
+  - type: Access
+    groups:
+    - AllAccess
+    tags:
+    - CentralCommand
+    - NuclearOperative
+    - SyndicateAgent
+    - Wizard
+  - type: Tag #  Ignore Chameleon tags
+    tags:
+    - DoorBumpOpener

@@ -27,12 +27,6 @@ public sealed partial class SleepingComponent : Component
     [AutoNetworkedField, AutoPausedField]
     public TimeSpan CooldownEnd;
 
-    /// <summary>
-    ///     The moment this entity went to sleep. Initialized on MapInit.
-    /// </summary>
-    [DataField]
-    public TimeSpan SleepingSince;
-
     [DataField]
     [AutoNetworkedField]
     public EntityUid? WakeAction;

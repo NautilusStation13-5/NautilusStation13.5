@@ -8,14 +8,6 @@
   - type: Item # TODO add inhand sprites for all utensils
     sprite: Objects/Misc/utensils.rsi
   - type: SpaceGarbage
-  # Shitmed Change
-  - type: Tweezers # Any utensil can poorly remove organs
-    speed: 0.2
-  - type: SurgeryTool
-    startSound:
-      path: /Audio/_Shitmed/Medical/Surgery/retractor1.ogg
-    endSound:
-      path: /Audio/_Shitmed/Medical/Surgery/hemostat1.ogg
 
 - type: entity
   parent: UtensilBase
@@ -32,7 +24,7 @@
     - Trash
   - type: MeleeWeapon
     wideAnimationRotation: 180
-    attackRate: .6666
+    attackRate: 1.5
     damage:
       types:
         Blunt: 0
@@ -54,21 +46,10 @@
     - Fork
   - type: MeleeWeapon
     wideAnimationRotation: 180
-    attackRate: .6666
+    attackRate: 1.5
     damage:
       types:
         Piercing: 5
-  # Shitmed Change
-  - type: Tweezers # Forks are better than spoons
-    speed: 0.35
-  - type: DamageOtherOnHit
-    staminaCost: 2.5
-  - type: EmbeddableProjectile
-    removalTime: 0.5
-    autoRemoveDuration: 10
-  - type: EmbedPassiveDamage
-  - type: ThrowingAngle
-    angle: 180
 
 - type: entity
   parent: UtensilBasePlastic
@@ -81,9 +62,6 @@
   - type: Utensil
     types:
     - Fork
-  # Shitmed Change
-  - type: Tweezers # Forks are better than spoons
-    speed: 0.35
 
 - type: entity
   parent: UtensilBase
@@ -103,13 +81,10 @@
     - Spoon
   - type: MeleeWeapon
     wideAnimationRotation: 180
-    attackRate: .6666
+    attackRate: 1.5
     damage:
       types:
         Blunt: 1
-  - type: DamageOtherOnHit
-  - type: ThrowingAngle
-    angle: 180
   - type: Shovel
     speedModifier: 0.1 # you can try
   - type: ReactionMixer
@@ -179,12 +154,9 @@
     - Stir
   - type: MeleeWeapon
     wideAnimationRotation: 180
-    attackRate: .5
+    attackRate: 2
     damage:
       types:
         Blunt: 2
-  - type: DamageOtherOnHit
-  - type: ThrowingAngle
-    angle: 180
   - type: Shovel
     speedModifier: 0.05 # nah

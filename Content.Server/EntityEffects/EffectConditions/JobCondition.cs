@@ -1,11 +1,11 @@
 using System.Linq;
 using Content.Shared.EntityEffects;
 using Content.Shared.Localizations;
-using Robust.Shared.Prototypes;
+using Content.Shared.Mind;
 using Content.Shared.Mind.Components;
 using Content.Shared.Roles;
 using Content.Shared.Roles.Jobs;
-using Content.Shared.Mind;
+using Robust.Shared.Prototypes;
 
 namespace Content.Server.EntityEffects.EffectConditions;
 
@@ -26,9 +26,17 @@ public sealed partial class JobCondition : EntityEffectCondition
             if(!args.EntityManager.HasComponent<JobRoleComponent>(roleId))
                 continue;
 
-            if(!args.EntityManager.TryGetComponent<MindRoleComponent>(roleId, out var mindRole)
-               || mindRole.JobPrototype is null)
+            if (!args.EntityManager.TryGetComponent<MindRoleComponent>(roleId, out var mindRole))
+            {
+                Logger.Error($"Encountered job mind role entity {roleId} without a {nameof(MindRoleComponent)}");
                 continue;
+            }
+
+            if (mindRole.JobPrototype == null)
+            {
+                Logger.Error($"Encountered job mind role entity {roleId} without a {nameof(JobPrototype)}");
+                continue;
+            }
 
             if (Job.Contains(mindRole.JobPrototype.Value))
                 return true;

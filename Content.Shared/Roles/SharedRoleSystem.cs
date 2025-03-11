@@ -25,8 +25,14 @@ public abstract class SharedRoleSystem : EntitySystem
     [Dependency] private readonly IEntityManager _entityManager = default!;
     [Dependency] private readonly SharedMindSystem _minds = default!;
     [Dependency] private readonly IPrototypeManager _prototypes = default!;
+
+    private JobRequirementOverridePrototype? _requirementOverride;
+
     public override void Initialize()
     {
+        Subs.CVar(_cfg, CCVars.GameRoleTimerOverride, SetRequirementOverride, true);
+
+        SubscribeLocalEvent<MindRoleComponent, ComponentShutdown>(OnComponentShutdown);
         SubscribeLocalEvent<StartingMindRoleComponent, PlayerSpawnCompleteEvent>(OnSpawn);
     }
 
@@ -36,6 +42,18 @@ public abstract class SharedRoleSystem : EntitySystem
             return;
 
         MindAddRole(mindId, component.MindRole, mind: mindComp, silent: component.Silent);
+    }
+
+    private void SetRequirementOverride(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            _requirementOverride = null;
+            return;
+        }
+
+        if (!_prototypes.TryIndex(value, out _requirementOverride ))
+            Log.Error($"Unknown JobRequirementOverridePrototype: {value}");
     }
 
     /// <summary>
@@ -90,10 +108,7 @@ public abstract class SharedRoleSystem : EntitySystem
         string? jobPrototype = null)
     {
         if (!Resolve(mindId, ref mind))
-        {
-            Log.Warning($"No Mind found for {ToPrettyString(mindId)} when attempting to add job role.");
             return;
-        }
 
         // Can't have someone get paid for two jobs now, can we
         if (MindHasRole<JobRoleComponent>((mindId, mind), out var jobRole)
@@ -153,9 +168,11 @@ public abstract class SharedRoleSystem : EntitySystem
         var update = MindRolesUpdate((mindId, mind));
 
         // RoleType refresh, Role time tracking, Update Admin playerlist
-
-        var message = new RoleAddedEvent(mindId, mind, update, silent);
-        RaiseLocalEvent(mindId, message, true);
+        if (mind.OwnedEntity != null)
+        {
+            var message = new RoleAddedEvent(mindId, mind, update, silent);
+            RaiseLocalEvent(mind.OwnedEntity.Value, message, true);
+        }
 
         var name = Loc.GetString(protoEnt.Name);
         if (mind.OwnedEntity is not null)
@@ -204,9 +221,7 @@ public abstract class SharedRoleSystem : EntitySystem
 
         foreach (var role in mind.MindRoles)
         {
-            if (!TryComp<MindRoleComponent>(role, out var comp))
-                continue;
-
+            var comp = Comp<MindRoleComponent>(role);
             if (comp.RoleType is not null)
                 roles.Add(comp.RoleType.Value);
         }
@@ -296,8 +311,11 @@ public abstract class SharedRoleSystem : EntitySystem
 
         var update = MindRolesUpdate(mind);
 
-        var message = new RoleRemovedEvent(mind.Owner, mind.Comp, update);
-        RaiseLocalEvent(mind, message, true);
+        if (mind.Comp.OwnedEntity != null)
+        {
+            var message = new RoleRemovedEvent(mind.Owner, mind.Comp, update);
+            RaiseLocalEvent(mind.Comp.OwnedEntity.Value, message, true);
+        }
 
         _adminLogger.Add(LogType.Mind,
             LogImpact.Low,
@@ -570,6 +588,43 @@ public abstract class SharedRoleSystem : EntitySystem
             _audio.PlayGlobal(sound, mind.Session);
     }
 
+    // TODO ROLES Change to readonly.
+    // Passing around a reference to a prototype's hashset makes me uncomfortable because it might be accidentally
+    // mutated.
+    public HashSet<JobRequirement>? GetJobRequirement(JobPrototype job)
+    {
+        if (_requirementOverride != null && _requirementOverride.Jobs.TryGetValue(job.ID, out var req))
+            return req;
+
+        return job.Requirements;
+    }
+
+    // TODO ROLES Change to readonly.
+    public HashSet<JobRequirement>? GetJobRequirement(ProtoId<JobPrototype> job)
+    {
+        if (_requirementOverride != null && _requirementOverride.Jobs.TryGetValue(job, out var req))
+            return req;
+
+        return _prototypes.Index(job).Requirements;
+    }
+
+    // TODO ROLES Change to readonly.
+    public HashSet<JobRequirement>? GetAntagRequirement(ProtoId<AntagPrototype> antag)
+    {
+        if (_requirementOverride != null && _requirementOverride.Antags.TryGetValue(antag, out var req))
+            return req;
+
+        return _prototypes.Index(antag).Requirements;
+    }
+
+    // TODO ROLES Change to readonly.
+    public HashSet<JobRequirement>? GetAntagRequirement(AntagPrototype antag)
+    {
+        if (_requirementOverride != null && _requirementOverride.Antags.TryGetValue(antag.ID, out var req))
+            return req;
+
+        return antag.Requirements;
+    }
 }
 
 /// <summary>

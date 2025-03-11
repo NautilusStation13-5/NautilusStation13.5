@@ -1,5 +1,3 @@
-using System.Linq;
-using Content.Server.Database;
 using Content.Shared.Administration;
 using Content.Shared.CCVar;
 using Content.Shared.GameTicking;
@@ -9,7 +7,6 @@ using Content.Shared.Preferences;
 using JetBrains.Annotations;
 using Robust.Server.Player;
 using Robust.Shared.Audio;
-using Robust.Shared.Audio.Systems;
 using Robust.Shared.Enums;
 using Robust.Shared.Player;
 using Robust.Shared.Timing;
@@ -20,8 +17,12 @@ namespace Content.Server.GameTicking
     [UsedImplicitly]
     public sealed partial class GameTicker
     {
-        private void InitializePlayer() =>
+        [Dependency] private readonly IPlayerManager _playerManager = default!;
+
+        private void InitializePlayer()
+        {
             _playerManager.PlayerStatusChanged += PlayerStatusChanged;
+        }
 
         private async void PlayerStatusChanged(object? sender, SessionStatusEventArgs args)
         {
@@ -51,9 +52,12 @@ namespace Content.Server.GameTicking
                     {
                         var data = new ContentPlayerData(session.UserId, args.Session.Name);
                         data.Mind = mindId;
-                        data.Whitelisted = await _db.GetWhitelistStatusAsync(session.UserId); // Nyanotrasen - Whitelist
                         session.Data.ContentDataUncast = data;
                     }
+
+                    // Make the player actually join the game.
+                    // timer time must be > tick length
+                    Timer.Spawn(0, () => _playerManager.JoinGame(args.Session));
 
                     var record = await _db.GetPlayerRecordByUserId(args.Session.UserId);
                     var firstConnection = record != null &&
@@ -65,7 +69,7 @@ namespace Content.Server.GameTicking
 
                     RaiseNetworkEvent(GetConnectionStatusMsg(), session.Channel);
 
-                    if (firstConnection && _configurationManager.GetCVar(CCVars.AdminNewPlayerJoinSound))
+                    if (firstConnection && _cfg.GetCVar(CCVars.AdminNewPlayerJoinSound))
                         _audio.PlayGlobal(new SoundPathSpecifier("/Audio/Effects/newplayerping.ogg"),
                             Filter.Empty().AddPlayers(_adminManager.ActiveAdmins), false,
                             audioParams: new AudioParams { Volume = -5f });
@@ -128,8 +132,7 @@ namespace Content.Server.GameTicking
                         mind.Session = null;
                     }
 
-                    if (_playerGameStatuses.ContainsKey(session.UserId))
-                        _userDb.ClientDisconnected(session);
+                    _userDb.ClientDisconnected(session);
                     break;
                 }
             }

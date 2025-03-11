@@ -1,6 +1,6 @@
 # Hacky for the stress test so don't even consider adding to this
 - type: entity
-  name: Burrower
+  name: burrower
   id: MobXeno
   parent: SimpleSpaceMobBase
   description: They mostly come at night. Mostly.
@@ -21,15 +21,10 @@
         true
       NavSmash: !type:Bool
         true
-  - type: Tool
-    speedModifier: 1.5
-    qualities:
-      - Prying
   - type: Prying
-    pryPowered: !type:Bool
-        true
-    force: !type:Bool
-      true
+    pryPowered: true
+    force: true
+    speedModifier: 1.5
     useSound:
       path: /Audio/Items/crowbar.ogg
   - type: Reactive
@@ -59,18 +54,13 @@
         layer:
         - MobLayer
   - type: MobState
-  - type: Deathgasp
-  - type: MobStateActions
-    actions:
-      Critical:
-      - ActionCritSuccumb
-      - ActionCritFakeDeath
-      - ActionCritLastWords
+    allowedStates:
+    - Alive
+    - Dead
   - type: MobThresholds
     thresholds:
       0: Alive
-      50: Critical
-      100: Dead
+      50: Dead
   - type: SlowOnDamage
     speedModifierThresholds:
       25: 0.5
@@ -98,7 +88,6 @@
       Dead:
         Base: dead
   - type: Puller
-    needsHands: false
   - type: Butcherable
     butcheringType: Spike
     spawned:
@@ -130,30 +119,11 @@
     molsPerSecondPerUnitMass: 0.0005
   - type: Speech
     speechVerb: LargeMob
-    speechSounds: Xenonid # DeltaV: Use RMC's speech sounds for sentient xenos
-  - type: Psionic
-    removable: false
-    roller: false
-  - type: InnatePsionicPowers
-    powersToAdd:
-      - TelepathyPower
-  - type: LanguageKnowledge
-    speaks:
-    - Xeno
-    understands:
-    - Xeno
-  - type: ThermalVision
-    isActive: true
-    lightRadius: 15
-    color: "#808080"
-    activateSound: null
-    deactivateSound: null
-  - type: Fauna # Lavaland Change
 
 - type: entity
-  name: Praetorian
+  name: praetorian
   parent: MobXeno
-  id: MobXenoPraetorianNPC # Delta V - These no longer inherit the ghost takeover comp
+  id: MobXenoPraetorian
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -165,8 +135,7 @@
   - type: MobThresholds
     thresholds:
       0: Alive
-      100: Critical
-      150: Dead
+      100: Dead
   - type: Stamina
     critThreshold: 300
   - type: SlowOnDamage
@@ -185,9 +154,9 @@
         - MobLayer
 
 - type: entity
-  name: Drone
+  name: drone
   parent: MobXeno
-  id: MobXenoDroneNPC # Delta V - These no longer inherit the ghost takeover comp
+  id: MobXenoDrone
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -199,8 +168,7 @@
   - type: MobThresholds
     thresholds:
       0: Alive
-      80: Critical
-      130: Dead
+      80: Dead
   - type: SlowOnDamage
     speedModifierThresholds:
       40: 0.7
@@ -223,9 +191,9 @@
         - MobLayer
 
 - type: entity
-  name: Queen
+  name: queen
   parent: MobXeno
-  id: MobXenoQueenNPC # Delta V - These no longer inherit the ghost takeover comp
+  id: MobXenoQueen
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -237,8 +205,7 @@
   - type: MobThresholds
     thresholds:
       0: Alive
-      300: Critical
-      350: Dead
+      300: Dead
   - type: SlowOnDamage
     speedModifierThresholds:
       150: 0.7
@@ -261,18 +228,11 @@
   - type: Tag
     tags:
     - CannotSuicide
-  - type: LanguageKnowledge
-    speaks:
-    - TauCetiBasic
-    - Xeno
-    understands:
-    - TauCetiBasic
-    - Xeno
 
 - type: entity
-  name: Ravager
+  name: ravager
   parent: MobXeno
-  id: MobXenoRavagerNPC # Delta V - These no longer inherit the ghost takeover comp
+  id: MobXenoRavager
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -284,8 +244,7 @@
   - type: MobThresholds
     thresholds:
       0: Alive
-      100: Critical
-      150: Dead
+      100: Dead
   - type: MovementSpeedModifier
     baseSprintSpeed: 4
   - type: MeleeWeapon
@@ -308,9 +267,9 @@
         - MobLayer
 
 - type: entity
-  name: Runner
+  name: runner
   parent: MobXeno
-  id: MobXenoRunnerNPC # Delta V - These no longer inherit the ghost takeover comp
+  id: MobXenoRunner
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -324,7 +283,7 @@
   - type: MeleeWeapon
     damage:
      groups:
-       Brute: 10
+       Brute: 5
   - type: Fixtures
     fixtures:
       fix1:
@@ -338,15 +297,14 @@
         - MobLayer
 
 - type: entity
-  name: Rouny
-  parent: MobXenoRunnerNPC # Delta V - These no longer inherit the ghost takeover comp
-  id: MobXenoRounyNPC # Delta V - These no longer inherit the ghost takeover comp
+  name: rouny
+  parent: MobXenoRunner
+  id: MobXenoRouny
   components:
   - type: Sprite
     drawdepth: Mobs
     sprite: Mobs/Aliens/Xenos/rouny.rsi
     offset: 0,0.6
-    scale: 0.7, 0.7
   - type: Butcherable
     butcheringType: Spike
     spawned:
@@ -354,9 +312,9 @@
       amount: 3
 
 - type: entity
-  name: Spitter
+  name: spitter
   parent: MobXeno
-  id: MobXenoSpitterNPC # Delta V - These no longer inherit the ghost takeover comp
+  id: MobXenoSpitter
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -420,6 +378,10 @@
         Base: dead_purple_snake
       Dead:
         Base: dead_purple_snake
+  - type: Butcherable
+    spawned:
+    - id: FoodMeatSnake
+      amount: 4
   - type: Grammar
     attributes:
       proper: true
@@ -486,5 +448,9 @@
         Base: dead_small_purple_snake
       Dead:
         Base: dead_small_purple_snake
+  - type: Butcherable
+    spawned:
+    - id: FoodMeatSnake
+      amount: 2
   - type: SolutionTransfer
     maxTransferAmount: 1

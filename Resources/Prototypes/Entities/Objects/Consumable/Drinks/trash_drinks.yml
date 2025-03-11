@@ -76,6 +76,7 @@
     materialComposition:
       Glass: 100
   - type: SpaceGarbage
+  - type: DnaSubstanceTrace
 
 - type: entity
   name: base empty bottle
@@ -142,12 +143,6 @@
     materialComposition:
       Cardboard: 20
   - type: SpaceGarbage
-  - type: EmitSoundOnPickup
-    sound: /Audio/SimpleStation14/Items/Handling/drinkglass_pickup.ogg
-  - type: EmitSoundOnDrop
-    sound: /Audio/SimpleStation14/Items/Handling/drinkglass_drop.ogg
-  - type: EmitSoundOnLand
-    sound: /Audio/SimpleStation14/Items/Handling/drinkglass_drop.ogg
 
 - type: entity
   name: base empty bottle
@@ -315,6 +310,7 @@
   - type: Sprite
     sprite: Objects/Consumable/TrashDrinks/winebottle_empty.rsi
 
+
 - type: entity
   name: lime juice carton
   parent: DrinkCartonBaseEmpty
@@ -358,10 +354,6 @@
   components:
   - type: Sprite
     sprite: Objects/Consumable/Drinks/milk.rsi
-  - type: SolutionContainerManager
-    solutions:
-      drink:
-        maxVol: 100
 
 - type: entity
   name: soy milk carton

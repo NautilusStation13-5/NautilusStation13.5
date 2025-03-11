@@ -29,7 +29,7 @@
       receiveFrequencyId: SuitSensor
       autoConnect: false
     - type: WirelessNetworkConnection
-      range: 10000 # Delta-V Maximises the range for the Crew Monitor Server to make it work for Listening Post
+      range: 500
     - type: StationLimitedNetwork
     - type: ApcPowerReceiver
       powerLoad: 200
@@ -56,6 +56,7 @@
                 SheetSteel1:
                   min: 1
                   max: 2
+    - type: AmbientOnPowered
     - type: AmbientSound
       volume: -9
       range: 5

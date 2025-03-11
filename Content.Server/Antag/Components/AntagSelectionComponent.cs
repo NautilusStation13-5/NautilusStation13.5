@@ -1,6 +1,7 @@
 using Content.Server.Administration.Systems;
 using Content.Shared.Antag;
 using Content.Shared.Destructible.Thresholds;
+using Content.Shared.Preferences.Loadouts;
 using Content.Shared.Roles;
 using Content.Shared.Whitelist;
 using Robust.Shared.Audio;
@@ -103,6 +104,7 @@ public partial struct AntagSelectionDefinition()
 
     /// <summary>
     /// Whether or not players should be picked to inhabit this antag or not.
+    /// If no players are left and <see cref="SpawnerPrototype"/> is set, it will make a ghost role.
     /// </summary>
     [DataField]
     public bool PickPlayer = true;
@@ -158,6 +160,12 @@ public partial struct AntagSelectionDefinition()
     /// </summary>
     [DataField]
     public ProtoId<StartingGearPrototype>? StartingGear;
+
+    /// <summary>
+    /// A list of role loadouts, from which a randomly selected one will be equipped.
+    /// </summary>
+    [DataField]
+    public List<ProtoId<RoleLoadoutPrototype>>? RoleLoadout;
 
     /// <summary>
     /// A briefing shown to the player.

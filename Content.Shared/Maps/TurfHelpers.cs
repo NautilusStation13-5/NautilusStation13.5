@@ -13,22 +13,6 @@ namespace Content.Shared.Maps
     public static class TurfHelpers
     {
         /// <summary>
-        ///     Attempts to get the turf at map indices with grid id or null if no such turf is found.
-        /// </summary>
-        public static TileRef GetTileRef(this Vector2i vector2i, EntityUid gridId, IEntityManager? entityManager = null)
-        {
-            entityManager ??= IoCManager.Resolve<IEntityManager>();
-
-            if (!entityManager.TryGetComponent<MapGridComponent>(gridId, out var grid))
-                return default;
-
-            if (!grid.TryGetTileRef(vector2i, out var tile))
-                return default;
-
-            return tile;
-        }
-
-        /// <summary>
         ///     Attempts to get the turf at a certain coordinates or null if no such turf is found.
         /// </summary>
         public static TileRef? GetTileRef(this EntityCoordinates coordinates, IEntityManager? entityManager = null, IMapManager? mapManager = null)

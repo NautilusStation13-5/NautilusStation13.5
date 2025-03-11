@@ -301,7 +301,7 @@ public sealed class SuicideCommandTests
     [Test]
     public async Task TestSuicideByHeldItemSpreadDamage()
     {
-        await using var pair = await PoolManager.GetServerClient(new()
+        await using var pair = await PoolManager.GetServerClient(new PoolSettings
         {
             Connected = true,
             Dirty = true,
@@ -357,14 +357,13 @@ public sealed class SuicideCommandTests
             consoleHost.GetSessionShell(playerMan.Sessions.First()).ExecuteCommand("suicide");
             var lethalDamageThreshold = mobThresholdsComp.Thresholds.Keys.Last();
 
-            if (damageableComp.DamageContainerID is not "Silicon")
-                Assert.Multiple(() =>
-                {
-                    Assert.That(mobStateSystem.IsDead(player, mobStateComp));
-                    Assert.That(entManager.TryGetComponent<GhostComponent>(mindComponent.CurrentEntity, out var ghostComp) &&
-                                !ghostComp.CanReturnToBody);
-                    Assert.That(damageableComp.Damage.DamageDict["Slash"], Is.EqualTo(lethalDamageThreshold / 2));
-                });
+            Assert.Multiple(() =>
+            {
+                Assert.That(mobStateSystem.IsDead(player, mobStateComp));
+                Assert.That(entManager.TryGetComponent<GhostComponent>(mindComponent.CurrentEntity, out var ghostComp) &&
+                            !ghostComp.CanReturnToBody);
+                Assert.That(damageableComp.Damage.DamageDict["Slash"], Is.EqualTo(lethalDamageThreshold / 2));
+            });
         });
 
         await pair.CleanReturnAsync();

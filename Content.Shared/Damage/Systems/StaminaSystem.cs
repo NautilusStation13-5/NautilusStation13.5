@@ -1,6 +1,4 @@
 using System.Linq;
-using Content.Shared._Goobstation.MartialArts;
-using Content.Shared._Goobstation.MartialArts.Components;
 using Content.Shared.Administration.Logs;
 using Content.Shared.Alert;
 using Content.Shared.CombatMode;
@@ -9,13 +7,10 @@ using Content.Shared.Damage.Events;
 using Content.Shared.Database;
 using Content.Shared.Effects;
 using Content.Shared.IdentityManagement;
-using Content.Shared.Jittering;
 using Content.Shared.Popups;
 using Content.Shared.Projectiles;
 using Content.Shared.Rejuvenate;
 using Content.Shared.Rounding;
-using Content.Shared.Speech.EntitySystems;
-using Content.Shared.StatusEffect;
 using Content.Shared.Stunnable;
 using Content.Shared.Throwing;
 using Content.Shared.Weapons.Melee.Events;
@@ -33,17 +28,12 @@ public sealed partial class StaminaSystem : EntitySystem
 {
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly INetManager _net = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly ISharedAdminLogManager _adminLogger = default!;
     [Dependency] private readonly AlertsSystem _alerts = default!;
     [Dependency] private readonly MetaDataSystem _metadata = default!;
     [Dependency] private readonly SharedColorFlashEffectSystem _color = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
     [Dependency] private readonly SharedStunSystem _stunSystem = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly StatusEffectsSystem _statusEffect = default!; // goob edit
-    [Dependency] private readonly SharedStutteringSystem _stutter = default!; // goob edit
-    [Dependency] private readonly SharedJitteringSystem _jitter = default!; // goob edit
 
     /// <summary>
     /// How much of a buffer is there between the stun duration and when stuns can be re-applied.
@@ -89,8 +79,7 @@ public sealed partial class StaminaSystem : EntitySystem
         {
             RemCompDeferred<ActiveStaminaComponent>(uid);
         }
-
-        SetStaminaAlert(uid);
+        _alerts.ClearAlert(uid, component.StaminaAlert);
     }
 
     private void OnStartup(EntityUid uid, StaminaComponent component, ComponentStartup args)
@@ -124,7 +113,7 @@ public sealed partial class StaminaSystem : EntitySystem
 
     private void OnDisarmed(EntityUid uid, StaminaComponent component, DisarmedEvent args)
     {
-        if (args.Handled || !_random.Prob(args.PushProbability))
+        if (args.Handled)
             return;
 
         if (component.Critical)
@@ -133,17 +122,8 @@ public sealed partial class StaminaSystem : EntitySystem
         var damage = args.PushProbability * component.CritThreshold;
         TakeStaminaDamage(uid, damage, component, source: args.Source);
 
-        // We need a better method of getting if the entity is going to resist stam damage, both this and the lines in the foreach at the end of OnHit() are awful
-        if (!component.Critical)
-            return;
-
-        var targetEnt = Identity.Entity(args.Target, EntityManager);
-        var sourceEnt = Identity.Entity(args.Source, EntityManager);
-
-        _popup.PopupEntity(Loc.GetString("stunned-component-disarm-success-others", ("source", sourceEnt), ("target", targetEnt)), targetEnt, Filter.PvsExcept(args.Source), true, PopupType.LargeCaution);
-        _popup.PopupCursor(Loc.GetString("stunned-component-disarm-success", ("target", targetEnt)), args.Source, PopupType.Large);
-
-        _adminLogger.Add(LogType.DisarmedKnockdown, LogImpact.Medium, $"{ToPrettyString(args.Source):user} knocked down {ToPrettyString(args.Target):target}");
+        args.PopupPrefix = "disarm-action-shove-";
+        args.IsStunned = component.Critical;
 
         args.Handled = true;
     }
@@ -156,13 +136,6 @@ public sealed partial class StaminaSystem : EntitySystem
         {
             return;
         }
-
-        // Goobstation - Martial Arts
-        if (TryComp<MartialArtsKnowledgeComponent>(args.User, out var knowledgeComp)
-            && TryComp<MartialArtBlockedComponent>(args.Weapon, out var blockedComp)
-            && knowledgeComp.MartialArtsForm == blockedComp.Form)
-            return;
-        // Goobstation
 
         var ev = new StaminaDamageOnHitAttemptEvent();
         RaiseLocalEvent(uid, ref ev);
@@ -181,24 +154,21 @@ public sealed partial class StaminaSystem : EntitySystem
             toHit.Add((ent, stam));
         }
 
+        var hitEvent = new StaminaMeleeHitEvent(toHit);
+        RaiseLocalEvent(uid, hitEvent);
+
+        if (hitEvent.Handled)
+            return;
+
+        var damage = component.Damage;
+
+        damage *= hitEvent.Multiplier;
+
+        damage += hitEvent.FlatModifier;
+
         foreach (var (ent, comp) in toHit)
         {
-            var hitEvent = new TakeStaminaDamageEvent(ent);
-            RaiseLocalEvent(uid, hitEvent);
-
-            if (hitEvent.Handled)
-                return;
-
-            var damageImmediate = component.Damage;
-            damageImmediate *= hitEvent.Multiplier;
-            damageImmediate += hitEvent.FlatModifier;
-
-            damageImmediate *= hitEvent.Multiplier;
-
-            damageImmediate += hitEvent.FlatModifier;
-
-            TakeStaminaDamage(ent, damageImmediate / toHit.Count, comp, source: args.User, with: args.Weapon, sound: component.Sound, immediate: true);
-            TakeOvertimeStaminaDamage(ent, component.Overtime);
+            TakeStaminaDamage(ent, damage / toHit.Count, comp, source: args.User, with: args.Weapon, sound: component.Sound);
         }
     }
 
@@ -222,7 +192,9 @@ public sealed partial class StaminaSystem : EntitySystem
 
     private void OnCollide(EntityUid uid, StaminaDamageOnCollideComponent component, EntityUid target)
     {
-        if (!TryComp<StaminaComponent>(target, out var stamComp))
+        // you can't inflict stamina damage on things with no stamina component
+        // this prevents stun batons from using up charges when throwing it at lockers or lights
+        if (!HasComp<StaminaComponent>(target))
             return;
 
         var ev = new StaminaDamageOnHitAttemptEvent();
@@ -230,28 +202,13 @@ public sealed partial class StaminaSystem : EntitySystem
         if (ev.Cancelled)
             return;
 
-        var hitEvent = new TakeStaminaDamageEvent(target);
-        RaiseLocalEvent(target, hitEvent);
-
-        if (hitEvent.Handled)
-            return;
-
-        var damage = component.Damage;
-
-        damage *= hitEvent.Multiplier;
-
-        damage += hitEvent.FlatModifier;
-
-        TakeStaminaDamage(target, damage, source: uid, sound: component.Sound);
+        TakeStaminaDamage(target, component.Damage, source: uid, sound: component.Sound);
     }
 
     private void SetStaminaAlert(EntityUid uid, StaminaComponent? component = null)
     {
         if (!Resolve(uid, ref component, false) || component.Deleted)
-        {
-            _alerts.ClearAlert(uid, "Stamina");
             return;
-        }
 
         var severity = ContentHelpers.RoundToLevels(MathF.Max(0f, component.CritThreshold - component.StaminaDamage), component.CritThreshold, 7);
         _alerts.ShowAlert(uid, component.StaminaAlert, (short) severity);
@@ -275,28 +232,10 @@ public sealed partial class StaminaSystem : EntitySystem
         return true;
     }
 
-    // goob edit - stunmeta
-    public void TakeOvertimeStaminaDamage(EntityUid uid, float value)
-    {
-         // do this only on server side because otherwise shit happens (Coderabbit do not bitch at me about the profanity I swear to God)
-         if (value == 0)
-            return;
-
-        var hasComp = TryComp<OvertimeStaminaDamageComponent>(uid, out var overtime);
-
-        if (!hasComp)
-            overtime = EnsureComp<OvertimeStaminaDamageComponent>(uid);
-
-        overtime!.Amount = hasComp ? overtime.Amount + value : value;
-        overtime!.Damage = hasComp ? overtime.Damage + value : value;
-    }
-
-    // goob edit - stunmeta
     public void TakeStaminaDamage(EntityUid uid, float value, StaminaComponent? component = null,
-        EntityUid? source = null, EntityUid? with = null, bool visual = true, SoundSpecifier? sound = null, bool? allowsSlowdown = true, bool immediate = true)
+        EntityUid? source = null, EntityUid? with = null, bool visual = true, SoundSpecifier? sound = null)
     {
-        if (!Resolve(uid, ref component, false)
-            || value == 0)
+        if (!Resolve(uid, ref component, false))
             return;
 
         var ev = new BeforeStaminaDamageEvent(value);
@@ -305,11 +244,8 @@ public sealed partial class StaminaSystem : EntitySystem
             return;
 
         // Have we already reached the point of max stamina damage?
-        if (component.Critical && immediate)
-        {
-            EnterStamCrit(uid, component, true); // enter stamcrit
+        if (component.Critical)
             return;
-        }
 
         var oldDamage = component.StaminaDamage;
         component.StaminaDamage = MathF.Max(0f, component.StaminaDamage + value);
@@ -324,23 +260,30 @@ public sealed partial class StaminaSystem : EntitySystem
         }
 
         var slowdownThreshold = component.CritThreshold / 2f;
-        if (allowsSlowdown == true)
 
-        // If we go above n% then apply effects
-        if (component.StaminaDamage > slowdownThreshold)
+        // If we go above n% then apply slowdown
+        if (oldDamage < slowdownThreshold &&
+            component.StaminaDamage > slowdownThreshold)
         {
-            // goob edit - stunmeta
-            // no slowdown because funny
-            _jitter.DoJitter(uid, TimeSpan.FromSeconds(10f), true);
-            _stutter.DoStutter(uid, TimeSpan.FromSeconds(10f), true);
+            _stunSystem.TrySlowdown(uid, TimeSpan.FromSeconds(3), true, 0.8f, 0.8f);
         }
 
         SetStaminaAlert(uid, component);
 
-        if (!component.Critical && component.StaminaDamage >= component.CritThreshold && value > 0)
-            EnterStamCrit(uid, component, immediate);
-        else if (component.StaminaDamage < component.CritThreshold)
-            ExitStamCrit(uid, component);
+        if (!component.Critical)
+        {
+            if (component.StaminaDamage >= component.CritThreshold)
+            {
+                EnterStamCrit(uid, component);
+            }
+        }
+        else
+        {
+            if (component.StaminaDamage < component.CritThreshold)
+            {
+                ExitStamCrit(uid, component);
+            }
+        }
 
         EnsureComp<ActiveStaminaComponent>(uid);
         Dirty(uid, component);
@@ -367,51 +310,27 @@ public sealed partial class StaminaSystem : EntitySystem
         }
     }
 
-    public void ToggleStaminaDrain(EntityUid target, float drainRate, bool enabled, bool modifiesSpeed, EntityUid? source = null)
-    {
-        if (!TryComp<StaminaComponent>(target, out var stamina))
-            return;
-
-        // If theres no source, we assume its the target that caused the drain.
-        var actualSource = source ?? target;
-
-        if (enabled)
-        {
-            stamina.ActiveDrains[actualSource] = (drainRate, modifiesSpeed);
-            EnsureComp<ActiveStaminaComponent>(target);
-        }
-        else
-            stamina.ActiveDrains.Remove(actualSource);
-
-        Dirty(target, stamina);
-    }
-
     public override void Update(float frameTime)
     {
         base.Update(frameTime);
+
         if (!_timing.IsFirstTimePredicted)
             return;
 
         var stamQuery = GetEntityQuery<StaminaComponent>();
         var query = EntityQueryEnumerator<ActiveStaminaComponent>();
         var curTime = _timing.CurTime;
+
         while (query.MoveNext(out var uid, out _))
         {
             // Just in case we have active but not stamina we'll check and account for it.
             if (!stamQuery.TryGetComponent(uid, out var comp) ||
-                comp.StaminaDamage <= 0f && !comp.Critical && comp.ActiveDrains.Count == 0)
+                comp.StaminaDamage <= 0f && !comp.Critical)
             {
                 RemComp<ActiveStaminaComponent>(uid);
                 continue;
             }
-            if (comp.ActiveDrains.Count > 0)
-                foreach (var (source, (drainRate, modifiesSpeed)) in comp.ActiveDrains)
-                    TakeStaminaDamage(uid,
-                    drainRate * frameTime,
-                    comp,
-                    source: source,
-                    visual: false,
-                    allowsSlowdown: modifiesSpeed);
+
             // Shouldn't need to consider paused time as we're only iterating non-paused stamina components.
             var nextUpdate = comp.NextUpdate;
 
@@ -426,43 +345,31 @@ public sealed partial class StaminaSystem : EntitySystem
             }
 
             comp.NextUpdate += TimeSpan.FromSeconds(1f);
-            // If theres no active drains, recover stamina.
-            if (comp.ActiveDrains.Count == 0)
-                TakeStaminaDamage(uid, -comp.Decay, comp);
-
+            TakeStaminaDamage(uid, -comp.Decay, comp);
             Dirty(uid, comp);
         }
     }
 
-    // goob edit - stunmeta
-    private void EnterStamCrit(EntityUid uid, StaminaComponent? component = null, bool hardStun = false)
+    private void EnterStamCrit(EntityUid uid, StaminaComponent? component = null)
     {
-        if (!Resolve(uid, ref component) || !hardStun && component.Critical)
+        if (!Resolve(uid, ref component) ||
+            component.Critical)
         {
             return;
         }
 
-        // if our entity is under stims make threshold bigger
-        if (TryComp<StamcritResistComponent>(uid, out var stamres)
-        && component.StaminaDamage < component.CritThreshold * stamres.Multiplier)
-            return;
+        // To make the difference between a stun and a stamcrit clear
+        // TODO: Mask?
 
-        if (!hardStun)
-        {
-            if (!_statusEffect.HasStatusEffect(uid, "KnockedDown"))
-                _stunSystem.TryKnockdown(uid, component.StunTime, true);
-            return;
-        }
-
-        // you got batonned hard.
         component.Critical = true;
+        component.StaminaDamage = component.CritThreshold;
+
         _stunSystem.TryParalyze(uid, component.StunTime, true);
+
         // Give them buffer before being able to be re-stunned
         component.NextUpdate = _timing.CurTime + component.StunTime + StamCritBufferTime;
-
         EnsureComp<ActiveStaminaComponent>(uid);
         Dirty(uid, component);
-
         _adminLogger.Add(LogType.Stamina, LogImpact.Medium, $"{ToPrettyString(uid):user} entered stamina crit");
     }
 

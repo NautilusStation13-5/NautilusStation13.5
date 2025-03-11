@@ -3,7 +3,8 @@
   id: BaseFlatpack
   name: base flatpack
   description: A flatpack used for constructing something.
-  categories: [ HideSpawnMenu ]
+  categories:
+  - HideSpawnMenu
   components:
   - type: Item
     size: Large
@@ -66,42 +67,6 @@
     guides: [ AME, Power ]
   - type: StealTarget
     stealGroup: AmePartFlatpack
-
-- type: entity
-  parent: BaseFlatpack
-  id: TegCenterPartFlatpack
-  name: TEG Center flatpack
-  description: A flatpack used for constructing the central core of a TEG.
-  components:
-  - type: Flatpack
-    entity: TegCenter
-  - type: Sprite
-    layers:
-    - state: base
-    - state: overlay
-      color: "#cec8ac"
-      map: ["enum.FlatpackVisualLayers.Overlay"]
-    - state: icon-default
-  - type: GuideHelp
-    guides: [ TEG, Power ]
-
-- type: entity
-  parent: BaseFlatpack
-  id: TegCirculatorPartFlatpack
-  name: TEG Circulator flatpack
-  description: A flatpack used for constructing the circulator of a TEG.
-  components:
-  - type: Flatpack
-    entity: TegCirculator
-  - type: Sprite
-    layers:
-    - state: base
-    - state: overlay
-      color: "#cec8ac"
-      map: ["enum.FlatpackVisualLayers.Overlay"]
-    - state: icon-default
-  - type: GuideHelp
-    guides: [ TEG, Power ]
 
 - type: entity
   parent: BaseFlatpack
@@ -230,3 +195,72 @@
     - state: overlay
       color: "#cec8ac"
     - state: icon-default
+
+- type: entity
+  parent: BaseFlatpack
+  id: SpaceHeaterFlatpack
+  name: space heater flatpack
+  description: A flatpack used for constructing a space heater.
+  components:
+  - type: Flatpack
+    entity: SpaceHeaterAnchored
+
+- type: entity
+  parent: BaseFlatpack
+  id: FaxMachineFlatpack
+  name: fax machine flatpack
+  description: A flatpack used for constructing a fax machine.
+  components:
+  - type: Sprite
+    layers:
+    - state: fax-machine
+  - type: Flatpack
+    entity: FaxMachineBase
+
+- type: entity
+  parent: BaseFlatpack
+  id: CrewMonitoringServerFlatpack
+  name: crew monitoring server flatpack
+  description: A flatpack used for constructing a crew monitoring server.
+  components:
+  - type: Flatpack
+    entity: CrewMonitoringServer
+
+- type: entity
+  parent: BaseFlatpack
+  id: CrewMonitoringComputerFlatpack
+  name: crew monitoring computer flatpack
+  description: A flatpack used for constructing a crew monitoring console.
+  components:
+  - type: Flatpack
+    entity: ComputerCrewMonitoring
+
+
+##CHEM LAB STUFF
+
+- type: entity
+  parent: FaxMachineFlatpack
+  id: ReagentGrinderFlatpack
+  name: fax machine flatpack
+  description: A flatpack used for constructing a reagent grinder.
+  components:
+  - type: Flatpack
+    entity: KitchenReagentGrinder
+
+- type: entity
+  parent: FaxMachineFlatpack
+  id: HotplateFlatpack
+  name: fax machine flatpack
+  description: A flatpack used for constructing a hotplate.
+  components:
+  - type: Flatpack
+    entity: ChemistryHotplate
+
+- type: entity
+  parent: FaxMachineFlatpack
+  id: CentrifugeFlatpack
+  name: fax machine flatpack
+  description: A flatpack used for constructing a centrifuge.
+  components:
+  - type: Flatpack
+    entity: MachineCentrifuge

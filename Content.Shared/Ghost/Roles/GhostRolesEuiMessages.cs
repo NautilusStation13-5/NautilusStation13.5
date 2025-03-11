@@ -1,4 +1,3 @@
-using Content.Shared.Customization.Systems;
 using Content.Shared.Eui;
 using Content.Shared.Roles;
 using Robust.Shared.Serialization;
@@ -12,7 +11,12 @@ namespace Content.Shared.Ghost.Roles
         public string Name { get; set; }
         public string Description { get; set; }
         public string Rules { get; set; }
-        public List<CharacterRequirement>? Requirements { get; set; }
+
+        // TODO ROLE TIMERS
+        // Actually make use of / enforce this requirement?
+        // Why is this even here.
+        // Move to ghost role prototype & respect CCvars.GameRoleTimerOverride
+        public HashSet<JobRequirement>? Requirements { get; set; }
 
         /// <inheritdoc cref="GhostRoleKind"/>
         public GhostRoleKind Kind { get; set; }
@@ -27,6 +31,7 @@ namespace Content.Shared.Ghost.Roles
         /// if <see cref="Kind"/> is <see cref="GhostRoleKind.RaffleInProgress"/>, specifies when raffle finishes.
         /// </summary>
         public TimeSpan RaffleEndTime { get; set; }
+
     }
 
     [NetSerializable, Serializable]

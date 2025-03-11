@@ -52,7 +52,6 @@ public sealed partial class AdminVerbSystem
     [Dependency] private readonly StationJobsSystem _stationJobsSystem = default!;
     [Dependency] private readonly JointSystem _jointSystem = default!;
     [Dependency] private readonly BatterySystem _batterySystem = default!;
-    [Dependency] private readonly SharedTransformSystem _xformSystem = default!;
     [Dependency] private readonly MetaDataSystem _metaSystem = default!;
     [Dependency] private readonly GunSystem _gun = default!;
 
@@ -328,7 +327,7 @@ public sealed partial class AdminVerbSystem
                 Act = () =>
                 {
                     var (mapUid, gridUid) = _adminTestArenaSystem.AssertArenaLoaded(player);
-                    _xformSystem.SetCoordinates(args.Target, new EntityCoordinates(gridUid ?? mapUid, Vector2.One));
+                    _transformSystem.SetCoordinates(args.Target, new EntityCoordinates(gridUid ?? mapUid, Vector2.One));
                 },
                 Impact = LogImpact.Medium,
                 Message = Loc.GetString("admin-trick-send-to-test-arena-description"),
@@ -534,7 +533,7 @@ public sealed partial class AdminVerbSystem
                     if (shuttle is null)
                         return;
 
-                    _xformSystem.SetCoordinates(args.User, new EntityCoordinates(shuttle.Value, Vector2.Zero));
+                    _transformSystem.SetCoordinates(args.User, new EntityCoordinates(shuttle.Value, Vector2.Zero));
                 },
                 Impact = LogImpact.Low,
                 Message = Loc.GetString("admin-trick-locate-cargo-shuttle-description"),
@@ -726,15 +725,7 @@ public sealed partial class AdminVerbSystem
                         if (!int.TryParse(amount, out var result))
                             return;
 
-                        if (result > 0)
-                        {
-                            ballisticAmmo.UnspawnedCount = result;
-                        }
-                        else
-                        {
-                            ballisticAmmo.UnspawnedCount = 0;
-                        }
-
+                        _gun.SetBallisticUnspawned((args.Target, ballisticAmmo), result);
                         _gun.UpdateBallisticAppearance(args.Target, ballisticAmmo);
                     });
                 },
@@ -746,11 +737,11 @@ public sealed partial class AdminVerbSystem
         }
     }
 
-    private void RefillEquippedTanks(EntityUid target, Gas plasma)
+    private void RefillEquippedTanks(EntityUid target, Gas gasType)
     {
         foreach (var held in _inventorySystem.GetHandOrInventoryEntities(target))
         {
-            RefillGasTank(held, Gas.Plasma);
+            RefillGasTank(held, gasType);
         }
     }
 

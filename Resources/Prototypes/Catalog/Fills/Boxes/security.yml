@@ -4,10 +4,6 @@
   id: BoxHandcuff
   description: A box full of handcuffs.
   components:
-  - type: Storage
-    whitelist:
-      components:
-      - Handcuff
   - type: StorageFill
     contents:
       - id: Handcuffs
@@ -16,21 +12,6 @@
     layers:
       - state: box_security
       - state: handcuff
-
-- type: entity
-  name: prisoner headset box
-  parent: BoxCardboard
-  id: BoxPrisonerHeadset
-  description: A box of prisoner headsets.
-  components:
-  - type: StorageFill
-    contents:
-    - id: ClothingHeadsetPrison
-      amount: 4
-  - type: Sprite
-    layers:
-    - state: box_security
-    - state: headset
 
 - type: entity
   name: flashbang box

@@ -4,9 +4,8 @@
   description: job-description-bartender
   playTimeTracker: JobBartender
   requirements:
-    - !type:CharacterDepartmentTimeRequirement
-      department: Civilian
-      min: 3600 #DeltaV
+    - !type:OverallPlaytimeRequirement
+      time: 3600 #1 hr
   startingGear: BartenderGear
   icon: "JobIconBartender"
   supervisors: job-supervisors-hop
@@ -20,24 +19,10 @@
 
 - type: startingGear
   id: BartenderGear
-  subGear:
-  - BartenderPlasmamanGear
   equipment:
-    head: ClothingHeadHatTophat
-    jumpsuit: ClothingUniformJumpsuitBartender
-    outerClothing: ClothingOuterVest
-    back: ClothingBackpackFilled
     shoes: ClothingShoesColorBlack
     id: BartenderPDA
     ears: ClothingHeadsetService
-  innerClothingSkirt: ClothingUniformJumpskirtBartender
-  satchel: ClothingBackpackSatchelFilled
-  duffelbag: ClothingBackpackDuffelFilled
-
-- type: startingGear
-  id: BartenderPlasmamanGear
-  parent: BasePlasmamanGear
-  equipment:
-    jumpsuit: ClothingUniformEnvirosuitEnviroslacks
-    head: ClothingHeadEnvirohelmColorWhite
-    gloves: ClothingHandsGlovesEnviroglovesWhite
+  #storage:
+    #back:
+    #- Stuff

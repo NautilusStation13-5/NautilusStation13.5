@@ -1,5 +1,4 @@
 using Content.Server.Chat.Systems;
-using Content.Shared.Chat;
 using Content.Shared.Magic;
 using Content.Shared.Magic.Events;
 

@@ -11,7 +11,11 @@
     - HEAD
     unfoldedSlots:
     - MASK
+    foldedHideLayers: []
+    unfoldedHideLayers:
+    - Snout
   - type: Mask
+    disableOnFolded: true
   - type: IngestionBlocker
   - type: IdentityBlocker
     coverage: MOUTH
@@ -25,21 +29,11 @@
   - type: Tag
     tags:
     - Bandana
+    - ClothMade
   - type: HideLayerClothing
     slots:
     - Snout
     hideOnToggle: true
-
-- type: entity
-  parent: ClothingMaskBandanaBase
-  id: ClothingMaskBandWhite
-  name: bandana
-  description: A bandana to make you look cool.
-  components:
-  - type: Sprite
-    sprite: Clothing/Head/Bandanas/white.rsi
-  - type: Clothing
-    sprite: Clothing/Head/Bandanas/white.rsi
 
 - type: entity
   parent: ClothingMaskBandanaBase
@@ -75,8 +69,8 @@
     sprite: Clothing/Head/Bandanas/botany.rsi
   - type: Tag
     tags:
-    - ClothMade
     - WhitelistChameleon
+    - ClothMade
 
 - type: entity
   parent: ClothingMaskBandanaBase

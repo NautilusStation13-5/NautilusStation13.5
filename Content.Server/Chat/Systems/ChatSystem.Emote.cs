@@ -1,6 +1,4 @@
 using System.Collections.Frozen;
-using System.Linq;
-using Content.Shared.Chat;
 using Content.Shared.Chat.Prototypes;
 using Content.Shared.Speech;
 using Robust.Shared.Prototypes;
@@ -12,7 +10,6 @@ namespace Content.Server.Chat.Systems;
 public partial class ChatSystem
 {
     private FrozenDictionary<string, EmotePrototype> _wordEmoteDict = FrozenDictionary<string, EmotePrototype>.Empty;
-    private IReadOnlyList<string> Punctuation { get; } = new List<string> { ",", ".", "!", "?", "-", "~", "'", "\"", };
 
     protected override void OnPrototypeReload(PrototypesReloadedEventArgs obj)
     {
@@ -96,8 +93,7 @@ public partial class ChatSystem
         {
             // not all emotes are loc'd, but for the ones that are we pass in entity
             var action = Loc.GetString(_random.Pick(emote.ChatMessages), ("entity", source));
-            var language = _language.GetLanguage(source);
-            SendEntityEmote(source, action, range, nameOverride, language, hideLog: hideLog, checkEmote: false, ignoreActionBlocker: ignoreActionBlocker);
+            SendEntityEmote(source, action, range, nameOverride, hideLog: hideLog, checkEmote: false, ignoreActionBlocker: ignoreActionBlocker);
         }
 
         // do the rest of emote event logic here
@@ -165,18 +161,32 @@ public partial class ChatSystem
     /// <param name="textInput"></param>
     private void TryEmoteChatInput(EntityUid uid, string textInput)
     {
-        var actionLower = textInput.ToLower();
-        // Replace ending punctuation with nothing
-        if (Punctuation.Any(punctuation => actionLower.EndsWith(punctuation)))
-            actionLower = actionLower.Remove(actionLower.Length - 1);
-
-        if (!_wordEmoteDict.TryGetValue(actionLower, out var emote))
+        var actionTrimmedLower = TrimPunctuation(textInput.ToLower());
+        if (!_wordEmoteDict.TryGetValue(actionTrimmedLower, out var emote))
             return;
 
         if (!AllowedToUseEmote(uid, emote))
             return;
 
         InvokeEmoteEvent(uid, emote);
+        return;
+
+        static string TrimPunctuation(string textInput)
+        {
+            var trimEnd = textInput.Length;
+            while (trimEnd > 0 && char.IsPunctuation(textInput[trimEnd - 1]))
+            {
+                trimEnd--;
+            }
+
+            var trimStart = 0;
+            while (trimStart < trimEnd && char.IsPunctuation(textInput[trimStart]))
+            {
+                trimStart++;
+            }
+
+            return textInput[trimStart..trimEnd];
+        }
     }
     /// <summary>
     /// Checks if we can use this emote based on the emotes whitelist, blacklist, and availibility to the entity.
@@ -186,18 +196,12 @@ public partial class ChatSystem
     /// <returns></returns>
     private bool AllowedToUseEmote(EntityUid source, EmotePrototype emote)
     {
-        // If emote is in AllowedEmotes, it will bypass whitelist and blacklist
-        if (TryComp<SpeechComponent>(source, out var speech) &&
-            speech.AllowedEmotes.Contains(emote.ID))
-            return true;
-
-        // Check the whitelist and blacklist
-        if (_whitelistSystem.IsWhitelistFail(emote.Whitelist, source) ||
-            _whitelistSystem.IsBlacklistPass(emote.Blacklist, source))
+        if ((_whitelistSystem.IsWhitelistFail(emote.Whitelist, source) || _whitelistSystem.IsBlacklistPass(emote.Blacklist, source)))
             return false;
 
-        // Check if the emote is available for all
-        if (!emote.Available)
+        if (!emote.Available &&
+            TryComp<SpeechComponent>(source, out var speech) &&
+            !speech.AllowedEmotes.Contains(emote.ID))
             return false;
 
         return true;
@@ -206,7 +210,7 @@ public partial class ChatSystem
     private void InvokeEmoteEvent(EntityUid uid, EmotePrototype proto)
     {
         var ev = new EmoteEvent(proto);
-        RaiseLocalEvent(uid, ref ev, true); // goob edit
+        RaiseLocalEvent(uid, ref ev);
     }
 }
 

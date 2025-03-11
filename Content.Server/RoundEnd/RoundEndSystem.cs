@@ -22,7 +22,6 @@ using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 using Timer = Robust.Shared.Timing.Timer;
-using Content.Server.Announcements.Systems;
 
 namespace Content.Server.RoundEnd
 {
@@ -43,7 +42,6 @@ namespace Content.Server.RoundEnd
         [Dependency] private readonly EmergencyShuttleSystem _shuttle = default!;
         [Dependency] private readonly SharedAudioSystem _audio = default!;
         [Dependency] private readonly StationSystem _stationSystem = default!;
-        [Dependency] private readonly AnnouncerSystem _announcer = default!;
 
         public TimeSpan DefaultCooldownDuration { get; set; } = TimeSpan.FromSeconds(30);
 
@@ -127,7 +125,7 @@ namespace Content.Server.RoundEnd
             return _countdownTokenSource != null;
         }
 
-        public void RequestRoundEnd(EntityUid? requester = null, bool checkCooldown = true, string text = "round-end-system-shuttle-called-announcement", string name = "Station")
+        public void RequestRoundEnd(EntityUid? requester = null, bool checkCooldown = true, string text = "round-end-system-shuttle-called-announcement", string name = "round-end-system-shuttle-sender-announcement")
         {
             var duration = DefaultCountdownDuration;
 
@@ -145,7 +143,7 @@ namespace Content.Server.RoundEnd
             RequestRoundEnd(duration, requester, checkCooldown, text, name);
         }
 
-        public void RequestRoundEnd(TimeSpan countdownTime, EntityUid? requester = null, bool checkCooldown = true, string text = "round-end-system-shuttle-called-announcement", string name = "Station")
+        public void RequestRoundEnd(TimeSpan countdownTime, EntityUid? requester = null, bool checkCooldown = true, string text = "round-end-system-shuttle-called-announcement", string name = "round-end-system-shuttle-sender-announcement")
         {
             if (_gameTicker.RunLevel != GameRunLevel.InRound)
                 return;
@@ -182,22 +180,21 @@ namespace Content.Server.RoundEnd
                 units = "eta-units-minutes";
             }
 
-            _announcer.SendAnnouncement(_announcer.GetAnnouncementId("ShuttleCalled"),
-                Filter.Broadcast(),
-                text,
-                name,
-                Color.Gold,
-                null,
-                null,
+            _chatSystem.DispatchGlobalAnnouncement(Loc.GetString(text,
                 ("time", time),
-                    ("units", Loc.GetString(units))
-            );
+                ("units", Loc.GetString(units))),
+                Loc.GetString(name),
+                false,
+                null,
+                Color.Gold);
+
+            _audio.PlayGlobal("/Audio/Announcements/shuttlecalled.ogg", Filter.Broadcast(), true);
 
             LastCountdownStart = _gameTiming.CurTime;
             ExpectedCountdownEnd = _gameTiming.CurTime + countdownTime;
 
             // TODO full game saves
-            Timer.Spawn(countdownTime, _shuttle.CallEmergencyShuttle, _countdownTokenSource.Token);
+            Timer.Spawn(countdownTime, _shuttle.DockEmergencyShuttle, _countdownTokenSource.Token);
 
             ActivateCooldown();
             RaiseLocalEvent(RoundEndSystemChangedEvent.Default);
@@ -236,13 +233,10 @@ namespace Content.Server.RoundEnd
                 _adminLogger.Add(LogType.ShuttleRecalled, LogImpact.High, $"Shuttle recalled");
             }
 
-            _announcer.SendAnnouncement(
-                _announcer.GetAnnouncementId("ShuttleRecalled"),
-                Filter.Broadcast(),
-                "round-end-system-shuttle-recalled-announcement",
-                Loc.GetString("Station"),
-                Color.Gold
-            );
+            _chatSystem.DispatchGlobalAnnouncement(Loc.GetString("round-end-system-shuttle-recalled-announcement"),
+                Loc.GetString("Station"), false, colorOverride: Color.Gold);
+
+            _audio.PlayGlobal("/Audio/Announcements/shuttlerecalled.ogg", Filter.Broadcast(), true);
 
             LastCountdownStart = null;
             ExpectedCountdownEnd = null;
@@ -321,13 +315,9 @@ namespace Content.Server.RoundEnd
                     // Check is shuttle called or not. We should only dispatch announcement if it's already called
                     if (IsRoundEndRequested())
                     {
-                        _announcer.SendAnnouncement(
-                            _announcer.GetAnnouncementId("ShuttleCalled"),
-                            Filter.Broadcast(),
-                            textAnnounce,
+                        _chatSystem.DispatchGlobalAnnouncement(Loc.GetString(textAnnounce),
                             Loc.GetString(sender),
-                            Color.Gold
-                        );
+                            colorOverride: Color.Gold);
                     }
                     else
                     {
@@ -357,22 +347,6 @@ namespace Content.Server.RoundEnd
                 _cooldownTokenSource = null;
                 RaiseLocalEvent(RoundEndSystemChangedEvent.Default);
             }, _cooldownTokenSource.Token);
-        }
-
-        public void DelayShuttle(TimeSpan delay)
-        {
-            if (_countdownTokenSource == null || !ExpectedCountdownEnd.HasValue)
-                return;
-
-            var countdown = ExpectedCountdownEnd.Value - _gameTiming.CurTime + delay;
-            if (countdown.TotalSeconds < 0)
-                return;
-
-            ExpectedCountdownEnd = _gameTiming.CurTime + countdown;
-            _countdownTokenSource.Cancel();
-            _countdownTokenSource = new CancellationTokenSource();
-
-            Timer.Spawn(countdown, _shuttle.CallEmergencyShuttle, _countdownTokenSource.Token);
         }
 
         public override void Update(float frameTime)

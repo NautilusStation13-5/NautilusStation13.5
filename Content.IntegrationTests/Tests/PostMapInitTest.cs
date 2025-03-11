@@ -16,6 +16,7 @@ using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Prototypes;
+using Content.Shared.Station.Components;
 using Robust.Shared.Utility;
 using YamlDotNet.RepresentationModel;
 
@@ -29,16 +30,13 @@ namespace Content.IntegrationTests.Tests
 
         private static readonly string[] NoSpawnMaps =
         {
-            "CentCommMain",
-            "CentCommHarmony",
-            "Dart",
-            "NukieOutpost"
+            "CentComm",
+            "Dart"
         };
 
         private static readonly string[] Grids =
         {
-            "/Maps/CentralCommand/main.yml",
-            "/Maps/CentralCommand/harmony.yml", // Harmony CC version
+            "/Maps/centcomm.yml",
             "/Maps/Shuttles/cargo.yml",
             "/Maps/Shuttles/emergency.yml",
             "/Maps/Shuttles/infiltrator.yml",
@@ -48,32 +46,27 @@ namespace Content.IntegrationTests.Tests
         {
             "Dev",
             "TestTeg",
-            "CentCommMain",
-            "CentCommHarmony",
+            "Fland",
+            "Meta",
+            "Packed",
+            "Omega",
+            "Bagel",
+            "CentComm",
+            "Box",
+            "Core",
+            "Marathon",
             "MeteorArena",
-            "NukieOutpost",
-            "Core", // No current maintainer. In need of a rework...
-            "Pebble", // Maintained by Plyushune
-            // "Edge", // De-rotated, no current maintainer.
-            "Saltern", // Maintained by the Sin Mapping Team, ODJ, and TCJ.
-            "Shoukou", // Maintained by Violet
-            // "Tortuga", // De-rotated, no current maintainer.
-            "Arena", // Maintained by astriloqua.
-            // "Asterisk", // De-rotated, no current maintainer.
-            "Glacier", // Maintained by Violet
-            // "TheHive", // De-rotated, no current maintainer.
-            // "Hammurabi", // De-rotated, no current maintainer.
-            "Lighthouse", // Maintained by Violet
-            // "Submarine", // De-rotated, no current maintainer.
-            "Gax", // Maintained by Estacao Pirata
-            "Lavatest", // Lavaland Change
-            "Rad", // Maintained by Estacao Pirata
-            // "Europa", // De-rotated, has significant issues.
-            "Meta", // Maintained by Estacao Pirata
-            "Box", // Maintained by Estacao Pirata
-            "Lambda", // Maintained by Estacao Pirata
-            "Bagel", // Maintained by Estacao Pirata
-            "Northway" // Maintained by Violet
+            "Saltern",
+            "Reach",
+            "Train",
+            "Oasis",
+            "Cog",
+            "Gate",
+            "Amber",
+            "Loop",
+            "Elkridge"
+
+
         };
 
         /// <summary>
@@ -254,27 +247,22 @@ namespace Content.IntegrationTests.Tests
                         Assert.That(lateSpawns, Is.GreaterThan(0), $"Found no latejoin spawn points on {mapProto}");
                     }
 
-                    var comp = entManager.GetComponent<StationJobsComponent>(station);
-                    var jobs = new HashSet<string>(comp.SetupAvailableJobs.Keys);
-
                     // Test all availableJobs have spawnPoints
                     // This is done inside gamemap test because loading the map takes ages and we already have it.
+                    var comp = entManager.GetComponent<StationJobsComponent>(station);
+                    var jobs = new HashSet<ProtoId<JobPrototype>>(comp.SetupAvailableJobs.Keys);
+
                     var spawnPoints = entManager.EntityQuery<SpawnPointComponent>()
-                        .Where(x => x.SpawnType == SpawnPointType.Job)
-                        .Select(x => x.Job!.ID);
+                        .Where(x => x.SpawnType == SpawnPointType.Job && x.Job != null)
+                        .Select(x => x.Job.Value);
 
                     jobs.ExceptWith(spawnPoints);
 
-                    foreach (var jobId in jobs)
-                    {
-                        var exists = protoManager.TryIndex<JobPrototype>(jobId, out var jobPrototype);
+                    spawnPoints = entManager.EntityQuery<ContainerSpawnPointComponent>()
+                        .Where(x => x.SpawnType is SpawnPointType.Job or SpawnPointType.Unset && x.Job != null)
+                        .Select(x => x.Job.Value);
 
-                        if (!exists)
-                            continue;
-
-                        if (jobPrototype.JobEntity != null)
-                            jobs.Remove(jobId);
-                    }
+                    jobs.ExceptWith(spawnPoints);
 
                     Assert.That(jobs, Is.Empty, $"There is no spawnpoints for {string.Join(", ", jobs)} on {mapProto}.");
                 }

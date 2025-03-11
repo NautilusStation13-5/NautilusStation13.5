@@ -62,7 +62,7 @@
     containers:
       disposals: !type:Container
   - type: StaticPrice
-    price: 62
+    price: 70
   - type: PowerSwitch
 
 - type: entity
@@ -77,9 +77,6 @@
     graph: DisposalMachine
     node: disposal_unit
   - type: DisposalUnit
-    blacklist:
-      components:
-      - SegmentedEntity
   - type: ThrowInsertContainer
     containerId: disposals
   - type: UserInterface

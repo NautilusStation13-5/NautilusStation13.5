@@ -144,13 +144,13 @@
   - type: SolutionContainerManager
     solutions:
       ammo:
-        maxVol: 30
+        maxVol: 15
   - type: RefillableSolution
     solution: ammo
   - type: DrainableSolution
     solution: ammo
   - type: SolutionInjectOnProjectileHit
-    transferAmount: 30 # "Hey, you're not meant to have a shotgun its gree- *snores*"
+    transferAmount: 15
     solution: ammo
   - type: InjectableSolution
     solution: ammo

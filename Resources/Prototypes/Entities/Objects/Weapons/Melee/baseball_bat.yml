@@ -1,6 +1,6 @@
 - type: entity
   name: baseball bat
-  parent: BaseItem
+  parent: [BaseItem, BaseMinorContraband]
   id: BaseBallBat
   description: A robust baseball bat.
   components:
@@ -9,27 +9,18 @@
     state: icon
   - type: MeleeWeapon
     wideAnimationRotation: -135
-    range: 1.6
     damage:
       types:
-        Blunt: 7.5
+        Blunt: 10
         Structural: 5
-    bluntStaminaDamageFactor: 2.0
-    heavyRateModifier: 2
-    heavyDamageBaseModifier: 1.75
-    heavyStaminaCost: 10
-    maxTargets: 2
-    angle: 120
     soundHit:
       collection: MetalThud
   - type: Wieldable
   - type: IncreaseDamageOnWield
     damage:
       types:
-        Blunt: 4
+        Blunt: 5
         Structural: 10
-  - type: DamageOtherOnHit
-    staminaCost: 10
   - type: Item
     size: Normal
   - type: Tool

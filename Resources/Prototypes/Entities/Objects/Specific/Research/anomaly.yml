@@ -21,10 +21,6 @@
     - ScannersAndVessels
   - type: Item
     storedRotation: -90
-  - type: ReverseEngineering # Nyano
-    difficulty: 2
-    recipes:
-      - AnomalyScanner
 
 - type: entity
   id: AnomalyLocatorUnpowered
@@ -56,6 +52,7 @@
       components:
       - Anomaly
   - type: Beeper
+    isMuted: true
     minBeepInterval: 0.15
     maxBeepInterval: 1.00
     beepSound:
@@ -129,14 +126,19 @@
     state: icon
   - type: Item
     size: Large
+    storedSprite:
+      state: storage
+      sprite: Objects/Weapons/Melee/gorilla.rsi
   - type: MeleeWeapon
-    attackRate: 2
+    attackRate: 0.5
     angle: 0
     animation: WeaponArcFist
     wideAnimationRotation: -135
     damage:
       types:
         Blunt: 20
+    soundHit:
+      path: "/Audio/Weapons/Guns/Gunshots/kinetic_accel.ogg"
   - type: CorePoweredThrower
   - type: MeleeThrowOnHit
     unanchorOnHit: true
@@ -153,3 +155,10 @@
   - type: ContainerContainer
     containers:
       core_slot: !type:ContainerSlot
+  - type: DamageOnAttackedProtection
+    damageProtection:
+      flatReductions:
+        Heat: 100
+        Cold: 100
+        Radiation: 100
+    slots: NONE

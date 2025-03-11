@@ -21,16 +21,12 @@ using Content.Shared.IdentityManagement;
 using Content.Shared.Popups;
 using Robust.Server.GameObjects;
 using Robust.Shared.Configuration;
-using Content.Server.Announcements.Systems;
-using Robust.Shared.Player;
-using Content.Server.Station.Components;
 
 namespace Content.Server.Communications
 {
     public sealed class CommunicationsConsoleSystem : EntitySystem
     {
         [Dependency] private readonly AccessReaderSystem _accessReaderSystem = default!;
-        [Dependency] private readonly InteractionSystem _interaction = default!;
         [Dependency] private readonly AlertLevelSystem _alertLevelSystem = default!;
         [Dependency] private readonly ChatSystem _chatSystem = default!;
         [Dependency] private readonly DeviceNetworkSystem _deviceNetworkSystem = default!;
@@ -41,7 +37,6 @@ namespace Content.Server.Communications
         [Dependency] private readonly UserInterfaceSystem _uiSystem = default!;
         [Dependency] private readonly IConfigurationManager _cfg = default!;
         [Dependency] private readonly IAdminLogManager _adminLogger = default!;
-        [Dependency] private readonly AnnouncerSystem _announcer = default!;
 
         private const float UIUpdateInterval = 5.0f;
 
@@ -192,14 +187,16 @@ namespace Content.Server.Communications
         private bool CanCallOrRecall(CommunicationsConsoleComponent comp)
         {
             // Defer to what the round end system thinks we should be able to do.
-            if (_emergency.EmergencyShuttleArrived
-                || !_roundEndSystem.CanCallOrRecall()
-                || !comp.CanShuttle)
+            if (_emergency.EmergencyShuttleArrived || !_roundEndSystem.CanCallOrRecall())
+                return false;
+
+            // Ensure that we can communicate with the shuttle (either call or recall)
+            if (!comp.CanShuttle)
                 return false;
 
             // Calling shuttle checks
             if (_roundEndSystem.ExpectedCountdownEnd is null)
-                return comp.CanShuttle;
+                return true;
 
             // Recalling shuttle checks
             var recallThreshold = _cfg.GetCVar(CCVars.EmergencyRecallTurningPoint);
@@ -264,18 +261,16 @@ namespace Content.Server.Communications
             Loc.TryGetString(comp.Title, out var title);
             title ??= comp.Title;
 
-            msg += $"\n{Loc.GetString("comms-console-announcement-sent-by")} {author}";
+            msg += "\n" + Loc.GetString("comms-console-announcement-sent-by") + " " + author;
             if (comp.Global)
             {
-                _announcer.SendAnnouncement("announce", Filter.Broadcast(), msg, title, comp.Color);
+                _chatSystem.DispatchGlobalAnnouncement(msg, title, announcementSound: comp.Sound, colorOverride: comp.Color);
 
                 _adminLogger.Add(LogType.Chat, LogImpact.Low, $"{ToPrettyString(message.Actor):player} has sent the following global announcement: {msg}");
                 return;
             }
 
-            if (TryComp<StationDataComponent>(_stationSystem.GetOwningStation(uid), out var stationData))
-                _announcer.SendAnnouncement("announce", _stationSystem.GetInStation(stationData), msg, title,
-                    comp.Color);
+            _chatSystem.DispatchStationAnnouncement(uid, msg, title, colorOverride: comp.Color);
 
             _adminLogger.Add(LogType.Chat, LogImpact.Low, $"{ToPrettyString(message.Actor):player} has sent the following station announcement: {msg}");
 

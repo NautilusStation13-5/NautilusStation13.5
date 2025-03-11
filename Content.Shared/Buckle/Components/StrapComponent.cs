@@ -15,7 +15,7 @@ public sealed partial class StrapComponent : Component
     /// <summary>
     /// The entities that are currently buckled to this strap.
     /// </summary>
-    [ViewVariables, AutoNetworkedField]
+    [DataField, AutoNetworkedField]
     public HashSet<EntityUid> BuckledEntities = new();
 
     /// <summary>
@@ -78,6 +78,12 @@ public sealed partial class StrapComponent : Component
     /// </summary>
     [DataField]
     public ProtoId<AlertPrototype> BuckledAlertType = "Buckled";
+
+    /// <summary>
+    /// How long it takes to buckle someone else into a chair
+    /// </summary>
+    [DataField]
+    public float BuckleDoafterTime = 2f;
 
     /// <summary>
     /// Whether InteractHand will buckle the user to the strap.

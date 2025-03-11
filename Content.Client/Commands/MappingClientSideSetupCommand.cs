@@ -1,3 +1,4 @@
+using Content.Client.Actions;
 using Content.Client.Mapping;
 using Content.Client.Markers;
 using JetBrains.Annotations;
@@ -12,7 +13,6 @@ internal sealed class MappingClientSideSetupCommand : LocalizedCommands
 {
     [Dependency] private readonly IEntitySystemManager _entitySystemManager = default!;
     [Dependency] private readonly ILightManager _lightManager = default!;
-    [Dependency] private readonly IStateManager _stateManager = default!;
 
     public override string Command => "mappingclientsidesetup";
 
@@ -24,9 +24,8 @@ internal sealed class MappingClientSideSetupCommand : LocalizedCommands
         {
             _entitySystemManager.GetEntitySystem<MarkerSystem>().MarkersVisible = true;
             _lightManager.Enabled = false;
-            shell.ExecuteCommand("showsubfloor");
-            shell.ExecuteCommand("zoom 1.5");
-            shell.ExecuteCommand("scene MappingState");
+            shell.ExecuteCommand("showsubfloorforever");
+            _entitySystemManager.GetEntitySystem<ActionsSystem>().LoadActionAssignments("/mapping_actions.yml", false);
         }
     }
 }

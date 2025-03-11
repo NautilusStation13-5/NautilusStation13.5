@@ -74,12 +74,12 @@ public sealed partial class OfferingWindowOption : PanelContainer
 
             if (_claimed)
             {
-                ClaimButton.AddStyleClass(StyleBase.ButtonDanger);
+                ClaimButton.AddStyleClass(StyleBase.ButtonCaution);
                 ClaimButton.Text = Loc.GetString("offering-window-claimed");
             }
             else
             {
-                ClaimButton.RemoveStyleClass(StyleBase.ButtonDanger);
+                ClaimButton.RemoveStyleClass(StyleBase.ButtonCaution);
                 ClaimButton.Text = Loc.GetString("offering-window-claim");
             }
         }

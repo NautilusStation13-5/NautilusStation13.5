@@ -100,7 +100,7 @@ public sealed partial class ElectrifiedComponent : Component
     public float ShockDamage = 7.5f;
 
     /// <summary>
-    ///     Shock time, in seconds.
+    /// Shock time, in seconds.
     /// </summary>
     [DataField, AutoNetworkedField]
     public float ShockTime = 8f;

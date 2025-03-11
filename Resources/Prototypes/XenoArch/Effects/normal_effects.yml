@@ -257,7 +257,8 @@
   effectHint: artifact-effect-hint-release
   components:
   - type: RadiationSource
-    intensity: 2
+    intensity: 1
+    slope: 0.3
 
 - type: artifactEffect
   id: EffectKnock
@@ -556,7 +557,8 @@
   effectHint: artifact-effect-hint-release
   components:
   - type: RadiationSource
-    intensity: 6
+    intensity: 2
+    slope: 0.3
 
 - type: artifactEffect
   id: EffectMaterialSpawn
@@ -583,24 +585,6 @@
     range: 7.5
     messages:
     - shuffle-artifact-popup
-
-- type: artifactEffect
-  id: EffectT4PartsSpawn
-  targetDepth: 3
-  effectHint: artifact-effect-hint-creation
-  components:
-  - type: SpawnArtifact
-    maxSpawns: 10
-    spawns:
-    - id: BluespaceCapacitorStockPart
-      prob: 0.5
-      maxAmount: 3
-    - id: BluespaceManipulatorStockPart
-      prob: 0.5
-      maxAmount: 3
-    - id: BluespaceMatterBinStockPart
-      prob: 0.5
-      maxAmount: 3
 
 - type: artifactEffect
   id: EffectFoamDangerous

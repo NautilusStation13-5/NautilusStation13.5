@@ -1,6 +1,5 @@
 using System.Numerics;
 using Content.Server.GameTicking;
-using Content.Server.GameTicking.Rules.Components;
 using Content.Server.Spawners.Components;
 using Content.Shared.EntityTable;
 using Content.Shared.GameTicking.Components;
@@ -89,18 +88,8 @@ namespace Content.Server.Spawners.EntitySystems
                 return;
             }
 
-            if (Deleted(uid))
-                return;
-
-            var picked = _robustRandom.Pick(component.Prototypes);
-            try
-            {
-                EntityManager.SpawnEntity(picked, Transform(uid).Coordinates);
-            }
-            catch (EntityCreationException e)
-            {
-                Log.Warning($"Caught an exception while trying to process a conditional spawner {ToPrettyString(uid)} of type {picked}: {e}");
-            }
+            if (!Deleted(uid))
+                EntityManager.SpawnEntity(_robustRandom.Pick(component.Prototypes), Transform(uid).Coordinates);
         }
 
         private void Spawn(EntityUid uid, RandomSpawnerComponent component)

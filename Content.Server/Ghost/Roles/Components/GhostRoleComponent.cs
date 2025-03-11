@@ -1,6 +1,5 @@
-﻿using Content.Server.Ghost.Roles.Raffles;
+using Content.Server.Ghost.Roles.Raffles;
 using Content.Server.Mind.Commands;
-using Content.Shared.Customization.Systems;
 using Content.Shared.Roles;
 using Robust.Shared.Prototypes;
 
@@ -20,7 +19,7 @@ public sealed partial class GhostRoleComponent : Component
     // Why is this even here.
     // Move to ghost role prototype & respect CCvars.GameRoleTimerOverride
     [DataField("requirements")]
-    public List<CharacterRequirement>? Requirements;
+    public HashSet<JobRequirement>? Requirements;
 
     /// <summary>
     /// Whether the <see cref="MakeSentientCommand"/> should run on the mob.
@@ -112,3 +111,4 @@ public sealed partial class GhostRoleComponent : Component
     [Access(typeof(GhostRoleSystem), Other = AccessPermissions.ReadWriteExecute)] // also FIXME Friends
     public ProtoId<JobPrototype>? JobProto = null;
 }
+

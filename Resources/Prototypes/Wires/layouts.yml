@@ -1,7 +1,6 @@
 - type: wireLayout
   id: Airlock
   wires:
-  - !type:AccessWireAction
   - !type:PowerWireAction
   - !type:PowerWireAction
     pulseTimeout: 15
@@ -45,9 +44,12 @@
   id: AirlockArmory
 
 - type: wireLayout
+  parent: Airlock
+  id: AirlockExternal
+
+- type: wireLayout
   id: HighSec
   wires:
-  - !type:AccessWireAction
   - !type:PowerWireAction
     pulseTimeout: 10
   - !type:DoorBoltWireAction
@@ -88,6 +90,7 @@
 - type: wireLayout
   id: FireAlarm
   wires:
+  - !type:AiInteractWireAction
   - !type:PowerWireAction
   - !type:AtmosMonitorDeviceNetWire
     alarmOnPulse: true
@@ -154,20 +157,12 @@
   id: TrainingDefusable
   dummyWires: 0
   wires:
-    - !type:ActivateWireAction
-    - !type:BoltWireAction
-    - !type:DelayWireAction
-    - !type:ProceedWireAction
-    - !type:BoomWireAction
+  - !type:ActivateWireAction
+  - !type:BoltWireAction
+  - !type:DelayWireAction
+  - !type:ProceedWireAction
+  - !type:BoomWireAction
 
-# TODO: AI
-- type: wireLayout
-  id: ShopVendor
-  wires:
-# - !type:AiInteractWireAction
-  - !type:PowerWireAction
-  - !type:AccessWireAction
-    
 - type: wireLayout
   id: Jukebox
   dummyWires: 2

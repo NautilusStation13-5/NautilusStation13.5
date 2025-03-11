@@ -1,11 +1,11 @@
 ﻿# Actions
 - type: entity
   id: ActionJumpToCore
-  name: Jump to core
-  description: Sends your eye back to the core.
+  name: Jump to Sweetwater.
+  description: Sends your eye back to your core in Sweetwater.
   components:
   - type: InstantAction
-    priority: -10
+    priority: -9
     itemIconStyle: BigAction
     icon:
       sprite: Interface/Actions/actions_ai.rsi
@@ -13,19 +13,17 @@
     event: !type:JumpToCoreEvent
 
 - type: entity
-  id: ActionShowJobIcons
-  name: Show job icons
-  description: Shows job icons for crew members.
+  id: ActionChangeLevel
+  name: Jump to Trieste
+  description: Sends your eye to Trieste.
   components:
   - type: InstantAction
-    priority: -5
+    priority: -9
     itemIconStyle: BigAction
     icon:
       sprite: Interface/Actions/actions_ai.rsi
-      state: job_view
-    event: !type:ActionComponentChangeEvent
-      components:
-      - type: ShowJobIcons
+      state: ai_core
+    event: !type:ChangeLevelEvent
 
 - type: entity
   id: ActionSurvCameraLights
@@ -33,7 +31,7 @@
   description: Enable surveillance camera lights near wherever you're viewing.
   components:
   - type: InstantAction
-    priority: -6
+    priority: -5
     itemIconStyle: BigAction
     icon:
       sprite: Interface/Actions/actions_ai.rsi
@@ -59,6 +57,8 @@
   description: View the laws that you must follow.
   components:
   - type: InstantAction
+    checkCanInteract: false
+    checkConsciousness: false
     priority: -3
     itemIconStyle: NoItem
     icon:

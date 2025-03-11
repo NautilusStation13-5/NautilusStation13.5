@@ -1,5 +1,3 @@
-using Content.Shared.Body.Part;
-using Content.Shared.Body.Systems;
 using Content.Shared.Clothing.Components;
 using Content.Shared.Hands.Components;
 using Content.Shared.Hands.EntitySystems;
@@ -8,6 +6,7 @@ using Content.Shared.Interaction.Events;
 using Content.Shared.Inventory;
 using Content.Shared.Inventory.Events;
 using Content.Shared.Item;
+using Content.Shared.Strip.Components;
 using Robust.Shared.Containers;
 using Robust.Shared.GameStates;
 
@@ -31,11 +30,11 @@ public abstract class ClothingSystem : EntitySystem
         SubscribeLocalEvent<ClothingComponent, GotEquippedEvent>(OnGotEquipped);
         SubscribeLocalEvent<ClothingComponent, GotUnequippedEvent>(OnGotUnequipped);
         SubscribeLocalEvent<ClothingComponent, ItemMaskToggledEvent>(OnMaskToggled);
-        SubscribeLocalEvent<ClothingComponent, GettingPickedUpAttemptEvent>(OnPickedUp);
-        SubscribeLocalEvent<HumanoidAppearanceComponent, BodyPartAddedEvent>(OnPartAttachedToBody, after: [typeof(SharedBodySystem)]);
 
         SubscribeLocalEvent<ClothingComponent, ClothingEquipDoAfterEvent>(OnEquipDoAfter);
         SubscribeLocalEvent<ClothingComponent, ClothingUnequipDoAfterEvent>(OnUnequipDoAfter);
+
+        SubscribeLocalEvent<ClothingComponent, BeforeItemStrippedEvent>(OnItemStripped);
     }
 
     private void OnUseInHand(Entity<ClothingComponent> ent, ref UseInHandEvent args)
@@ -59,11 +58,6 @@ public abstract class ClothingSystem : EntitySystem
     {
         foreach (var slotDef in userEnt.Comp1.Slots)
         {
-            // Do not attempt to quick-equip clothing in pocket slots.
-            // We should probably add a special flag to SlotDefinition to skip quick equip if more similar slots get added.
-            if (slotDef.SlotFlags.HasFlag(SlotFlags.POCKET))
-                continue;
-
             if (!_invSystem.CanEquip(userEnt, toEquipEnt, slotDef.Name, out _, slotDef, userEnt, toEquipEnt))
                 continue;
 
@@ -91,35 +85,38 @@ public abstract class ClothingSystem : EntitySystem
         }
     }
 
-    private void ToggleVisualLayers(EntityUid equipee, HashSet<HumanoidVisualLayers> layers, HashSet<HumanoidVisualLayers> appearanceLayers, bool force = false)
+    private void ToggleVisualLayers(EntityUid equipee, HashSet<HumanoidVisualLayers> layers, HashSet<HumanoidVisualLayers> appearanceLayers)
     {
         foreach (HumanoidVisualLayers layer in layers)
         {
-            if (!force && !appearanceLayers.Contains(layer))
-                break;
+            if (!appearanceLayers.Contains(layer))
+                continue;
 
             InventorySystem.InventorySlotEnumerator enumerator = _invSystem.GetSlotEnumerator(equipee);
 
             bool shouldLayerShow = true;
-            while (enumerator.NextItem(out EntityUid item))
+            while (enumerator.NextItem(out EntityUid item, out SlotDefinition? slot))
             {
                 if (TryComp(item, out HideLayerClothingComponent? comp))
                 {
                     if (comp.Slots.Contains(layer))
                     {
-                        //Checks for mask toggling. TODO: Make a generic system for this
-                        if (comp.HideOnToggle && TryComp(item, out MaskComponent? mask) && TryComp(item, out ClothingComponent? clothing))
+                        if (TryComp(item, out ClothingComponent? clothing) && clothing.Slots == slot.SlotFlags)
                         {
-                            if (clothing.EquippedPrefix != mask.EquippedPrefix)
+                            //Checks for mask toggling. TODO: Make a generic system for this
+                            if (comp.HideOnToggle && TryComp(item, out MaskComponent? mask))
+                            {
+                                if (clothing.EquippedPrefix != mask.EquippedPrefix)
+                                {
+                                    shouldLayerShow = false;
+                                    break;
+                                }
+                            }
+                            else
                             {
                                 shouldLayerShow = false;
                                 break;
                             }
-                        }
-                        else
-                        {
-                            shouldLayerShow = false;
-                            break;
                         }
                     }
                 }
@@ -182,32 +179,6 @@ public abstract class ClothingSystem : EntitySystem
         CheckEquipmentForLayerHide(ent.Owner, args.Wearer);
     }
 
-    private void OnPickedUp(Entity<ClothingComponent> ent, ref GettingPickedUpAttemptEvent args)
-    {
-        // If this clothing is equipped by the performer of this action, and the clothing has an unequip delay, stop the attempt
-        if (ent.Comp.UnequipDelay <= TimeSpan.Zero
-            || !_invSystem.TryGetContainingSlot(ent.Owner, out var slot)
-            || !_containerSys.TryGetContainingContainer(ent, out var container)
-            || container.Owner != args.User)
-            return;
-
-        args.Cancel();
-    }
-
-    // Yes, this is exclusive C# just so that high heels selected from loadouts still hide the feet layers
-    // after Shitmed (SharedBodySystem.PartAppearance) initializes the feet parts setting their layer visibility to true.
-    private void OnPartAttachedToBody(Entity<HumanoidAppearanceComponent> ent, ref BodyPartAddedEvent args)
-    {
-        var enumerator = _invSystem.GetSlotEnumerator(ent.Owner);
-        while (enumerator.NextItem(out var item))
-        {
-            if (!TryComp<HideLayerClothingComponent>(item, out var comp))
-                continue;
-
-            CheckEquipmentForLayerHide(item, ent.Owner);
-        }
-    }
-
     private void OnEquipDoAfter(Entity<ClothingComponent> ent, ref ClothingEquipDoAfterEvent args)
     {
         if (args.Handled || args.Cancelled || args.Target is not { } target)
@@ -224,10 +195,15 @@ public abstract class ClothingSystem : EntitySystem
             _handsSystem.TryPickup(args.User, ent);
     }
 
+    private void OnItemStripped(Entity<ClothingComponent> ent, ref BeforeItemStrippedEvent args)
+    {
+        args.Additive += ent.Comp.StripDelay;
+    }
+
     private void CheckEquipmentForLayerHide(EntityUid equipment, EntityUid equipee)
     {
         if (TryComp(equipment, out HideLayerClothingComponent? clothesComp) && TryComp(equipee, out HumanoidAppearanceComponent? appearanceComp))
-            ToggleVisualLayers(equipee, clothesComp.Slots, appearanceComp.HideLayersOnEquip, clothesComp.Force);
+            ToggleVisualLayers(equipee, clothesComp.Slots, appearanceComp.HideLayersOnEquip);
     }
 
     #region Public API
@@ -264,8 +240,7 @@ public abstract class ClothingSystem : EntitySystem
 
         clothing.ClothingVisuals = otherClothing.ClothingVisuals;
         clothing.EquippedPrefix = otherClothing.EquippedPrefix;
-        clothing.Sprite = otherClothing.Sprite;
-        clothing.FemaleMask = otherClothing.FemaleMask;
+        clothing.RsiPath = otherClothing.RsiPath;
 
         _itemSys.VisualsChanged(uid);
         Dirty(uid, clothing);
@@ -273,9 +248,6 @@ public abstract class ClothingSystem : EntitySystem
 
     public void SetLayerColor(ClothingComponent clothing, string slot, string mapKey, Color? color)
     {
-        if (clothing.ClothingVisuals == null)
-            return;
-
         foreach (var layer in clothing.ClothingVisuals[slot])
         {
             if (layer.MapKeys == null)
@@ -289,9 +261,6 @@ public abstract class ClothingSystem : EntitySystem
     }
     public void SetLayerState(ClothingComponent clothing, string slot, string mapKey, string state)
     {
-        if (clothing.ClothingVisuals == null)
-            return;
-
         foreach (var layer in clothing.ClothingVisuals[slot])
         {
             if (layer.MapKeys == null)

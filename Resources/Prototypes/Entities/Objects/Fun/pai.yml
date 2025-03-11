@@ -6,7 +6,6 @@
   name: personal ai device
   description: Your electronic pal who's fun to be with!
   components:
-  - type: Renamable
   - type: Instrument
     allowPercussion: false
     handheld: false
@@ -20,8 +19,6 @@
       enum.StationMapUiKey.Key:
         type: StationMapBoundUserInterface
         requireInputValidation: false
-      enum.SharedRenamableInterfaceKey.Key:
-        type: RenamableBoundUserInterface
   - type: Sprite
     sprite: Objects/Fun/pai.rsi
     layers:
@@ -49,12 +46,8 @@
     stopSearchVerbPopup: pai-system-stopped-searching
   - type: Examiner
   - type: IntrinsicRadioReceiver
-  - type: IntrinsicRadioTransmitter
-    channels:
-    - Binary
   - type: ActiveRadio
     channels:
-    - Binary
     - Common
   - type: DoAfter
   - type: Actions
@@ -78,29 +71,13 @@
           Searching: { state: pai-searching-overlay }
           On: { state: pai-on-overlay }
   - type: StationMap
-  - type: LanguageKnowledge
-    speaks:
-    - TauCetiBasic
-    - SolCommon
-    - Tradeband
-    - Freespeak
-    - Elyran
-    - RobotTalk
-    understands:
-    - TauCetiBasic
-    - SolCommon
-    - Tradeband
-    - Freespeak
-    - Elyran
-    - RobotTalk
-    - Sign # It's intentional that they don't "Speak" sign language.
-  - type: DamageOtherOnHit
-    damage:
-      types:
-        Blunt: 3
+  - type: ChangeVoiceInContainer
+    whitelist:
+      components:
+        - SecretStash
 
 - type: entity
-  parent: PersonalAI
+  parent: [ PersonalAI, BaseSyndicateContraband]
   id: SyndicatePersonalAI
   name: syndicate personal ai device
   description: Your Syndicate pal who's fun to be with!
@@ -168,7 +145,6 @@
   id: ActionPAIPlayMidi
   name: Play MIDI
   description: Open your portable MIDI interface to soothe your owner.
-  categories: [ HideSpawnMenu ]
   components:
   - type: InstantAction
     checkCanInteract: false
@@ -181,7 +157,6 @@
   id: ActionPAIOpenMap
   name: Open Map
   description: Open your map interface and guide your owner.
-  categories: [ HideSpawnMenu ]
   components:
     - type: InstantAction
       checkCanInteract: false

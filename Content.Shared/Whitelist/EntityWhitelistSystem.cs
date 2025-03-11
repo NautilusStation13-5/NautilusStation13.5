@@ -8,6 +8,7 @@ namespace Content.Shared.Whitelist;
 public sealed class EntityWhitelistSystem : EntitySystem
 {
     [Dependency] private readonly IComponentFactory _factory = default!;
+    [Dependency] private readonly SharedRoleSystem _roles = default!;
     [Dependency] private readonly TagSystem _tag = default!;
 
     private EntityQuery<ItemComponent> _itemQuery;
@@ -59,11 +60,10 @@ public sealed class EntityWhitelistSystem : EntitySystem
         if (list.MindRoles != null)
         {
             var regs = StringsToRegs(list.MindRoles);
-            var roles = EntityManager.System<SharedRoleSystem>();
 
             foreach (var role in regs)
             {
-                if (roles.MindHasRole(uid, role.Type, out _))
+                if ( _roles.MindHasRole(uid, role.Type, out _))
                 {
                     if (!list.RequireAll)
                         return true;

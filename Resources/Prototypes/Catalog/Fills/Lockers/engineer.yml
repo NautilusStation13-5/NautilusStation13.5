@@ -94,14 +94,8 @@
       - id: GasAnalyzer
       - id: MedkitOxygenFilled
       - id: HolofanProjector
-      - id: DoorRemoteFirefight
       - id: RCD
       - id: RCDAmmo
-      - id: RPD
-      - id: RCDAmmo # Extra Compressed matter for the RPD
-      - id: LunchboxEngineeringFilledRandom # Delta-V Lunchboxes!
-        prob: 0.3
-      - id: AccessConfigurator
 
 - type: entity
   id: LockerAtmosphericsFilled
@@ -116,14 +110,8 @@
       - id: GasAnalyzer
       - id: MedkitOxygenFilled
       - id: HolofanProjector
-      - id: DoorRemoteFirefight
       - id: RCD
       - id: RCDAmmo
-      - id: RPD
-      - id: RCDAmmo # Extra Compressed matter for the RPD
-      - id: LunchboxEngineeringFilledRandom # Delta-V Lunchboxes!
-        prob: 0.3
-      - id: AccessConfigurator
 
 - type: entity
   id: LockerEngineerFilledHardsuit
@@ -138,9 +126,6 @@
       - id: ClothingShoesBootsMag
       - id: RCD
       - id: RCDAmmo
-      - id: LunchboxEngineeringFilledRandom # Delta-V Lunchboxes!
-        prob: 0.3
-      - id: AccessConfigurator
 
 - type: entity
   id: LockerEngineerFilled
@@ -154,9 +139,6 @@
       - id: trayScanner
       - id: RCD
       - id: RCDAmmo
-      - id: LunchboxEngineeringFilledRandom # Delta-V Lunchboxes!
-        prob: 0.3
-      - id: AccessConfigurator
 
 - type: entity
   id: ClosetRadiationSuitFilled

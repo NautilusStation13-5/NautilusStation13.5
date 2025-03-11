@@ -1,18 +1,13 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Content.Shared.Dataset;
-using Content.Shared.Customization.Systems;
 using Content.Shared.Hands.Components;
 using Content.Shared.Hands.EntitySystems;
-using Content.Shared.Humanoid;
 using Content.Shared.Inventory;
-using Content.Shared.Preferences;
+using Content.Shared.Item;
 using Content.Shared.Preferences.Loadouts;
 using Content.Shared.Roles;
 using Content.Shared.Storage;
 using Content.Shared.Storage.EntitySystems;
 using Robust.Shared.Collections;
-using Robust.Shared.Configuration;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Utility;
@@ -25,11 +20,9 @@ public abstract class SharedStationSpawningSystem : EntitySystem
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] protected readonly InventorySystem InventorySystem = default!;
     [Dependency] private readonly SharedHandsSystem _handsSystem = default!;
+    [Dependency] private readonly MetaDataSystem _metadata = default!;
     [Dependency] private readonly SharedStorageSystem _storage = default!;
     [Dependency] private readonly SharedTransformSystem _xformSystem = default!;
-    [Dependency] private readonly MetaDataSystem _metadata = default!;
-    [Dependency] private readonly IConfigurationManager _configurationManager = default!;
-    [Dependency] private readonly CharacterRequirementsSystem _characterRequirements = default!;
 
     private EntityQuery<HandsComponent> _handsQuery;
     private EntityQuery<InventoryComponent> _inventoryQuery;
@@ -46,15 +39,36 @@ public abstract class SharedStationSpawningSystem : EntitySystem
     }
 
     /// <summary>
+    ///     Equips the data from a `RoleLoadout` onto an entity.
+    /// </summary>
+    public void EquipRoleLoadout(EntityUid entity, RoleLoadout loadout, RoleLoadoutPrototype roleProto)
+    {
+        // Order loadout selections by the order they appear on the prototype.
+        foreach (var group in loadout.SelectedLoadouts.OrderBy(x => roleProto.Groups.FindIndex(e => e == x.Key)))
+        {
+            foreach (var items in group.Value)
+            {
+                if (!PrototypeManager.TryIndex(items.Prototype, out var loadoutProto))
+                {
+                    Log.Error($"Unable to find loadout prototype for {items.Prototype}");
+                    continue;
+                }
+
+                EquipStartingGear(entity, loadoutProto, raiseEvent: false);
+            }
+        }
+
+        EquipRoleName(entity, loadout, roleProto);
+    }
+
+    /// <summary>
     /// Applies the role's name as applicable to the entity.
     /// </summary>
-    public void EquipJobName(EntityUid entity, JobPrototype job)
+    public void EquipRoleName(EntityUid entity, RoleLoadout loadout, RoleLoadoutPrototype roleProto)
     {
         string? name = null;
 
-        if (string.IsNullOrEmpty(name)
-            && job.NameDataset.HasValue
-            && PrototypeManager.TryIndex(job.NameDataset.Value, out var nameData))
+        if (string.IsNullOrEmpty(name) && PrototypeManager.TryIndex(roleProto.NameDataset, out var nameData))
         {
             name = Loc.GetString(_random.Pick(nameData.Values));
         }
@@ -65,13 +79,27 @@ public abstract class SharedStationSpawningSystem : EntitySystem
         }
     }
 
+    public void EquipStartingGear(EntityUid entity, LoadoutPrototype loadout, bool raiseEvent = true)
+    {
+        EquipStartingGear(entity, loadout.StartingGear, raiseEvent);
+        EquipStartingGear(entity, (IEquipmentLoadout) loadout, raiseEvent);
+    }
+
     /// <summary>
     /// <see cref="EquipStartingGear(Robust.Shared.GameObjects.EntityUid,System.Nullable{Robust.Shared.Prototypes.ProtoId{Content.Shared.Roles.StartingGearPrototype}},bool)"/>
     /// </summary>
     public void EquipStartingGear(EntityUid entity, ProtoId<StartingGearPrototype>? startingGear, bool raiseEvent = true)
     {
         PrototypeManager.TryIndex(startingGear, out var gearProto);
-        EquipStartingGear(entity, gearProto);
+        EquipStartingGear(entity, gearProto, raiseEvent);
+    }
+
+    /// <summary>
+    /// <see cref="EquipStartingGear(Robust.Shared.GameObjects.EntityUid,System.Nullable{Robust.Shared.Prototypes.ProtoId{Content.Shared.Roles.StartingGearPrototype}},bool)"/>
+    /// </summary>
+    public void EquipStartingGear(EntityUid entity, StartingGearPrototype? startingGear, bool raiseEvent = true)
+    {
+        EquipStartingGear(entity, (IEquipmentLoadout?) startingGear, raiseEvent);
     }
 
     /// <summary>
@@ -80,14 +108,10 @@ public abstract class SharedStationSpawningSystem : EntitySystem
     /// <param name="entity">Entity to load out.</param>
     /// <param name="startingGear">Starting gear to use.</param>
     /// <param name="raiseEvent">Should we raise the event for equipped. Set to false if you will call this manually</param>
-    public void EquipStartingGear(EntityUid entity, StartingGearPrototype? startingGear, bool raiseEvent = true)
+    public void EquipStartingGear(EntityUid entity, IEquipmentLoadout? startingGear, bool raiseEvent = true)
     {
         if (startingGear == null)
             return;
-
-        if (GetProfile(entity, out var profile))
-            // Equip any sub-gears of this starting gear.
-            startingGear = ApplySubGear(startingGear, profile);
 
         var xform = _xformQuery.GetComponent(entity);
 
@@ -95,12 +119,12 @@ public abstract class SharedStationSpawningSystem : EntitySystem
         {
             foreach (var slot in slotDefinitions)
             {
-                var equipmentStr = startingGear.GetGear(slot.Name, null);
-                if (string.IsNullOrEmpty(equipmentStr))
-                    continue;
-
-                var equipmentEntity = EntityManager.SpawnEntity(equipmentStr, xform.Coordinates);
-                InventorySystem.TryEquip(entity, equipmentEntity, slot.Name, true, force:true);
+                var equipmentStr = startingGear.GetGear(slot.Name);
+                if (!string.IsNullOrEmpty(equipmentStr))
+                {
+                    var equipmentEntity = EntityManager.SpawnEntity(equipmentStr, xform.Coordinates);
+                    InventorySystem.TryEquip(entity, equipmentEntity, slot.Name, silent: true, force: true);
+                }
             }
         }
 
@@ -114,8 +138,7 @@ public abstract class SharedStationSpawningSystem : EntitySystem
 
                 if (_handsSystem.TryGetEmptyHand(entity, out var emptyHand, handsComponent))
                 {
-                    _handsSystem.TryPickup(entity, inhandEntity, emptyHand, checkActionBlocker: false,
-                        handsComp: handsComponent);
+                    _handsSystem.TryPickup(entity, inhandEntity, emptyHand, checkActionBlocker: false, handsComp: handsComponent);
                 }
             }
         }
@@ -123,26 +146,23 @@ public abstract class SharedStationSpawningSystem : EntitySystem
         if (startingGear.Storage.Count > 0)
         {
             var coords = _xformSystem.GetMapCoordinates(entity);
-            var ents = new ValueList<EntityUid>();
             _inventoryQuery.TryComp(entity, out var inventoryComp);
 
-            foreach (var (slot, entProtos) in startingGear.Storage)
+            foreach (var (slotName, entProtos) in startingGear.Storage)
             {
-                if (entProtos.Count == 0)
+                if (entProtos == null || entProtos.Count == 0)
                     continue;
 
-                foreach (var ent in entProtos)
-                {
-                    ents.Add(Spawn(ent, coords));
-                }
-
                 if (inventoryComp != null &&
-                    InventorySystem.TryGetSlotEntity(entity, slot, out var slotEnt, inventoryComponent: inventoryComp) &&
+                    InventorySystem.TryGetSlotEntity(entity, slotName, out var slotEnt, inventoryComponent: inventoryComp) &&
                     _storageQuery.TryComp(slotEnt, out var storage))
                 {
-                    foreach (var ent in ents)
+
+                    foreach (var entProto in entProtos)
                     {
-                        _storage.Insert(slotEnt.Value, ent, out _, storageComp: storage, playSound: false);
+                        var spawnedEntity = Spawn(entProto, coords);
+
+                        _storage.Insert(slotEnt.Value, spawnedEntity, out _, storageComp: storage, playSound: false);
                     }
                 }
             }
@@ -153,109 +173,5 @@ public abstract class SharedStationSpawningSystem : EntitySystem
             var ev = new StartingGearEquippedEvent(entity);
             RaiseLocalEvent(entity, ref ev);
         }
-    }
-
-    public bool GetProfile(EntityUid? uid, [NotNullWhen(true)] out HumanoidCharacterProfile? profile)
-    {
-        if (!TryComp(uid, out HumanoidAppearanceComponent? appearance))
-        {
-            profile = null;
-            return false;
-        }
-
-        if (appearance.LastProfileLoaded is { } lastProfileLoaded)
-        {
-            profile = lastProfileLoaded;
-            return true;
-        }
-
-        profile = HumanoidCharacterProfile.DefaultWithSpecies(appearance.Species);
-        return true;
-    }
-
-    // <summary>
-    //   Apply a starting gear's sub-gears to itself, returning a new starting gear prototype with
-    //   replaced equipment.
-    // </summary>
-    public StartingGearPrototype ApplySubGear(StartingGearPrototype startingGear, HumanoidCharacterProfile profile, JobPrototype? job = null)
-    {
-        if (startingGear.SubGears.Count == 0)
-            return startingGear;
-
-        // Job can be null for cases like ghost roles' starting gear which do not have a job definition.
-        job ??= new JobPrototype();
-
-        var newStartingGear = startingGear;
-        var foundConditionalMatch = false;
-
-        foreach (var subGear in startingGear.SubGears)
-        {
-            if (!PrototypeManager.TryIndex<StartingGearPrototype>(subGear.Id, out var subGearProto) ||
-                !_characterRequirements.CheckRequirementsValid(
-                    subGearProto.Requirements, job, profile, new Dictionary<string, TimeSpan>(), false, job,
-                    EntityManager, PrototypeManager, _configurationManager,
-                    out _))
-                continue;
-
-            // Apply the sub-gear's sub-gears if there are any
-            subGearProto = ApplySubGear(subGearProto, profile, job);
-
-            if (!foundConditionalMatch)
-            {
-                foundConditionalMatch = true;
-                // Lazy init on making a new starting gear prototype for performance reasons.
-                // We can't just modify the original prototype or it will be modified for everyone.
-                newStartingGear = new StartingGearPrototype()
-                {
-                    Equipment = startingGear.Equipment.ToDictionary(static entry => entry.Key, static entry => entry.Value),
-                    InnerClothingSkirt = startingGear.InnerClothingSkirt,
-                    Satchel = startingGear.Satchel,
-                    Duffelbag = startingGear.Duffelbag,
-                    Inhand = new List<EntProtoId>(startingGear.Inhand),
-                    Storage = startingGear.Storage.ToDictionary(
-                        static entry => entry.Key,
-                        static entry => new List<EntProtoId>(entry.Value)
-                    ),
-                };
-            }
-
-            // Apply the sub-gear's equipment to this starting gear
-            if (subGearProto.InnerClothingSkirt != null)
-                newStartingGear.InnerClothingSkirt = subGearProto.InnerClothingSkirt;
-
-            if (subGearProto.Satchel != null)
-                newStartingGear.Satchel = subGearProto.Satchel;
-
-            if (subGearProto.Duffelbag != null)
-                newStartingGear.Duffelbag = subGearProto.Duffelbag;
-
-            foreach (var (slot, entProtoId) in subGearProto.Equipment)
-            {
-                // Don't remove items in pockets, instead put them in the backpack or hands
-                if (slot == "pocket1" && newStartingGear.Equipment.TryGetValue("pocket1", out var pocket1) ||
-                    slot == "pocket2" && newStartingGear.Equipment.TryGetValue("pocket2", out var pocket2))
-                {
-                    var pocketProtoId = slot == "pocket1" ? pocket1 : pocket2;
-
-                    if (string.IsNullOrEmpty(newStartingGear.GetGear("back", null)))
-                        newStartingGear.Inhand.Add(pocketProtoId);
-                    else
-                    {
-                        if (!newStartingGear.Storage.ContainsKey("back"))
-                            newStartingGear.Storage["back"] = new();
-                        newStartingGear.Storage["back"].Add(pocketProtoId);
-                    }
-                }
-
-                newStartingGear.Equipment[slot] = entProtoId;
-            }
-
-            newStartingGear.Inhand.AddRange(subGearProto.Inhand);
-
-            foreach (var (slot, entProtoIds) in subGearProto.Storage)
-                newStartingGear.Storage[slot].AddRange(entProtoIds);
-        }
-
-        return newStartingGear;
     }
 }

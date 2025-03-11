@@ -1,5 +1,4 @@
 - type: entity
-  categories: [ HideSpawnMenu ]
   parent: BaseGameRule
   id: Thief
   components:
@@ -23,7 +22,7 @@
       playerRatio: 15
       lateJoinAdditional: true
       allowNonHumans: true
-      multiAntagSetting: All
+      multiAntagSetting: NotExclusive
       startingGear: ThiefGear
       components:
       - type: Pacified
@@ -31,14 +30,3 @@
       - MindRoleThief
       briefing:
         sound: "/Audio/Misc/thief_greeting.ogg"
-
-#- type: entity
-#  categories: [ HideSpawnMenu ]
-#  parent: BaseGameRule
-#  id: Exterminator
-#  components:
-#  - type: GenericAntagRule
-#    agentName: terminator-round-end-agent-name
-#    objectives:
-#    - TerminateObjective
-#    - ShutDownObjective

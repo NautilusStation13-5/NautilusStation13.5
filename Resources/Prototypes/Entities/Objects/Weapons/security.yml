@@ -1,6 +1,6 @@
 - type: entity
   name: stun baton
-  parent: BaseItem
+  parent: [BaseItem, BaseRestrictedContraband]
   id: Stunbaton
   description: A stun baton for incapacitating people with. Actively harming with this is considered bad tone.
   components:
@@ -9,9 +9,6 @@
     layers:
     - state: stunbaton_off
       map: [ "enum.ToggleVisuals.Layer" ]
-  - type: Tag
-    tags:
-    - Stunbaton
   - type: Stunbaton
     energyPerUse: 50
   - type: ItemToggle
@@ -32,29 +29,25 @@
     activatedDamage:
       types:
         Blunt: 0
-  - type: ItemToggleDamageOtherOnHit
   - type: MeleeWeapon
     wideAnimationRotation: -135
     damage:
       types:
         Blunt: 7
-    bluntStaminaDamageFactor: 2.5
-    heavyRateModifier: 0.75
-    heavyDamageBaseModifier: 1.75
-    heavyStaminaCost: 1
+    bluntStaminaDamageFactor: 2.0
+    angle: 60
     animation: WeaponArcSlash
-  - type: DamageOtherOnHit
-  - type: StaminaDamageOnHit # Stunmeta
-    damage: 15
-    overtime: 40
+  - type: StaminaDamageOnHit
+    damage: 35
     sound: /Audio/Weapons/egloves.ogg
   - type: StaminaDamageOnCollide
-    damage: 15
-    overtime: 40
+    damage: 35
     sound: /Audio/Weapons/egloves.ogg
+  - type: LandAtCursor # it deals stamina damage when thrown
   - type: Battery
     maxCharge: 1000
     startingCharge: 1000
+  - type: UseDelay
   - type: Item
     heldPrefix: off
     size: Normal
@@ -94,12 +87,11 @@
   - type: GuideHelp
     guides:
     - Security
-  - type: MartialArtBlocked # Goobstation - Martial Arts
-    form: CorporateJudo # Goobstation - Martial Arts
+    - Antagonists
 
 - type: entity
   name: truncheon
-  parent: BaseItem
+  parent: [BaseItem, BaseRestrictedContraband]
   id: Truncheon
   description: A rigid, steel-studded baton, meant to harm.
   components:
@@ -108,18 +100,12 @@
     state: icon
   - type: MeleeWeapon
     wideAnimationRotation: -135
-    attackRate: 0.8
     damage:
       types:
-        Blunt: 15
+        Blunt: 20
     soundHit:
       collection: MetalThud
-    bluntStaminaDamageFactor: 2
-    heavyRateModifier: 1
-    heavyDamageBaseModifier: 1.2
-    heavyStaminaCost: 7.5
-  - type: DamageOtherOnHit
-    staminaCost: 9
+    bluntStaminaDamageFactor: 1.5
   - type: Item
     size: Normal
   - type: Tag
@@ -138,10 +124,11 @@
   - type: GuideHelp
     guides:
     - Security
+    - Antagonists
 
 - type: entity
   name: flash
-  parent: BaseItem
+  parent: [BaseItem, BaseSecurityScienceCommandContraband]
   id: Flash
   description: An ultrabright flashbulb with a trigger, which causes the victim to be dazed and lose their eyesight for a moment. Useless when burnt out.
   components:
@@ -167,11 +154,7 @@
     - type: Item
       size: Small
       sprite: Objects/Weapons/Melee/flash.rsi
-#    - type: DynamicPrice
-#      price: 40
-    - type: ReverseEngineering # Nyano
-      recipes:
-        - Flash
+    - type: UseDelay
     - type: StaticPrice
       price: 40
     - type: Appearance
@@ -187,6 +170,7 @@
     - type: GuideHelp
       guides:
       - Security
+      - Antagonists
 
 - type: entity
   name: flash
@@ -200,7 +184,7 @@
 
 - type: entity
   name: portable flasher
-  parent: BaseStructure
+  parent: [BaseMachine, BaseRestrictedContraband]
   id: PortableFlasher
   description: An ultrabright flashbulb with a proximity trigger, useful for making an area security-only.
   components:
@@ -216,14 +200,11 @@
         !type:PhysShapeCircle
           radius: 2
       repeating: true
-    - type: Anchorable
     - type: Sprite
       sprite: Objects/Weapons/pflash.rsi
       layers:
         - state: "off"
           map: ["enum.ProximityTriggerVisualLayers.Base"]
-    - type: InteractionOutline
-    - type: Physics
     - type: Fixtures
       fixtures:
         fix1:
@@ -245,3 +226,4 @@
     - type: GuideHelp
       guides:
       - Security
+      - Antagonists

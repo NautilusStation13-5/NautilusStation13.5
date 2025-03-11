@@ -1,7 +1,6 @@
 using Content.Server.Actions;
 using Content.Server.Bed.Components;
 using Content.Server.Body.Systems;
-using Content.Server.Construction;
 using Content.Server.Power.Components;
 using Content.Server.Power.EntitySystems;
 using Content.Shared.Bed;
@@ -9,12 +8,10 @@ using Content.Shared.Bed.Sleep;
 using Content.Shared.Body.Components;
 using Content.Shared.Buckle.Components;
 using Content.Shared.Damage;
-using Content.Shared.Emag.Components;
 using Content.Shared.Emag.Systems;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Power;
 using Robust.Shared.Timing;
-using Content.Shared.Silicon.Components; // I shouldn't have to modify this.
 using Robust.Shared.Utility;
 
 namespace Content.Server.Bed
@@ -37,8 +34,6 @@ namespace Content.Server.Bed
             SubscribeLocalEvent<StasisBedComponent, UnstrappedEvent>(OnStasisUnstrapped);
             SubscribeLocalEvent<StasisBedComponent, PowerChangedEvent>(OnPowerChanged);
             SubscribeLocalEvent<StasisBedComponent, GotEmaggedEvent>(OnEmagged);
-            SubscribeLocalEvent<StasisBedComponent, RefreshPartsEvent>(OnRefreshParts);
-            SubscribeLocalEvent<StasisBedComponent, UpgradeExamineEvent>(OnUpgradeExamine);
         }
 
         private void OnStrapped(Entity<HealOnBuckleComponent> bed, ref StrappedEvent args)
@@ -75,8 +70,7 @@ namespace Content.Server.Bed
 
                 foreach (var healedEntity in strapComponent.BuckledEntities)
                 {
-                    if (_mobStateSystem.IsDead(healedEntity)
-                        || HasComp<SiliconComponent>(healedEntity))
+                    if (_mobStateSystem.IsDead(healedEntity))
                         continue;
 
                     var damage = bedComponent.Damage;
@@ -101,8 +95,6 @@ namespace Content.Server.Bed
 
             var metabolicEvent = new ApplyMetabolicMultiplierEvent(args.Buckle, bed.Comp.Multiplier, true);
             RaiseLocalEvent(args.Buckle, ref metabolicEvent);
-
-            EnsureComp<InStasisComponent>(args.Buckle);
         }
 
         private void OnStasisUnstrapped(Entity<StasisBedComponent> bed, ref UnstrappedEvent args)
@@ -112,8 +104,6 @@ namespace Content.Server.Bed
 
             var metabolicEvent = new ApplyMetabolicMultiplierEvent(args.Buckle, bed.Comp.Multiplier, false);
             RaiseLocalEvent(args.Buckle, ref metabolicEvent);
-
-            RemComp<InStasisComponent>(args.Buckle);
         }
 
         private void OnPowerChanged(EntityUid uid, StasisBedComponent component, ref PowerChangedEvent args)
@@ -142,19 +132,6 @@ namespace Content.Server.Bed
                 var metabolicEvent = new ApplyMetabolicMultiplierEvent(buckledEntity, component.Multiplier, shouldApply);
                 RaiseLocalEvent(buckledEntity, ref metabolicEvent);
             }
-        }
-
-        private void OnRefreshParts(EntityUid uid, StasisBedComponent component, RefreshPartsEvent args)
-        {
-            var metabolismRating = args.PartRatings[component.MachinePartMetabolismModifier];
-            component.Multiplier = component.BaseMultiplier * metabolismRating; // Linear scaling so it's not OP
-            if (HasComp<EmaggedComponent>(uid))
-                component.Multiplier = 1f / component.Multiplier;
-        }
-
-        private void OnUpgradeExamine(EntityUid uid, StasisBedComponent component, UpgradeExamineEvent args)
-        {
-            args.AddPercentageUpgrade("stasis-bed-component-upgrade-stasis", component.Multiplier / component.BaseMultiplier);
         }
     }
 }

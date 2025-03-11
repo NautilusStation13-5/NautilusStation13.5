@@ -146,6 +146,10 @@ namespace Content.Server.Database
 
             if (exemptFlags is { } exempt)
             {
+                // Any flag to bypass BlacklistedRange bans.
+                if (exempt != ServerBanExemptFlags.None)
+                    exempt |= ServerBanExemptFlags.BlacklistedRange;
+
                 query = query.Where(b => (b.ExemptFlags & exempt) == 0);
             }
 

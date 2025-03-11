@@ -24,7 +24,7 @@
     sprite: Clothing/Mask/breath.rsi
     state: icon
   product: CrateEmergencyInternals
-  cost: 500
+  cost: 600
   category: cargoproduct-category-name-emergency
   group: market
 
@@ -34,7 +34,7 @@
     sprite: Clothing/Mask/breath.rsi
     state: icon
   product: CrateEmergencyInternalsLarge
-  cost: 2000
+  cost: 1200
   category: cargoproduct-category-name-emergency
   group: market
 
@@ -63,28 +63,8 @@
   icon:
     sprite: Objects/Tanks/red.rsi
     state: icon
-  product: CrateSlimepersonLifeSupport
-  cost: 300
-  category: cargoproduct-category-name-emergency
-  group: market
-
-- type: cargoProduct
-  id: EmergencyPlasmaInternals
-  icon:
-    sprite: Objects/Tanks/plasmaman.rsi
-    state: icon
-  product: CratePlasmaInternals
-  cost: 750 # Plasma is expensive!
-  category: cargoproduct-category-name-emergency
-  group: market
-
-- type: cargoProduct
-  id: EmergencyPlasmamanEnvirosuit
-  icon:
-    sprite: Clothing/Uniforms/Envirosuits/plain.rsi
-    state: icon
-  product: CratePlasmamanEnvirosuit
-  cost: 600
+  product: CrateNitrogenInternals
+  cost: 350
   category: cargoproduct-category-name-emergency
   group: market
 

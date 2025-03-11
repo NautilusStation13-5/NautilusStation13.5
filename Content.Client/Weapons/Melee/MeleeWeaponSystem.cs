@@ -1,6 +1,5 @@
 using System.Linq;
 using Content.Client.Gameplay;
-using Content.Shared.CCVar;
 using Content.Shared.CombatMode;
 using Content.Shared.Effects;
 using Content.Shared.Hands.Components;
@@ -9,7 +8,6 @@ using Content.Shared.StatusEffect;
 using Content.Shared.Weapons.Melee;
 using Content.Shared.Weapons.Melee.Events;
 using Content.Shared.Weapons.Ranged.Components;
-using Content.Shared.Wieldable.Components;
 using Robust.Client.GameObjects;
 using Robust.Client.Graphics;
 using Robust.Client.Input;
@@ -30,6 +28,7 @@ public sealed partial class MeleeWeaponSystem : SharedMeleeWeaponSystem
     [Dependency] private readonly AnimationPlayerSystem _animation = default!;
     [Dependency] private readonly InputSystem _inputSystem = default!;
     [Dependency] private readonly SharedColorFlashEffectSystem _color = default!;
+    [Dependency] private readonly MapSystem _map = default!;
 
     private EntityQuery<TransformComponent> _xformQuery;
 
@@ -66,28 +65,16 @@ public sealed partial class MeleeWeaponSystem : SharedMeleeWeaponSystem
         if (!TryGetWeapon(entity, out var weaponUid, out var weapon))
             return;
 
-        if (!CombatMode.IsInCombatMode(entity) || !Blocker.CanAttack(entity))
+        if (!CombatMode.IsInCombatMode(entity) || !Blocker.CanAttack(entity, weapon: (weaponUid, weapon)))
         {
             weapon.Attacking = false;
             return;
         }
 
-        var useDown = _inputSystem.CmdStates.GetState(EngineKeyFunctions.Use) == BoundKeyState.Down;
-        var altDown = _inputSystem.CmdStates.GetState(EngineKeyFunctions.UseSecondary) == BoundKeyState.Down;
+        var useDown = _inputSystem.CmdStates.GetState(EngineKeyFunctions.Use);
+        var altDown = _inputSystem.CmdStates.GetState(EngineKeyFunctions.UseSecondary);
 
-        // Disregard inputs to the shoot binding
-        if (TryComp<GunComponent>(weaponUid, out var gun) &&
-            // Except if can't shoot due to being unwielded
-            (!HasComp<GunRequiresWieldComponent>(weaponUid) ||
-            (TryComp<WieldableComponent>(weaponUid, out var wieldable) && wieldable.Wielded)))
-        {
-            if (gun.UseKey)
-                useDown = false;
-            else
-                altDown = false;
-        }
-
-        if (weapon.AutoAttack || !useDown && !altDown)
+        if (weapon.AutoAttack || useDown != BoundKeyState.Down && altDown != BoundKeyState.Down)
         {
             if (weapon.Attacking)
             {
@@ -95,12 +82,22 @@ public sealed partial class MeleeWeaponSystem : SharedMeleeWeaponSystem
             }
         }
 
-        if (weapon.Attacking || weapon.NextAttack > Timing.CurTime || (!useDown && !altDown))
+        if (weapon.Attacking || weapon.NextAttack > Timing.CurTime)
         {
             return;
         }
 
         // TODO using targeted actions while combat mode is enabled should NOT trigger attacks.
+
+        // TODO: Need to make alt-fire melee its own component I guess?
+        // Melee and guns share a lot in the middle but share virtually nothing at the start and end so
+        // it's kinda tricky.
+        // I think as long as we make secondaries their own component it's probably fine
+        // as long as guncomp has an alt-use key then it shouldn't be too much of a PITA to deal with.
+        if (TryComp<GunComponent>(weaponUid, out var gun) && gun.UseKey)
+        {
+            return;
+        }
 
         var mousePos = _eyeManager.PixelToMap(_inputManager.MouseScreenPosition);
 
@@ -113,16 +110,15 @@ public sealed partial class MeleeWeaponSystem : SharedMeleeWeaponSystem
 
         if (MapManager.TryFindGridAt(mousePos, out var gridUid, out _))
         {
-            coordinates = EntityCoordinates.FromMap(gridUid, mousePos, TransformSystem, EntityManager);
+            coordinates = TransformSystem.ToCoordinates(gridUid, mousePos);
         }
         else
         {
-            coordinates = EntityCoordinates.FromMap(MapManager.GetMapEntityId(mousePos.MapId), mousePos, TransformSystem, EntityManager);
+            coordinates = TransformSystem.ToCoordinates(_map.GetMap(mousePos.MapId), mousePos);
         }
 
         // Heavy attack.
-        if (!weapon.DisableHeavy &&
-            (!weapon.SwapKeys ? altDown : useDown))
+        if (altDown == BoundKeyState.Down)
         {
             // If it's an unarmed attack then do a disarm
             if (weapon.AltDisarm && weaponUid == entity)
@@ -143,17 +139,13 @@ public sealed partial class MeleeWeaponSystem : SharedMeleeWeaponSystem
         }
 
         // Light attack
-        if (!weapon.DisableClick &&
-            (!weapon.SwapKeys ? useDown : altDown))
+        if (useDown == BoundKeyState.Down)
         {
             var attackerPos = TransformSystem.GetMapCoordinates(entity);
 
             if (mousePos.MapId != attackerPos.MapId ||
                 (attackerPos.Position - mousePos.Position).Length() > weapon.Range)
             {
-                if (weapon.HeavyOnLightMiss)
-                    ClientHeavyAttack(entity, coordinates, weaponUid, weapon);
-
                 return;
             }
 
@@ -167,12 +159,6 @@ public sealed partial class MeleeWeaponSystem : SharedMeleeWeaponSystem
             // Don't light-attack if interaction will be handling this instead
             if (Interaction.CombatModeCanHandInteract(entity, target))
                 return;
-
-            if (weapon.HeavyOnLightMiss && !CanDoLightAttack(entity, target, weapon, out _))
-            {
-                ClientHeavyAttack(entity, coordinates, weaponUid, weapon);
-                return;
-            }
 
             RaisePredictiveEvent(new LightAttackEvent(GetNetEntity(target), GetNetEntity(weaponUid), GetNetCoordinates(coordinates)));
         }
@@ -235,19 +221,19 @@ public sealed partial class MeleeWeaponSystem : SharedMeleeWeaponSystem
             return;
         }
 
-        var targetMap = coordinates.ToMap(EntityManager, TransformSystem);
+        var targetMap = TransformSystem.ToMapCoordinates(coordinates);
 
         if (targetMap.MapId != userXform.MapID)
             return;
 
         var userPos = TransformSystem.GetWorldPosition(userXform);
         var direction = targetMap.Position - userPos;
-        var distance = MathF.Min(component.Range * component.HeavyRangeModifier, direction.Length());
+        var distance = MathF.Min(component.Range, direction.Length());
 
         // This should really be improved. GetEntitiesInArc uses pos instead of bounding boxes.
         // Server will validate it with InRangeUnobstructed.
         var entities = GetNetEntityList(ArcRayCast(userPos, direction.ToWorldAngle(), component.Angle, distance, userXform.MapID, user).ToList());
-        RaisePredictiveEvent(new HeavyAttackEvent(GetNetEntity(meleeUid), entities.GetRange(0, Math.Min(component.MaxTargets, entities.Count)), GetNetCoordinates(coordinates)));
+        RaisePredictiveEvent(new HeavyAttackEvent(GetNetEntity(meleeUid), entities.GetRange(0, Math.Min(MaxTargets, entities.Count)), GetNetCoordinates(coordinates)));
     }
 
     private void OnMeleeLunge(MeleeLungeEvent ev)

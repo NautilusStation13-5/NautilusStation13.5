@@ -125,15 +125,7 @@ public sealed class CargoTest
 
             foreach (var proto in protoIds)
             {
-                EntityUid? ent = null;
-                try
-                {
-                    ent = entManager.SpawnEntity(proto, coord);
-                }
-                catch (Exception e)
-                {
-                    return;
-                }
+                var ent = entManager.SpawnEntity(proto, coord);
 
                 if (entManager.TryGetComponent<StackPriceComponent>(ent, out var stackpricecomp)
                     && stackpricecomp.Price > 0)

@@ -38,6 +38,7 @@ public sealed class InternalsSystem : EntitySystem
         SubscribeLocalEvent<InternalsComponent, ComponentShutdown>(OnInternalsShutdown);
         SubscribeLocalEvent<InternalsComponent, GetVerbsEvent<InteractionVerb>>(OnGetInteractionVerbs);
         SubscribeLocalEvent<InternalsComponent, InternalsDoAfterEvent>(OnDoAfter);
+        SubscribeLocalEvent<InternalsComponent, ToggleInternalsAlertEvent>(OnToggleInternalsAlert);
 
         SubscribeLocalEvent<InternalsComponent, StartingGearEquippedEvent>(OnStartingGear);
     }
@@ -51,7 +52,7 @@ public sealed class InternalsSystem : EntitySystem
             return; // already connected
 
         // Can the entity breathe the air it is currently exposed to?
-        if (!TryComp(uid, out RespiratorComponent? respirator) || _respirator.CanMetabolizeInhaledAir((uid, respirator)))
+        if (_respirator.CanMetabolizeInhaledAir(uid))
             return;
 
         var tank = FindBestGasTank(uid);
@@ -70,6 +71,9 @@ public sealed class InternalsSystem : EntitySystem
         ref GetVerbsEvent<InteractionVerb> args)
     {
         if (!args.CanAccess || !args.CanInteract || args.Hands is null)
+            return;
+
+        if (!AreInternalsWorking(ent) && ent.Comp.BreathTools.Count == 0)
             return;
 
         var user = args.User;
@@ -100,9 +104,9 @@ public sealed class InternalsSystem : EntitySystem
         // Toggle off if they're on
         if (AreInternalsWorking(internals))
         {
-            if (force || user == uid)
+            if (force)
             {
-                DisconnectTank(internals);
+                DisconnectTank((uid, internals));
                 return;
             }
 
@@ -158,6 +162,14 @@ public sealed class InternalsSystem : EntitySystem
         args.Handled = true;
     }
 
+    private void OnToggleInternalsAlert(Entity<InternalsComponent> ent, ref ToggleInternalsAlertEvent args)
+    {
+        if (args.Handled)
+            return;
+        ToggleInternals(ent, ent, false, internals: ent.Comp);
+        args.Handled = true;
+    }
+
     private void OnInternalsStartup(Entity<InternalsComponent> ent, ref ComponentStartup args)
     {
         _alerts.ShowAlert(ent, ent.Comp.InternalsAlert, GetSeverity(ent));
@@ -197,21 +209,15 @@ public sealed class InternalsSystem : EntitySystem
             return;
 
         _alerts.ShowAlert(ent, ent.Comp.InternalsAlert, GetSeverity(ent));
-
-        var ev = new BreathToolConnectedEvent(ent.Owner, toolEntity);
-        RaiseLocalEvent(ent.Owner, ev);
     }
 
-    public void DisconnectTank(InternalsComponent? component)
+    public void DisconnectTank(Entity<InternalsComponent> ent)
     {
-        if (component is null)
-            return;
+        if (TryComp(ent.Comp.GasTankEntity, out GasTankComponent? tank))
+            _gasTank.DisconnectFromInternals((ent.Comp.GasTankEntity.Value, tank));
 
-        if (TryComp(component.GasTankEntity, out GasTankComponent? tank))
-            _gasTank.DisconnectFromInternals((component.GasTankEntity.Value, tank));
-
-        component.GasTankEntity = null;
-        _alerts.ShowAlert(component.Owner, component.InternalsAlert, GetSeverity(component));
+        ent.Comp.GasTankEntity = null;
+        _alerts.ShowAlert(ent.Owner, ent.Comp.InternalsAlert, GetSeverity(ent.Comp));
     }
 
     public bool TryConnectTank(Entity<InternalsComponent> ent, EntityUid tankEntity)
@@ -265,44 +271,29 @@ public sealed class InternalsSystem : EntitySystem
         // 3. in-hand tanks
         // 4. pocket/belt tanks
 
-        if (!Resolve(user, ref user.Comp1, ref user.Comp2, ref user.Comp3))
+        if (!Resolve(user, ref user.Comp2, ref user.Comp3))
             return null;
 
         if (_inventory.TryGetSlotEntity(user, "back", out var backEntity, user.Comp2, user.Comp3) &&
             TryComp<GasTankComponent>(backEntity, out var backGasTank) &&
-            _gasTank.CanConnectToInternals(backGasTank))
+            _gasTank.CanConnectToInternals((backEntity.Value, backGasTank)))
         {
             return (backEntity.Value, backGasTank);
         }
 
         if (_inventory.TryGetSlotEntity(user, "suitstorage", out var entity, user.Comp2, user.Comp3) &&
             TryComp<GasTankComponent>(entity, out var gasTank) &&
-            _gasTank.CanConnectToInternals(gasTank))
+            _gasTank.CanConnectToInternals((entity.Value, gasTank)))
         {
             return (entity.Value, gasTank);
         }
 
         foreach (var item in _inventory.GetHandOrInventoryEntities((user.Owner, user.Comp1, user.Comp2)))
         {
-            if (TryComp(item, out gasTank) && _gasTank.CanConnectToInternals(gasTank))
+            if (TryComp(item, out gasTank) && _gasTank.CanConnectToInternals((item, gasTank)))
                 return (item, gasTank);
         }
 
         return null;
-    }
-}
-
-/// <summary>
-///   Raised on an equipee when it has breath tools connected.
-/// </summary>
-public sealed class BreathToolConnectedEvent : EntityEventArgs
-{
-    public readonly EntityUid Equipee;
-    public readonly EntityUid BreathTool;
-
-    public BreathToolConnectedEvent(EntityUid equipee, EntityUid breathTool)
-    {
-        Equipee = equipee;
-        BreathTool = breathTool;
     }
 }

@@ -159,7 +159,7 @@ public sealed partial class GatewayWindow : FancyWindow,
 
             if (Pressable())
             {
-                openButton.AddStyleClass(StyleBase.ButtonDanger);
+                openButton.AddStyleClass(StyleBase.ButtonCaution);
             }
 
             var buttonContainer = new BoxContainer()

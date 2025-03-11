@@ -4,16 +4,23 @@
   description: job-description-captain
   playTimeTracker: JobCaptain
   requirements:
-    - !type:CharacterTraitRequirement
-      inverted: true
-      traits:
-        - Foreigner
-        - ForeignerLight
-        - Pacifist
+    - !type:OverallPlaytimeRequirement
+      time: 36000 #10 hrs. They're the fucking captain 
+    - !type:DepartmentTimeRequirement
+      department: Security
+      time: 7200 # 2 hour
+    - !type:DepartmentTimeRequirement
+      department: Medical
+      time: 7200 # 2 hour
+    - !type:DepartmentTimeRequirement
+      department: Engineering
+      time: 7200 # 2 hour
+    - !type:DepartmentTimeRequirement
+      department: Command
+      time: 7200 # 2 hour
   weight: 20
   startingGear: CaptainGear
   icon: "JobIconCaptain"
-  requireAdminNotify: true
   joinNotifyCrew: true
   supervisors: job-supervisors-centcom
   canBeAntag: false
@@ -25,30 +32,16 @@
   - !type:AddComponentSpecial
     components:
       - type: CommandStaff
-  afterLoadoutSpecial:
-  - !type:ModifyEnvirosuitSpecial
-    charges: 8
-  - !type:ModifyEnvirohelmSpecial
-    powerCell: PowerCellHigh
 
 - type: startingGear
   id: CaptainGear
-  subGear:
-  - CaptainPlasmamanGear
   equipment:
-    jumpsuit: ClothingUniformJumpsuitCaptain
-    back: ClothingBackpackCaptainFilled
     shoes: ClothingShoesBootsLaceup
+    eyes: ClothingEyesGlassesSunglasses
+    gloves: ClothingHandsGlovesCaptain
     id: CaptainPDA
     ears: ClothingHeadsetAltCommand
-  innerClothingSkirt: ClothingUniformJumpskirtCaptain
-  satchel: ClothingBackpackSatchelCaptainFilled
-  duffelbag: ClothingBackpackDuffelCaptainFilled
-
-- type: startingGear
-  id: CaptainPlasmamanGear
-  parent: BasePlasmamanGear
-  equipment:
-    jumpsuit: ClothingUniformEnvirosuitCaptain
-    head: ClothingHeadEnvirohelmCaptain
-    gloves: ClothingHandsGlovesCaptain
+  storage:
+    back:
+    - Flash
+    # - StationCharter

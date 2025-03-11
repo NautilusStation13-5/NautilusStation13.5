@@ -1,6 +1,5 @@
 using System.Numerics;
 using Content.Server.NPC.Components;
-using Content.Server.NPC.HTN;
 using Content.Shared.CombatMode;
 using Content.Shared.NPC;
 using Robust.Shared.Map;
@@ -11,7 +10,6 @@ namespace Content.Server.NPC.Systems;
 
 public sealed partial class NPCCombatSystem
 {
-    [Dependency] private readonly IRobustRandom _rng = default!;
     private const float TargetMeleeLostRange = 14f;
 
     private void InitializeMelee()
@@ -54,12 +52,11 @@ public sealed partial class NPCCombatSystem
                 continue;
             }
 
-            Attack(uid, comp, curTime, frameTime, physicsQuery, xformQuery); // Lavaland Change - added frameTime
+            Attack(uid, comp, curTime, physicsQuery, xformQuery);
         }
     }
 
-    // Lavaland Change - added frameTime
-    private void Attack(EntityUid uid, NPCMeleeCombatComponent component, TimeSpan curTime, float frameTime, EntityQuery<PhysicsComponent> physicsQuery, EntityQuery<TransformComponent> xformQuery)
+    private void Attack(EntityUid uid, NPCMeleeCombatComponent component, TimeSpan curTime, EntityQuery<PhysicsComponent> physicsQuery, EntityQuery<TransformComponent> xformQuery)
     {
         component.Status = CombatStatus.Normal;
 
@@ -107,16 +104,6 @@ public sealed partial class NPCCombatSystem
         if (weapon.NextAttack > curTime || !Enabled)
             return;
 
-        // Lavaland Change Start
-        if (component.ChargeupTimer < component.ChargeupDelay)
-        {
-            component.ChargeupTimer += frameTime;
-            return;
-        }
-
-        component.ChargeupTimer = 0f;
-        // Lavaland Change End
-
         if (_random.Prob(component.MissChance) &&
             physicsQuery.TryGetComponent(component.Target, out var targetPhysics) &&
             targetPhysics.LinearVelocity.LengthSquared() != 0f)
@@ -127,8 +114,5 @@ public sealed partial class NPCCombatSystem
         {
             _melee.AttemptLightAttack(uid, weaponUid, weapon, component.Target);
         }
-
-        if (Comp<HTNComponent>(uid).Blackboard.TryGetValue<float>("AttackDelayDeviation", out var dev, EntityManager))
-            weapon.NextAttack += TimeSpan.FromSeconds(_rng.NextFloat(-dev, dev));
     }
 }

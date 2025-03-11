@@ -61,7 +61,6 @@ namespace Content.Client.Input
             human.AddFunction(ContentKeyFunctions.AltUseItemInHand);
             human.AddFunction(ContentKeyFunctions.OpenCharacterMenu);
             human.AddFunction(ContentKeyFunctions.OpenEmotesMenu);
-            human.AddFunction(ContentKeyFunctions.OpenLanguageMenu);
             human.AddFunction(ContentKeyFunctions.ActivateItemInWorld);
             human.AddFunction(ContentKeyFunctions.ThrowItemInHand);
             human.AddFunction(ContentKeyFunctions.AltActivateItemInWorld);
@@ -74,10 +73,10 @@ namespace Content.Client.Input
             human.AddFunction(ContentKeyFunctions.SmartEquipBelt);
             human.AddFunction(ContentKeyFunctions.OpenBackpack);
             human.AddFunction(ContentKeyFunctions.OpenBelt);
-            human.AddFunction(ContentKeyFunctions.OfferItem);
-            human.AddFunction(ContentKeyFunctions.ToggleStanding);
-            human.AddFunction(ContentKeyFunctions.ToggleCrawlingUnder);
             human.AddFunction(ContentKeyFunctions.MouseMiddle);
+            human.AddFunction(ContentKeyFunctions.RotateObjectClockwise);
+            human.AddFunction(ContentKeyFunctions.RotateObjectCounterclockwise);
+            human.AddFunction(ContentKeyFunctions.FlipObject);
             human.AddFunction(ContentKeyFunctions.ArcadeUp);
             human.AddFunction(ContentKeyFunctions.ArcadeDown);
             human.AddFunction(ContentKeyFunctions.ArcadeLeft);
@@ -85,27 +84,14 @@ namespace Content.Client.Input
             human.AddFunction(ContentKeyFunctions.Arcade1);
             human.AddFunction(ContentKeyFunctions.Arcade2);
             human.AddFunction(ContentKeyFunctions.Arcade3);
-            human.AddFunction(ContentKeyFunctions.LookUp);
-            // Shitmed Change Start - TODO: Add groin targeting.
-            human.AddFunction(ContentKeyFunctions.TargetHead);
-            human.AddFunction(ContentKeyFunctions.TargetTorso);
-            human.AddFunction(ContentKeyFunctions.TargetLeftArm);
-            human.AddFunction(ContentKeyFunctions.TargetLeftHand);
-            human.AddFunction(ContentKeyFunctions.TargetRightArm);
-            human.AddFunction(ContentKeyFunctions.TargetRightHand);
-            human.AddFunction(ContentKeyFunctions.TargetLeftLeg);
-            human.AddFunction(ContentKeyFunctions.TargetLeftFoot);
-            human.AddFunction(ContentKeyFunctions.TargetRightLeg);
-            human.AddFunction(ContentKeyFunctions.TargetRightFoot);
-            // Shitmed Change End
 
             // actions should be common (for ghosts, mobs, etc)
             common.AddFunction(ContentKeyFunctions.OpenActionsMenu);
 
             foreach (var boundKey in ContentKeyFunctions.GetHotbarBoundKeys())
+            {
                 common.AddFunction(boundKey);
-            foreach (var boundKey in ContentKeyFunctions.GetLoadoutBoundKeys())
-                common.AddFunction(boundKey);
+            }
 
             var aghost = contexts.New("aghost", "common");
             aghost.AddFunction(EngineKeyFunctions.MoveUp);

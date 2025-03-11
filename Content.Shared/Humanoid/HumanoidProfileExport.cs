@@ -2,7 +2,9 @@ using Content.Shared.Preferences;
 
 namespace Content.Shared.Humanoid;
 
+/// <summary>
 /// Holds all of the data for importing / exporting character profiles.
+/// </summary>
 [DataDefinition]
 public sealed partial class HumanoidProfileExport
 {

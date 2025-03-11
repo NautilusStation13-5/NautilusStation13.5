@@ -14,7 +14,9 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Client.Lobby.UI;
 
-/// Holds character data on the side of the setup GUI
+/// <summary>
+/// Holds character data on the side of the setup GUI.
+/// </summary>
 [GenerateTypedNameReferences]
 public sealed partial class CharacterPickerButton : ContainerButton
 {
@@ -22,7 +24,9 @@ public sealed partial class CharacterPickerButton : ContainerButton
 
     private EntityUid _previewDummy;
 
+    /// <summary>
     /// Invoked if we should delete the attached character
+    /// </summary>
     public event Action? OnDeletePressed;
 
     public CharacterPickerButton(
@@ -46,12 +50,12 @@ public sealed partial class CharacterPickerButton : ContainerButton
         else
         {
             _previewDummy = UserInterfaceManager.GetUIController<LobbyUIController>()
-                .LoadProfileEntity(humanoid, true, true);
+                .LoadProfileEntity(humanoid, null, true);
 
             var highPriorityJob = humanoid.JobPriorities.SingleOrDefault(p => p.Value == JobPriority.High).Key;
-            if (highPriorityJob != null)
+            if (highPriorityJob != default)
             {
-                var jobName = prototypeManager.Index<JobPrototype>(highPriorityJob).LocalizedName;
+                var jobName = prototypeManager.Index(highPriorityJob).LocalizedName;
                 description = $"{description}\n{jobName}";
             }
         }

@@ -33,7 +33,7 @@
     thresholds:
     - trigger:
         !type:DamageTrigger
-        damage: 25
+        damage: 100
       behaviors:
         - !type:DoActsBehavior
           acts: [ "Destruction" ]
@@ -47,8 +47,7 @@
         sound:
           collection: MetalBreak
   - type: StaticPrice
-    price: 25
-  - type: RequireProjectileTarget
+    price: 50
 
 #Starts unanchored, cannot be rotated while anchored
 - type: entity
@@ -324,7 +323,7 @@
     node: chair
 
 - type: entity
-  parent: [SeatBase, BaseFoldable]
+  parent: [SeatBase, BaseDeployFoldable]
   id: ChairFolding
   name: folding chair
   description: If you carry six of these you become the coolest kid at church.
@@ -350,6 +349,7 @@
   - type: Construction
     graph: Seat
     node: chairFolding
+  - type: DamageExaminable
 
 - type: entity
   parent: ChairFolding
@@ -401,4 +401,4 @@
             min: 2
             max: 4
   - type: StaticPrice
-    price: 20
+    price: 50

@@ -1,17 +1,15 @@
 using System.Numerics;
-using Content.Shared.Nyanotrasen.Abilities.Oni;
 using Content.Shared.Weapons.Ranged.Events;
 using Content.Shared.Weapons.Ranged.Systems;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 using Robust.Shared.Map;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
-using Content.Shared._Goobstation.Weapons.Multishot;
 
 namespace Content.Shared.Weapons.Ranged.Components;
 
-[RegisterComponent, NetworkedComponent, AutoGenerateComponentState, AutoGenerateComponentPause]
-[Access(typeof(SharedGunSystem), typeof(SharedMultishotSystem), typeof(SharedOniSystem))] // DeltaV - I didn't feel like rewriting big chunks of code
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState(fieldDeltas: true), AutoGenerateComponentPause]
+[Access(typeof(SharedGunSystem))]
 public sealed partial class GunComponent : Component
 {
     #region Sound
@@ -214,7 +212,7 @@ public sealed partial class GunComponent : Component
     /// The base value for how fast the projectile moves.
     /// </summary>
     [DataField]
-    public float ProjectileSpeed = 25f;
+    public float ProjectileSpeed = 35f;
 
     /// <summary>
     /// How fast the projectile moves.
@@ -231,12 +229,6 @@ public sealed partial class GunComponent : Component
     [AutoNetworkedField]
     [AutoPausedField]
     public TimeSpan NextFire = TimeSpan.Zero;
-
-    /// <summary>
-    ///   After dealing a melee attack with this gun, the minimum cooldown in seconds before the gun can shoot again.
-    /// </summary>
-    [DataField]
-    public float MeleeCooldown = 0.528f;
 
     /// <summary>
     /// What firemodes can be selected.
@@ -271,12 +263,6 @@ public sealed partial class GunComponent : Component
     /// </summary>
     [DataField]
     public Vector2 DefaultDirection = new Vector2(0, -1);
-
-    /// <summary>
-    ///     The percentage chance of a given gun to accidentally discharge if violently thrown into a wall or person
-    /// </summary>
-    [DataField]
-    public float FireOnDropChance = 0.1f;
 }
 
 [Flags]

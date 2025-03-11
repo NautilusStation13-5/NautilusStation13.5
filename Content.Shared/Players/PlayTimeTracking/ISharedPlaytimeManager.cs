@@ -1,9 +1,12 @@
-using System.Diagnostics.CodeAnalysis;
 using Robust.Shared.Player;
 
 namespace Content.Shared.Players.PlayTimeTracking;
 
 public interface ISharedPlaytimeManager
 {
-    bool TryGetTrackerTimes(ICommonSession id, [NotNullWhen(true)] out Dictionary<string, TimeSpan>? time);
+    /// <summary>
+    /// Gets the playtimes for the session or an empty dictionary if none found.
+    /// </summary>
+    IReadOnlyDictionary<string, TimeSpan> GetPlayTimes(ICommonSession session);
 }
+

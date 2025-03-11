@@ -1,7 +1,6 @@
 using Content.Server.Administration.Commands;
 using Content.Server.Antag;
 using Content.Server.GameTicking.Rules.Components;
-using Content.Server.WhiteDream.BloodCult.Gamerule;
 using Content.Server.Zombies;
 using Content.Shared.Administration;
 using Content.Shared.Database;
@@ -23,6 +22,9 @@ public sealed partial class AdminVerbSystem
     private const string DefaultTraitorRule = "Traitor";
 
     [ValidatePrototypeId<EntityPrototype>]
+    private const string DefaultInitialInfectedRule = "Zombie";
+
+    [ValidatePrototypeId<EntityPrototype>]
     private const string DefaultNukeOpRule = "LoneOpsSpawn";
 
     [ValidatePrototypeId<EntityPrototype>]
@@ -30,9 +32,6 @@ public sealed partial class AdminVerbSystem
 
     [ValidatePrototypeId<EntityPrototype>]
     private const string DefaultThiefRule = "Thief";
-
-    [ValidatePrototypeId<EntityPrototype>]
-    private const string DefaultBloodCultRule = "BloodCult";
 
     [ValidatePrototypeId<StartingGearPrototype>]
     private const string PirateGearId = "PirateGear";
@@ -66,6 +65,20 @@ public sealed partial class AdminVerbSystem
             Message = Loc.GetString("admin-verb-make-traitor"),
         };
         args.Verbs.Add(traitor);
+
+        Verb initialInfected = new()
+        {
+            Text = Loc.GetString("admin-verb-text-make-initial-infected"),
+            Category = VerbCategory.Antag,
+            Icon = new SpriteSpecifier.Rsi(new("/Textures/Interface/Misc/job_icons.rsi"), "InitialInfected"),
+            Act = () =>
+            {
+                _antag.ForceMakeAntag<ZombieRuleComponent>(targetPlayer, DefaultInitialInfectedRule);
+            },
+            Impact = LogImpact.High,
+            Message = Loc.GetString("admin-verb-make-initial-infected"),
+        };
+        args.Verbs.Add(initialInfected);
 
         Verb zombie = new()
         {
@@ -138,19 +151,5 @@ public sealed partial class AdminVerbSystem
             Message = Loc.GetString("admin-verb-make-thief"),
         };
         args.Verbs.Add(thief);
-
-        Verb cultist = new()
-        {
-            Text = Loc.GetString("admin-verb-text-make-blood-cultist"),
-            Category = VerbCategory.Antag,
-            Icon = new SpriteSpecifier.Rsi(new("/Textures/Objects/Weapons/Melee/cult_dagger.rsi"), "icon"),
-            Act = () =>
-            {
-                _antag.ForceMakeAntag<BloodCultRuleComponent>(targetPlayer, DefaultBloodCultRule);
-            },
-            Impact = LogImpact.High,
-            Message = Loc.GetString("admin-verb-make-blood-cultist"),
-        };
-        args.Verbs.Add(cultist);
     }
 }

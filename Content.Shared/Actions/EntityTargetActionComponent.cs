@@ -4,6 +4,9 @@ using Robust.Shared.Serialization;
 
 namespace Content.Shared.Actions;
 
+/// <summary>
+/// Used on action entities to define an action that triggers when targeting an entity.
+/// </summary>
 [RegisterComponent, NetworkedComponent]
 public sealed partial class EntityTargetActionComponent : BaseTargetActionComponent
 {
@@ -12,27 +15,31 @@ public sealed partial class EntityTargetActionComponent : BaseTargetActionCompon
     /// <summary>
     ///     The local-event to raise when this action is performed.
     /// </summary>
-    [DataField]
+    [DataField("event")]
     [NonSerialized]
     public EntityTargetActionEvent? Event;
 
-    [DataField] public EntityWhitelist? Whitelist;
-    [DataField] public EntityWhitelist? Blacklist;
+    /// <summary>
+    /// Determines which entities are valid targets for this action.
+    /// </summary>
+    /// <remarks>No whitelist check when null.</remarks>
+    [DataField("whitelist")] public EntityWhitelist? Whitelist;
 
-    [DataField] public bool CanTargetSelf = true;
+    /// <summary>
+    /// Whether this action considers the user as a valid target entity when using this action.
+    /// </summary>
+    [DataField("canTargetSelf")] public bool CanTargetSelf = true;
 }
 
 [Serializable, NetSerializable]
 public sealed class EntityTargetActionComponentState : BaseActionComponentState
 {
     public EntityWhitelist? Whitelist;
-    public EntityWhitelist? Blacklist;
     public bool CanTargetSelf;
 
     public EntityTargetActionComponentState(EntityTargetActionComponent component, IEntityManager entManager) : base(component, entManager)
     {
         Whitelist = component.Whitelist;
-        Blacklist = component.Blacklist;
         CanTargetSelf = component.CanTargetSelf;
     }
 }

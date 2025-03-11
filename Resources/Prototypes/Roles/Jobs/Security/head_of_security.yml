@@ -4,32 +4,32 @@
   description: job-description-hos
   playTimeTracker: JobHeadOfSecurity
   requirements:
-    - !type:CharacterTraitRequirement
-      inverted: true
-      traits:
-        - Foreigner
-        - ForeignerLight
-        - Muted
-        - Blindness
-        - Pacifist
-        - BrittleBoneDisease
+    - !type:RoleTimeRequirement
+      role: JobWarden
+      time: 3600
+    - !type:RoleTimeRequirement
+      role: JobSecurityOfficer
+      time: 10800
+    - !type:DepartmentTimeRequirement
+      department: Security
+      time: 7200
+    - !type:OverallPlaytimeRequirement
+      time: 10800
   weight: 10
   startingGear: HoSGear
   icon: "JobIconHeadOfSecurity"
-  requireAdminNotify: true
   supervisors: job-supervisors-captain
   canBeAntag: false
   access:
   - HeadOfSecurity
   - Command
-  #- Brig  # Delta V: Removed
+  - Brig
   - Security
   - Armory
   - Maintenance
   - Service
   - External
   - Detective
-  - Corpsman # DeltaV - added Corpsman access
   - Cryogenics
   special:
   - !type:AddImplantSpecial
@@ -37,33 +37,16 @@
   - !type:AddComponentSpecial
     components:
       - type: CommandStaff
-  afterLoadoutSpecial:
-  - !type:ModifyEnvirosuitSpecial
-    charges: 8
-  - !type:ModifyEnvirohelmSpecial
-    powerCell: PowerCellHigh
 
 - type: startingGear
   id: HoSGear
-  subGear:
-  - HoSPlasmamanGear
   equipment:
-    jumpsuit: ClothingUniformJumpsuitHoS
-    back: ClothingBackpackHOSFilled
-    shoes: ClothingShoesBootsCombatFilled
-    eyes: ClothingEyesGlassesSunglasses
+    eyes: ClothingEyesGlassesSecurity
     id: HoSPDA
     gloves: ClothingHandsGlovesCombat
     ears: ClothingHeadsetAltSecurity
-    belt: ClothingBeltSecurityFilled
-  innerClothingSkirt: ClothingUniformJumpskirtHoS
-  satchel: ClothingBackpackSatchelHOSFilled
-  duffelbag: ClothingBackpackDuffelHOSFilled
-
-- type: startingGear
-  id: HoSPlasmamanGear
-  parent: BasePlasmamanSecurityGear
-  equipment:
-    jumpsuit: ClothingUniformEnvirosuitHoS
-    head: ClothingHeadEnvirohelmHoS
-    gloves: ClothingHandsGlovesEnviroglovesBlack
+    pocket1: WeaponRevolverDeckard
+  storage:
+    back:
+    - Flash
+    - SpeedLoaderMagnum

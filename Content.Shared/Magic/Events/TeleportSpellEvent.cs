@@ -1,6 +1,4 @@
 ﻿using Content.Shared.Actions;
-using Content.Shared.Chat;
-
 
 namespace Content.Shared.Magic.Events;
 
@@ -18,6 +16,4 @@ public sealed partial class TeleportSpellEvent : WorldTargetActionEvent, ISpeakS
     /// </summary>
     [DataField]
     public float BlinkVolume = 5f;
-
-    public InGameICChatType ChatType { get; } = InGameICChatType.Speak;
 }

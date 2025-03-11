@@ -4,14 +4,17 @@ alerts-low-oxygen-desc = There is [color=red]not enough oxygen[/color] in the ai
 alerts-low-nitrogen-name = [color=red]Low Nitrogen[/color]
 alerts-low-nitrogen-desc = There is [color=red]not enough nitrogen[/color] in the air you are breathing. Put on [color=green]internals[/color].
 
-alerts-low-plasma-name = [color=red]Low Plasma[/color]
-alerts-low-plasma-desc = There is [color=red]not enough plasma[/color] in the air you are breathing. Put on [color=green]internals[/color].
-
-alerts-high-oxygen-name = [color=red]High Oxygen[/color]
-alerts-high-oxygen-desc = There is [color=red]too much oxygen[/color] in the air you are breathing. Put on [color=green]internals[/color].
-
 alerts-high-toxin-name = [color=red]High Toxin Level[/color]
 alerts-high-toxin-desc = There are [color=red]too many toxins[/color] in the air you are breathing. Put on [color=green]internals[/color] or get away.
+
+alerts-lysis-name = [color=red]Plasmolysis[/color]
+alerts-lysis-desc = Your membrane is [color=red]falling apart[/color]! You need [color=green]seawater[/color]!
+
+alerts-drowning-name = [color=red]Drowning[/color]
+alerts-drowning-desc = You are[color=red]drowning[/color]! Turn on [color=green]internals[/color] or get away!
+
+alerts-short-circuit-name = [color=red]Short Circuit[/color]
+alerts-short-circuit-desc = You're [color=yellow]short-circuiting[/color]! Get out of the [color=blue]water[/color] immediately!.
 
 alerts-low-pressure-name = [color=red]Low Pressure[/color]
 alerts-low-pressure-desc = The air around you is [color=red]hazardously thin[/color]. A [color=green]space suit[/color] would protect you.
@@ -32,6 +35,9 @@ alerts-weightless-name = Weightless
 alerts-weightless-desc =
     Gravity has ceased affecting you, and you're floating around aimlessly. Find something sturdy to hold onto, or throw or shoot something in a direction opposite of you.
     Mag-boots or jetpacks would help you move with more control.
+
+alerts-walking-name = Walking
+alerts-walking-desc = You are walking, moving at a slow pace.
 
 alerts-stunned-name = [color=yellow]Stunned[/color]
 alerts-stunned-desc = You're [color=yellow]stunned[/color]! Something is impairing your ability to move or interact with objects.
@@ -59,6 +65,9 @@ alerts-battery-desc = If your battery depletes, you will be unable to use your a
 
 alerts-no-battery-name = No Battery
 alerts-no-battery-desc = You don't have a battery, rendering you unable to charge or use your abilities.
+
+jellid-alerts-no-battery-name = Low Energy
+jellid-alerts-no-battery-desc = You're feeling dangerously [color=red]drained[/color]. Find something with a [color=yellow]Battery[/color] to charge up.
 
 alerts-internals-name = Toggle internals
 alerts-internals-desc = Toggles your gas tank internals on or off.
@@ -102,6 +111,9 @@ alerts-bleed-desc = You're [color=red]bleeding[/color].
 alerts-pacified-name = [color=green]Pacified[/color]
 alerts-pacified-desc = You're pacified; you won't be able to harm living creatures.
 
+alerts-adrenaline-name = [color=red]Adrenaline[/color]
+alerts-adrenaline-desc = You're full of adrenaline: pain won't slow you down.
+
 alerts-suit-power-name = Suit Power
 alerts-suit-power-desc = How much power your space ninja suit has.
 
@@ -113,12 +125,3 @@ alerts-revenant-essence-desc = The power of souls. It sustains you and is used f
 
 alerts-revenant-corporeal-name = Corporeal
 alerts-revenant-corporeal-desc = You have manifested physically. People around you can see and hurt you.
-
-alerts-walking-name = Walking
-alerts-walking-desc = Indicates how fast you're moving.
-
-alerts-offer-name = Offer
-alerts-offer-desc = Someone offers you an item.
-
-alerts-deflecting-name = Deflecting
-alerts-deflecting-desc = You have a chance to deflect incoming projectiles. Standing still or moving slowly will increase this chance.

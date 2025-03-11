@@ -38,16 +38,10 @@
   id: JobChiefEngineer
 
 - type: playTimeTracker
-  id: JobChiefJustice
-
-- type: playTimeTracker
   id: JobChiefMedicalOfficer
 
 - type: playTimeTracker
   id: JobClown
-
-- type: playTimeTracker
-  id: JobClerk
 
 - type: playTimeTracker
   id: JobDetective
@@ -69,6 +63,12 @@
 
 - type: playTimeTracker
   id: JobERTSecurity
+
+- type: playTimeTracker
+  id: JobDeathSquad
+
+- type: playTimeTracker
+  id: JobCBURN
 
 - type: playTimeTracker
   id: JobHeadOfPersonnel
@@ -107,9 +107,6 @@
   id: JobPsychologist
 
 - type: playTimeTracker
-  id: JobProsecutor
-
-- type: playTimeTracker
   id: JobQuartermaster
 
 - type: playTimeTracker
@@ -122,10 +119,13 @@
   id: JobResearchDirector
 
 - type: playTimeTracker
-  id: JobRoboticist
+  id: JobSalvageSpecialist
 
 - type: playTimeTracker
-  id: JobSalvageSpecialist
+  id: JobPilot
+
+- type: playTimeTracker
+  id: JobBasinTech
 
 - type: playTimeTracker
   id: JobScientist
@@ -135,18 +135,6 @@
 
 - type: playTimeTracker
   id: JobSecurityOfficer
-
-- type: playTimeTracker
-  id: JobSeniorEngineer
-
-- type: playTimeTracker
-  id: JobSeniorOfficer
-
-- type: playTimeTracker
-  id: JobSeniorPhysician
-
-- type: playTimeTracker
-  id: JobSeniorResearcher
 
 - type: playTimeTracker
   id: JobServiceWorker
@@ -171,9 +159,3 @@
 
 - type: playTimeTracker
   id: JobZookeeper
-
-- type: playTimeTracker
-  id: JobDeathSquad
-
-- type: playTimeTracker
-  id: JobCBURN

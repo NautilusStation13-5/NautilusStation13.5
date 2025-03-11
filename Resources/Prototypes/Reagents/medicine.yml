@@ -8,23 +8,10 @@
   color: "#081a80"
   metabolisms:
     Medicine:
-      metabolismRate: 0.1
       effects:
-      - !type:GenericStatusEffect
-        key: PsionicallyInsulated
-        component: PsionicInsulation
-        type: Add
-        time: 900
       - !type:GenericStatusEffect
         key: Stutter
         component: ScrambledAccent
-        type: Add
-        time: 900
-      - !type:GenericStatusEffect
-        key: PsionicsDisabled
-        component: PsionicsDisabled
-        type: Add
-        time: 900
       - !type:Drunk
         slurSpeech: false
         boozePower: 20
@@ -43,7 +30,7 @@
       - !type:HealthChange
         damage:
           types:
-            Poison: -1.5 # Was 1, Slight Buff as it should heal for half the amount as Dip or Stelli
+            Poison: -1
       - !type:HealthChange
         conditions:
         - !type:ReagentThreshold
@@ -153,7 +140,7 @@
       - !type:HealthChange
         damage:
           groups:
-            Brute: -2.5 # Was 2, Buffed due to limb damage changes
+            Brute: -2
       - !type:HealthChange
         conditions:
         - !type:ReagentThreshold
@@ -181,7 +168,6 @@
   physicalDesc: reagent-physical-desc-fizzy
   flavor: medicine
   color: "#0091ff"
-  worksOnTheDead: true
   plantMetabolism:
   - !type:PlantAdjustToxins
     amount: -5
@@ -199,9 +185,10 @@
           damage:
           # todo scale with temp like SS13
             groups:
-              Airloss: -10
-        - !type:ModifyBloodLevel
-          amount: 5
+              Airloss: -6
+              Brute: -4
+              Burn: -6
+              Toxin: -4
 
 - type: reagent
   id: Doxarubixadone
@@ -211,7 +198,6 @@
   physicalDesc: reagent-physical-desc-bubbling
   flavor: medicine
   color: "#32cd32"
-  worksOnTheDead: true
   metabolisms:
     Medicine:
       effects:
@@ -221,9 +207,7 @@
             max: 213.0
           damage:
             types:
-             Cellular: -4
-            groups:
-                Brute: 1
+             Cellular: -2
 
 - type: reagent
   id: Dermaline
@@ -239,9 +223,9 @@
       - !type:HealthChange
         damage:
           types:
-            Heat: -2
-            Shock: -2
-            Cold: -2 # Was 1.5, Buffed due to limb damage changes
+            Heat: -1.5
+            Shock: -1.5
+            Cold: -1.5
       - !type:HealthChange
         conditions:
         - !type:ReagentThreshold
@@ -339,8 +323,8 @@
             Asphyxiation: -3
             Poison: -0.5
           groups:
-            Brute: -1
-            Burn: -1 # Was .5, Buffed due to limb damage changes
+            Brute: -0.5
+            Burn: -0.5
       - !type:HealthChange
         conditions:
         - !type:ReagentThreshold
@@ -375,6 +359,10 @@
         key: KnockedDown
         time: 0.75
         type: Remove
+      - !type:GenericStatusEffect
+        key: Adrenaline # Guess what epinephrine is...
+        component: IgnoreSlowOnDamage
+        time: 5 # lingers less than hivemind reagent to give it a niche
 
 - type: reagent
   id: Hyronalin
@@ -458,9 +446,9 @@
       - !type:HealthChange
         damage:
           types:
-            Heat: -0.5
-            Shock: -0.5
-            Cold: -0.5 # Was .33, Buffed due to limb damage changes
+            Heat: -0.33
+            Shock: -0.33
+            Cold: -0.33
       - !type:SatiateThirst
         factor: -10
         conditions:
@@ -495,12 +483,12 @@
       - !type:AdjustTemperature
         conditions:
         - !type:Temperature
-          max: 288.15
+          max: 293.15
         amount: 100000 # thermal energy, not temperature!
       - !type:AdjustTemperature
         conditions:
         - !type:Temperature
-          min: 298.15
+          min: 293.15
         amount: -10000
       - !type:PopupMessage
         type: Local
@@ -781,10 +769,9 @@
             Brute: -1
           types:
             Poison: -0.5 ##Should be about what it was when it healed the toxin group
-            Radiation: -0.15 ##Should really only heal minor accidental exposures
-            Heat: -0.5
-            Shock: -0.5
-            Cold: -0.5 # Was .33, Buffed due to limb damage changes
+            Heat: -0.33
+            Shock: -0.33
+            Cold: -0.33
 
 - type: reagent
   id: Lipozine
@@ -816,10 +803,10 @@
       - !type:HealthChange
         damage:
           groups:
-            Burn: -3
-            Toxin: -3
-            Airloss: -3
-            Brute: -3 # Was 2, Buffed due to limb damage changes
+            Burn: -2
+            Toxin: -2
+            Airloss: -2
+            Brute: -2
 
 - type: reagent
   id: Ultravasculine
@@ -1001,7 +988,7 @@
       - !type:HealthChange
         damage:
           types:
-            Slash: -4 # Was 3, Buffed due to limb damage changes
+            Slash: -3
       - !type:HealthChange
         conditions:
         - !type:ReagentThreshold
@@ -1048,7 +1035,7 @@
       - !type:HealthChange
         damage:
           types:
-            Blunt: -4 # Was 3, Buffed due to limb damage changes(GoobStation)
+            Blunt: -3.5
       - !type:HealthChange
         conditions:
         - !type:ReagentThreshold
@@ -1056,6 +1043,52 @@
         damage:
           types:
             Poison: 4
+
+- type: reagent
+  id: Holywater
+  name: reagent-name-holywater
+  group: Medicine
+  desc: reagent-desc-holywater
+  physicalDesc: reagent-physical-desc-holy
+  flavor: holy
+  color: "#91C3F7"
+  metabolisms:
+    Drink:
+      effects:
+      - !type:SatiateThirst
+        factor: 3
+    Medicine:
+      effects:
+      - !type:HealthChange
+        conditions:
+        - !type:TotalDamage
+          max: 50
+        damage:
+          types:
+            Blunt: -0.2
+            Poison: -0.2
+            Heat: -0.2
+            Shock: -0.2
+            Cold: -0.2
+  reactiveEffects:
+    Extinguish:
+      methods: [ Touch ]
+      effects:
+      - !type:ExtinguishReaction
+    Acidic:
+      methods: [ Touch ]
+      effects:
+      - !type:HealthChange
+        scaleByQuantity: true
+        ignoreResistances: false
+        damage:
+          types:
+            Holy: 0.5
+  plantMetabolism:
+  - !type:PlantAdjustWater
+    amount: 1
+  tileReactions:
+  - !type:ExtinguishTileReaction { }
 
 - type: reagent
   id: Pyrazine
@@ -1205,10 +1238,9 @@
           max: 213.0
         damage:
           types:
-            Heat: -5.0 # DeltaV - Increased from -3.0 to -5.0
-            Shock: -5.0 # DeltaV - Increased from -3.0 to -5.0
-            Cold: -5.0 # DeltaV - Added Cold healing to match Heat/Shock
-            Caustic: -2.0 # DeltaV - Increased from -1.0 to -2.0
+            Heat: -3.0
+            Shock: -3.0
+            Caustic: -1.0
 
 - type: reagent
   id : Mannitol # currently this is just a way to create psicodine
@@ -1352,48 +1384,3 @@
       - !type:AdjustReagent
         reagent: MindbreakerToxin
         amount: -3.0
-
-- type: reagent
-  id: HolyWater
-  name: reagent-name-holywater
-  group: Medicine
-  desc: reagent-desc-holywater
-  physicalDesc: reagent-physical-desc-translucent
-  flavor: holy
-  color: "#75b1f0"
-  boilingPoint: 100.0
-  meltingPoint: 0.0
-  reactiveEffects:
-    Acidic:
-      methods: [ Touch ]
-      effects:
-      - !type:HealthChange
-        scaleByQuantity: true
-        ignoreResistances: false
-        damage:
-          types:
-            Holy: 0.5
-  metabolisms: #Could nullify debuffs of feeding.
-    Drink:
-      effects:
-      - !type:SatiateThirst
-        factor: 3
-    Medicine:
-      effects:
-      - !type:ModifyBloodLevel
-        amount: 0.1
-      - !type:HealthChange
-        damage:
-          groups:
-            Brute: -0.5
-            Burn: -0.5
-          types:
-            Holy: 1
-      - !type:PurifyEvil
-        conditions:
-        - !type:ReagentThreshold
-          min: 15
-  plantMetabolism: #Heals plants a little with the holy power within it.
-  - !type:PlantAdjustHealth
-    amount: 0.1
-

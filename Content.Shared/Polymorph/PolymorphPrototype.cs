@@ -1,3 +1,4 @@
+using Robust.Shared.Audio;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype.Array;
 
@@ -117,15 +118,16 @@ public sealed partial record PolymorphConfiguration
     public TimeSpan Cooldown = TimeSpan.Zero;
 
     /// <summary>
-    /// The exact names of components to copy over when this polymorph is applied.
+    ///     If not null, this sound will be played when being polymorphed into something.
     /// </summary>
-    [DataField(serverOnly: true)]
-    public HashSet<string> CopiedComponents = new()
-    {
-        "LanguageKnowledge",
-        "LanguageSpeaker",
-        "Grammar"
-    };
+    [DataField]
+    public SoundSpecifier? PolymorphSound;
+
+    /// <summary>
+    ///     If not null, this sound will be played when being reverted from a polymorph.
+    /// </summary>
+    [DataField]
+    public SoundSpecifier? ExitPolymorphSound;
 }
 
 public enum PolymorphInventoryChange : byte

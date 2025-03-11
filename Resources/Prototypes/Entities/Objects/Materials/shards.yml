@@ -45,12 +45,9 @@
         mask:
         - ItemMask
   - type: DamageOtherOnHit
-    meleeDamageMultiplier: 2
-  - type: EmbeddableProjectile
-    sound: /Audio/Weapons/bladeslice.ogg
-    removalTime: 2.5
-    autoRemoveDuration: 30
-  - type: EmbedPassiveDamage
+    damage:
+      types:
+        Slash: 2
   - type: Tag
     tags:
     - Trash
@@ -67,11 +64,8 @@
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
   - type: StepTrigger
-    triggerGroups:
-      types:
-      - Shard
     intersectRatio: 0.2
-  - type: ClothingRequiredStepTrigger
+  - type: PreventableStepTrigger
   - type: Slippery
     slipSound:
       path: /Audio/Effects/glass_step.ogg
@@ -84,14 +78,6 @@
   - type: DeleteOnTrigger
   - type: StaticPrice
     price: 0
-  # Shitmed Change
-  - type: Scalpel
-    speed: 0.45
-  - type: SurgeryTool
-    startSound:
-      path: /Audio/_Shitmed/Medical/Surgery/scalpel1.ogg
-    endSound:
-      path: /Audio/_Shitmed/Medical/Surgery/scalpel2.ogg
 
 - type: entity
   parent: ShardBase
@@ -174,12 +160,8 @@
         Slash: 5.5
   - type: ToolRefinable
     refineResult:
-      - id: SheetGlass1
-      - id: SheetPlasma1
-  - type: EmbedPassiveDamage
-    damage:
-      types:
-        Slash: 0.15
+    - id: SheetGlass1
+    - id: SheetPlasma1
   - type: DamageUserOnTrigger
     damage:
       types:

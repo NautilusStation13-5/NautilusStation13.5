@@ -120,11 +120,6 @@ public sealed class SliceableFoodSystem : EntitySystem
         _transform.DropNextTo(sliceUid, (uid, transform));
         _transform.SetLocalRotation(sliceUid, 0);
 
-        // DeltaV - start of deep frier stuff
-        var slicedEv = new FoodSlicedEvent(user, uid, sliceUid);
-        RaiseLocalEvent(uid, ref slicedEv);
-        // DeltaV - end of deep frier stuff
-
         if (!_container.IsEntityOrParentInContainer(sliceUid))
         {
             var randVect = _random.NextVector2(2.0f, 2.5f);
@@ -177,3 +172,4 @@ public sealed class SliceableFoodSystem : EntitySystem
         _solutionContainer.EnsureSolution(entity.Owner, foodComp.Solution, out _);
     }
 }
+

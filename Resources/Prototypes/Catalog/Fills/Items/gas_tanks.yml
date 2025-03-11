@@ -63,22 +63,6 @@
         - 0.270782035 # nitrogen
       temperature: 293.15
 
-- type: entity
-  id: EmergencyPlasmaTankFilled
-  parent: EmergencyPlasmaTank
-  suffix: Filled
-  components:
-  - type: GasTank
-    outputPressure: 5.325
-    air:
-      # 16 minutes with Plasmaman lungs
-      volume: 0.66
-      moles:
-        - 0           # oxygen
-        - 0           # nitrogen
-        - 0           # CO2
-        - 0.270782035 # nitrogen
-      temperature: 293.15
 
 - type: entity
   id: ExtendedEmergencyOxygenTankFilled
@@ -109,22 +93,6 @@
         - 0.615413715 # nitrogen
       temperature: 293.15
 
-- type: entity
-  id: ExtendedEmergencyPlasmaTankFilled
-  parent: ExtendedEmergencyPlasmaTank
-  suffix: Filled
-  components:
-  - type: GasTank
-    outputPressure: 5.325
-    air:
-      # 37 minutes with Plasmaman lungs
-      volume: 1.5
-      moles:
-        - 0           # oxygen
-        - 0           # nitrogen
-        - 0           # CO2
-        - 0.615413715 # plasma
-      temperature: 293.15
 
 - type: entity
   id: DoubleEmergencyOxygenTankFilled
@@ -153,23 +121,6 @@
       moles:
         - 0 # oxygen
         - 1.025689525 # nitrogen
-      temperature: 293.15
-
-- type: entity
-  id: DoubleEmergencyPlasmaTankFilled
-  parent: DoubleEmergencyPlasmaTank
-  suffix: Filled
-  components:
-  - type: GasTank
-    outputPressure: 5.325
-    air:
-      # 62 minutes with Plasmaman lungs
-      volume: 1.5
-      moles:
-        - 0           # oxygen
-        - 0           # nitrogen
-        - 0           # CO2
-        - 1.025689525 # plasma
       temperature: 293.15
 
 - type: entity
@@ -208,6 +159,66 @@
         - 0.451303391 # 22% oxygen
         - 1.600075659 # 78% nitrogen
         # 2.051379050       total
+      temperature: 293.15
+
+- type: entity
+  id: TP14WaterTankEmergencyFilled
+  name: emergency water tank
+  parent: EmergencyOxygenTank
+  suffix: Filled
+  description: A tank designed to hold small amounts of water. It won't last long, but it works.
+  components:
+  - type: GasTank
+    outputPressure: 21.3
+    air:
+      # 31 minutes
+      volume: 5
+      moles:
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 0
+        - 2.051379050
+      temperature: 293.15
+
+- type: entity
+  id: TP14WaterTankFilled
+  name: water tank
+  parent: OxygenTank
+  suffix: Filled
+  description: A robust tank designed to store sea water
+  components:
+  - type: Clothing
+    quickEquip: false
+    slots:
+    - back
+    - suitStorage
+    sprite: Objects/Tanks/water.rsi
+  - type: Sprite
+    sprite: Objects/Tanks/water.rsi
+  - type: Item
+    sprite: Objects/Tanks/water.rsi
+  - type: GasTank
+    outputPressure: 21.3
+    air:
+      # 31 minutes
+      volume: 5
+      moles:
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 2.051379050
       temperature: 293.15
 
 - type: entity
@@ -260,9 +271,9 @@
   suffix: Filled
   components:
   - type: GasTank
-    outputPressure: 5.325
+    outputPressure: 101.3
     air:
-      # 125.2 minutes with Plasmaman lungs
+      # 6 minutes of agony
       volume: 5
       moles:
         - 0           # oxygen

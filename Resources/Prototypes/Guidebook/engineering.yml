@@ -8,6 +8,8 @@
   - Power
   - ShuttleCraft
   - Networking
+  - Flooding
+  - TheArtifact
 
 - type: guideEntry
   id: Construction
@@ -15,6 +17,16 @@
   text: "/ServerInfo/Guidebook/Engineering/Construction.xml"
   children: 
   - AirlockSecurity
+
+- type: guideEntry
+  id: TheArtifact
+  name: guide-entry-the-artifact
+  text: "/ServerInfo/Guidebook/Engineering/TheArtifact.xml"
+
+- type: guideEntry
+  id: Flooding
+  name: guide-entry-flooding
+  text: "/ServerInfo/Guidebook/Engineering/Flooding.xml"
   
 - type: guideEntry
   id: AirlockSecurity
@@ -66,7 +78,6 @@
   - Singularity
   - TEG
   - RTG
-  - Supermatter
 
 - type: guideEntry
   id: AME
@@ -92,8 +103,3 @@
   id: PortableGenerator
   name: guide-entry-portable-generator
   text: "/ServerInfo/Guidebook/Engineering/PortableGenerator.xml"
-
-- type: guideEntry
-  id: Supermatter
-  name: guide-entry-sm
-  text: "/ServerInfo/Guidebook/Engineering/Supermatter.xml"

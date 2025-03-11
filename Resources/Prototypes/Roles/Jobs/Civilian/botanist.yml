@@ -16,24 +16,11 @@
 
 - type: startingGear
   id: BotanistGear
-  subGear:
-  - BotanistPlasmamanGear
   equipment:
-    jumpsuit: ClothingUniformJumpsuitHydroponics
-    back: ClothingBackpackHydroponicsFilled
     shoes: ClothingShoesColorBrown
     id: BotanistPDA
     ears: ClothingHeadsetService
-    outerClothing: ClothingOuterApronBotanist
     belt: ClothingBeltPlantFilled
-  innerClothingSkirt: ClothingUniformJumpskirtHydroponics
-  satchel: ClothingBackpackSatchelHydroponicsFilled
-  duffelbag: ClothingBackpackDuffelHydroponicsFilled
-
-- type: startingGear
-  id: BotanistPlasmamanGear
-  parent: BasePlasmamanGear
-  equipment:
-    jumpsuit: ClothingUniformEnvirosuitHydroponics
-    head: ClothingHeadEnvirohelmHydroponics
-    gloves: ClothingHandsGlovesEnviroglovesLeather
+  #storage:
+    #back:
+    #- Stuff

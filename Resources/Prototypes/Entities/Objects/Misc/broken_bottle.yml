@@ -8,17 +8,10 @@
   - type: Execution
     doAfterDuration: 4.0
   - type: MeleeWeapon
-    attackRate: .71
-    range: 1.4
+    attackRate: 1.5
     damage:
       types:
-        Slash: 4
-    heavyRateModifier: 1.25
-    heavyRangeModifier: 0.8
-    heavyDamageBaseModifier: 1.5
-    heavyStaminaCost: 5
-    maxTargets: 3
-    angle: 75
+        Slash: 5
     soundHit:
       path: /Audio/Weapons/bladeslice.ogg
   - type: Sprite
@@ -27,7 +20,7 @@
   - type: DamageOtherOnHit
     damage:
       types:
-        Slash: 4
+        Slash: 2
   - type: Tag
     tags:
     - Trash

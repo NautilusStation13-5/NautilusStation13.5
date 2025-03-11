@@ -1,5 +1,5 @@
 ## UI
-cargo-console-menu-title = Cargo request console
+cargo-console-menu-title = Shipment request console
 cargo-console-menu-account-name-label = Account name:{" "}
 cargo-console-menu-account-name-none-text = None
 cargo-console-menu-shuttle-name-label = Shuttle name:{" "}
@@ -36,6 +36,7 @@ cargo-console-paper-print-name = Order #{$orderNumber}
 cargo-console-paper-print-text =
     Order #{$orderNumber}
     Item: {$itemName}
+    Quantity: {$orderQuantity}
     Requested by: {$requester}
     Reason: {$reason}
     Approved by: {$approver}
@@ -46,5 +47,3 @@ cargo-shuttle-console-station-unknown = Unknown
 cargo-shuttle-console-shuttle-not-found = Not found
 cargo-shuttle-console-organics = Detected organic lifeforms on the shuttle
 cargo-no-shuttle = No cargo shuttle found!
-
-cargo-telepad-delay-upgrade = Teleport delay

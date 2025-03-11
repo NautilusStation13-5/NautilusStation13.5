@@ -1,7 +1,7 @@
-﻿- type: entity
+- type: entity
   id: BaseShellShotgun
   name: shell (.50)
-  parent: BaseCartridge
+  parent: [ BaseCartridge, BaseRestrictedContraband ]
   abstract: true
   components:
   - type: Tag
@@ -123,7 +123,7 @@
     - ShellShotgunLight
   - type: Sprite
     layers:
-      - state: practice
+      - state: tranquilizer
         map: [ "enum.AmmoVisualLayers.Base" ]
   - type: CartridgeAmmo
     proto: PelletShotgunTranquilizer
@@ -137,8 +137,8 @@
   - type: SolutionTransfer
     maxTransferAmount: 7
   - type: SpentAmmoVisuals
-    state: "practice"
-    
+    state: "tranquilizer"
+
 - type: entity
   id: ShellShotgunImprovised
   name: improvised shotgun shell

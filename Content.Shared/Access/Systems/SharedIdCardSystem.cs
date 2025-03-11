@@ -25,6 +25,20 @@ public abstract class SharedIdCardSystem : EntitySystem
 
         SubscribeLocalEvent<IdCardComponent, MapInitEvent>(OnMapInit);
         SubscribeLocalEvent<TryGetIdentityShortInfoEvent>(OnTryGetIdentityShortInfo);
+        SubscribeLocalEvent<EntityRenamedEvent>(OnRename);
+    }
+
+    private void OnRename(ref EntityRenamedEvent ev)
+    {
+        // When a player gets renamed their id card is renamed as well to match.
+        // Unfortunately since TryFindIdCard will succeed if the entity is also a card this means that the card will
+        // keep renaming itself unless we return early.
+        // We also do not include the PDA itself being renamed, as that triggers the same event (e.g. for chameleon PDAs).
+        if (HasComp<IdCardComponent>(ev.Uid) || HasComp<PdaComponent>(ev.Uid))
+            return;
+
+        if (TryFindIdCard(ev.Uid, out var idCard))
+            TryChangeFullName(idCard, ev.NewName, idCard);
     }
 
     private void OnMapInit(EntityUid uid, IdCardComponent id, MapInitEvent args)
@@ -169,7 +183,7 @@ public abstract class SharedIdCardSystem : EntitySystem
         foreach (var department in _prototypeManager.EnumeratePrototypes<DepartmentPrototype>())
         {
             if (department.Roles.Contains(job.ID))
-                id.JobDepartments.Add("department-" + department.ID);
+                id.JobDepartments.Add(department.ID);
         }
 
         Dirty(uid, id);

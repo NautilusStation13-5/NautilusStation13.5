@@ -23,7 +23,6 @@ using Content.Shared.GameTicking;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Movement.Components;
 using Content.Shared.Parallax.Biomes;
-using Content.Shared.Roles;
 using Content.Shared.Salvage;
 using Content.Shared.Shuttles.Components;
 using Content.Shared.Tiles;
@@ -49,6 +48,8 @@ public sealed class ArrivalsSystem : EntitySystem
     [Dependency] private readonly IConsoleHost _console = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly IPrototypeManager _protoManager = default!;
+
+    [Dependency] private readonly IMapManager _mapManager = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly IChatManager _chat = default!;
     [Dependency] private readonly SharedMapSystem _mapSystem = default!;
@@ -84,9 +85,7 @@ public sealed class ArrivalsSystem : EntitySystem
 
     private readonly List<ProtoId<BiomeTemplatePrototype>> _arrivalsBiomeOptions = new()
     {
-        "Grasslands",
-        "LowDesert",
-        "Snow",
+        "OceanWorld",
     };
 
     public override void Initialize()
@@ -342,10 +341,6 @@ public sealed class ArrivalsSystem : EntitySystem
         if (!Enabled || _ticker.RunLevel != GameRunLevel.InRound)
             return;
 
-        if (ev.Job is not null
-            && _protoManager.Index<JobPrototype>(ev.Job).AlwaysUseSpawner)
-            return;
-
         if (!HasComp<StationArrivalsComponent>(ev.Station))
             return;
 
@@ -386,7 +381,7 @@ public sealed class ArrivalsSystem : EntitySystem
 
     private void SendDirections(PlayerSpawnCompleteEvent ev)
     {
-        if (!Enabled || !ev.LateJoin || !_pendingQuery.HasComp(ev.Mob))
+        if (!Enabled || !ev.LateJoin || ev.Silent || !_pendingQuery.HasComp(ev.Mob))
             return;
 
         var arrival = NextShuttleArrival();
@@ -515,45 +510,50 @@ public sealed class ArrivalsSystem : EntitySystem
         SetupArrivalsStation();
     }
 
-    private void SetupArrivalsStation()
+  private void SetupArrivalsStation()
+{
+    // Setup for the first map
+    var mapId1 = _mapManager.CreateMap();
+    var mapUid1 = _mapManager.GetMapEntityId(mapId1);
+    _mapManager.AddUninitializedMap(mapId1);
+
+    if (!_loader.TryLoad(mapId1, _cfgManager.GetCVar(CCVars.ArrivalsMap), out var uids1))
     {
-        var mapUid = _mapSystem.CreateMap(out var mapId, false);
-        _metaData.SetEntityName(mapUid, Loc.GetString("map-name-terminal"));
-
-        if (!_loader.TryLoad(mapId, _cfgManager.GetCVar(CCVars.ArrivalsMap), out var uids))
-        {
-            return;
-        }
-
-        foreach (var id in uids)
-        {
-            EnsureComp<ArrivalsSourceComponent>(id);
-            EnsureComp<ProtectedGridComponent>(id);
-            EnsureComp<PreventPilotComponent>(id);
-        }
-
-        // Setup planet arrivals if relevant
-        if (_cfgManager.GetCVar(CCVars.ArrivalsPlanet))
-        {
-            var template = _random.Pick(_arrivalsBiomeOptions);
-            _biomes.EnsurePlanet(mapUid, _protoManager.Index(template));
-            var restricted = new RestrictedRangeComponent
-            {
-                Range = 32f
-            };
-            AddComp(mapUid, restricted);
-        }
-
-        _mapSystem.InitializeMap(mapId);
-
-        // Handle roundstart stations.
-        var query = AllEntityQuery<StationArrivalsComponent>();
-
-        while (query.MoveNext(out var uid, out var comp))
-        {
-            SetupShuttle(uid, comp);
-        }
+        return;
     }
+
+    foreach (var id in uids1)
+    {
+        EnsureComp<ArrivalsSourceComponent>(id);
+        EnsureComp<PreventPilotComponent>(id);
+    }
+
+    // Setup planet arrivals for the first map if relevant
+    if (_cfgManager.GetCVar(CCVars.ArrivalsPlanet))
+    {
+        var template1 = _random.Pick(_arrivalsBiomeOptions);
+        _biomes.EnsurePlanet(mapUid1, _protoManager.Index(template1));
+        var restricted1 = new RestrictedRangeComponent
+        {
+            Range = 32f
+        };
+        AddComp(mapUid1, restricted1);
+    }
+
+    _mapManager.DoMapInitialize(mapId1);
+
+    // Setup for the ocean surface map
+    var mapId2 = _mapManager.CreateMap();
+    var mapUid2 = _mapManager.GetMapEntityId(mapId2);
+    _mapManager.AddUninitializedMap(mapId2);
+
+    if (!_loader.TryLoad(mapId2, _cfgManager.GetCVar(CCVars.Arrivals2Map), out var uids2)) // edit here to change the map, bozo
+    {
+        return;
+    }
+
+    _mapManager.DoMapInitialize(mapId2);
+}
 
     private void SetArrivals(bool obj)
     {
@@ -566,7 +566,7 @@ public sealed class ArrivalsSystem : EntitySystem
 
             while (query.MoveNext(out var sUid, out var comp))
             {
-                SetupShuttle(sUid, comp);
+                //SetupShuttle(sUid, comp);
             }
         }
         else
@@ -593,7 +593,7 @@ public sealed class ArrivalsSystem : EntitySystem
             return;
 
         // If it's a latespawn station then this will fail but that's okey
-        SetupShuttle(uid, component);
+        //SetupShuttle(uid, component);
     }
 
     private void SetupShuttle(EntityUid uid, StationArrivalsComponent component)

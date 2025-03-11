@@ -1,4 +1,3 @@
-player-panel-job-whitelists = Job Whitelists
 player-panel-title = information for {$player}
 player-panel-username = Username: {$player}
 player-panel-whitelisted = Whitelisted:
@@ -21,3 +20,4 @@ player-panel-logs = Logs
 player-panel-delete = Delete
 player-panel-rejuvenate = Rejuvenate
 player-panel-false = False
+player-panel-true = True

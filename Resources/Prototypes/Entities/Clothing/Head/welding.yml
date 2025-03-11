@@ -23,13 +23,6 @@
   - type: HideLayerClothing
     slots:
     - Snout
-  - type: DamageOtherOnHit
-    damage:
-      types:
-        Blunt: 7
-    staminaCost: 5
-    soundHit:
-      collection: MetalThud
 
 - type: entity
   parent: WeldingMaskBase

@@ -83,13 +83,11 @@ namespace Content.IntegrationTests.Tests.GameObjects.Components.Mobs
                     return null;
                 }
 
-                // This originally was hardcoded to expect a player character to have a Human Healthbar.
-                // It is no longer hardcoded to demand that.
-                // We should be seeing 2 alerts - the 2 debug alerts, in a specific order.
-                Assert.That(clientAlertsUI.AlertContainer.ChildCount, Is.GreaterThanOrEqualTo(2));
+                // we should be seeing 3 alerts - our health, and the 2 debug alerts, in a specific order.
+                Assert.That(clientAlertsUI.AlertContainer.ChildCount, Is.GreaterThanOrEqualTo(3));
                 var alertControls = clientAlertsUI.AlertContainer.Children.Select(c => (AlertControl) c);
                 var alertIDs = alertControls.Select(ac => ac.Alert.ID).ToArray();
-                var expectedIDs = new[] { "Debug1", "Debug2" };
+                var expectedIDs = new[] { "HumanHealth", "Debug1", "Debug2" };
                 Assert.That(alertIDs, Is.SupersetOf(expectedIDs));
             });
 
@@ -102,11 +100,11 @@ namespace Content.IntegrationTests.Tests.GameObjects.Components.Mobs
 
             await client.WaitAssertion(() =>
             {
-                // We should be seeing 1 alert now because one was cleared
-                Assert.That(clientAlertsUI.AlertContainer.ChildCount, Is.GreaterThanOrEqualTo(1));
+                // we should be seeing 2 alerts now because one was cleared
+                Assert.That(clientAlertsUI.AlertContainer.ChildCount, Is.GreaterThanOrEqualTo(2));
                 var alertControls = clientAlertsUI.AlertContainer.Children.Select(c => (AlertControl) c);
                 var alertIDs = alertControls.Select(ac => ac.Alert.ID).ToArray();
-                var expectedIDs = new[] { "Debug2" };
+                var expectedIDs = new[] { "HumanHealth", "Debug2" };
                 Assert.That(alertIDs, Is.SupersetOf(expectedIDs));
             });
 
