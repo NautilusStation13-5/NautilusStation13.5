@@ -18,37 +18,18 @@ public class ActionButtonContainer : GridContainer
     public event Action<GUIBoundKeyEventArgs, ActionButton>? ActionUnpressed;
     public event Action<ActionButton>? ActionFocusExited;
 
-    public ActionButtonContainer()
-    {
-        IoCManager.InjectDependencies(this);
-    }
+    public ActionButtonContainer() => IoCManager.InjectDependencies(this);
 
-    public ActionButton this[int index]
-    {
-        get => (ActionButton) GetChild(index);
-    }
+    public ActionButton this[int index] => (ActionButton) GetChild(index);
 
-    public void SetActionData(ActionsSystem system, params EntityUid?[] actionTypes)
+    private void BuildActionButtons(int count)
     {
-        var uniqueCount = Math.Min(system.GetClientActions().Count(), actionTypes.Length + 1);
         var keys = ContentKeyFunctions.GetHotbarBoundKeys();
 
-        for (var i = 0; i < uniqueCount; i++)
-        {
-            if (i >= ChildCount)
-            {
-                AddChild(MakeButton(i));
-            }
-
-            if (!actionTypes.TryGetValue(i, out var action))
-                action = null;
-            ((ActionButton) GetChild(i)).UpdateData(action, system);
-        }
-
-        for (var i = ChildCount - 1; i >= uniqueCount; i--)
-        {
-            RemoveChild(GetChild(i));
-        }
+        Children.Clear();
+        for (var i = 0; i < count; i++)
+            AddChild(MakeButton(i));
+        return;
 
         ActionButton MakeButton(int index)
         {
@@ -59,20 +40,30 @@ public class ActionButtonContainer : GridContainer
 
             button.KeyBind = boundKey;
             if (_input.TryGetKeyBinding(boundKey, out var binding))
-            {
                 button.Label.Text = binding.GetKeyString();
-            }
 
             return button;
+        }
+    }
+
+    public void SetActionData(ActionsSystem system, params EntityUid?[] actionTypes)
+    {
+        var uniqueCount = Math.Max(ContentKeyFunctions.GetHotbarBoundKeys().Length, actionTypes.Length + 1);
+        if (ChildCount != uniqueCount)
+            BuildActionButtons(uniqueCount);
+
+        for (var i = 0; i < uniqueCount; i++)
+        {
+            if (!actionTypes.TryGetValue(i, out var action))
+                action = null;
+            ((ActionButton) GetChild(i)).UpdateData(action, system);
         }
     }
 
     public void ClearActionData()
     {
         foreach (var button in Children)
-        {
             ((ActionButton) button).ClearData();
-        }
     }
 
     protected override void ChildAdded(Control newChild)
@@ -112,9 +103,9 @@ public class ActionButtonContainer : GridContainer
     public IEnumerable<ActionButton> GetButtons()
     {
         foreach (var control in Children)
-        {
             if (control is ActionButton button)
                 yield return button;
-        }
     }
+
+    ~ActionButtonContainer() => UserInterfaceManager.GetUIController<ActionUIController>().RemoveActionContainer();
 }

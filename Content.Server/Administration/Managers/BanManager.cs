@@ -70,10 +70,7 @@ public sealed partial class BanManager : IBanManager, IPostInjectInit
 
         var userRoleBans = new List<ServerRoleBanDef>();
         foreach (var ban in roleBans)
-        {
             userRoleBans.Add(ban);
-        }
-
         cancel.ThrowIfCancellationRequested();
         _cachedBanExemptions[player] = flags;
         _cachedRoleBans[player] = userRoleBans;

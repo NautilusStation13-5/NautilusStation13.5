@@ -11,8 +11,10 @@ using Content.Shared.Mind;
 using Content.Shared.Rejuvenate;
 using Content.Shared.Whitelist;
 using Robust.Shared.Audio.Systems;
+using Robust.Shared.Containers;
 using Robust.Shared.GameStates;
 using Robust.Shared.Map;
+using Robust.Shared.Network;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 
@@ -22,6 +24,8 @@ public abstract class SharedActionsSystem : EntitySystem
 {
     [Dependency] protected readonly IGameTiming GameTiming = default!;
     [Dependency] private readonly ISharedAdminLogManager _adminLogger = default!;
+    [Dependency] private readonly INetManager _net = default!;
+
     [Dependency] private readonly SharedInteractionSystem _interactionSystem = default!;
     [Dependency] private readonly ActionBlockerSystem _actionBlockerSystem = default!;
     [Dependency] private readonly RotateToFaceSystem _rotateToFaceSystem = default!;
@@ -69,42 +73,8 @@ public abstract class SharedActionsSystem : EntitySystem
         SubscribeAllEvent<RequestPerformActionEvent>(OnActionRequest);
     }
 
-    public override void Update(float frameTime)
-    {
-        base.Update(frameTime);
-
-        var worldActionQuery = EntityQueryEnumerator<WorldTargetActionComponent>();
-        while (worldActionQuery.MoveNext(out var uid, out var action))
-        {
-            if (IsCooldownActive(action) || !ShouldResetCharges(action))
-                continue;
-
-            ResetCharges(uid, dirty: true);
-        }
-
-        var instantActionQuery = EntityQueryEnumerator<InstantActionComponent>();
-        while (instantActionQuery.MoveNext(out var uid, out var action))
-        {
-            if (IsCooldownActive(action) || !ShouldResetCharges(action))
-                continue;
-
-            ResetCharges(uid, dirty: true);
-        }
-
-        var entityActionQuery = EntityQueryEnumerator<EntityTargetActionComponent>();
-        while (entityActionQuery.MoveNext(out var uid, out var action))
-        {
-            if (IsCooldownActive(action) || !ShouldResetCharges(action))
-                continue;
-
-            ResetCharges(uid, dirty: true);
-        }
-    }
-
     private void OnActionMapInit(EntityUid uid, BaseActionComponent component, MapInitEvent args)
     {
-        component.OriginalIconColor = component.IconColor;
-
         if (component.Charges == null)
             return;
 
@@ -157,7 +127,7 @@ public abstract class SharedActionsSystem : EntitySystem
         bool logError = true)
     {
         result = null;
-        if (uid == null || TerminatingOrDeleted(uid.Value))
+        if (!Exists(uid))
             return false;
 
         var ev = new GetActionDataEvent();
@@ -281,7 +251,7 @@ public abstract class SharedActionsSystem : EntitySystem
     }
 
     #region ComponentStateManagement
-    public virtual void UpdateAction(EntityUid? actionId, BaseActionComponent? action = null)
+    protected virtual void UpdateAction(EntityUid? actionId, BaseActionComponent? action = null)
     {
         // See client-side code.
     }
@@ -360,18 +330,25 @@ public abstract class SharedActionsSystem : EntitySystem
         Dirty(actionId.Value, action);
     }
 
-    public void ResetCharges(EntityUid? actionId, bool update = false, bool dirty = false)
+    public void ResetCharges(EntityUid? actionId)
     {
         if (!TryGetActionData(actionId, out var action))
             return;
 
         action.Charges = action.MaxCharges;
+        UpdateAction(actionId, action);
+        Dirty(actionId.Value, action);
+    }
 
-        if (update)
-            UpdateAction(actionId, action);
+    public void SetMaxCharges(EntityUid? actionId, int? maxCharges)
+    {
+        if (!TryGetActionData(actionId, out var action) ||
+            action.MaxCharges == maxCharges)
+            return;
 
-        if (dirty)
-            Dirty(actionId.Value, action);
+        action.MaxCharges = maxCharges;
+        UpdateAction(actionId, action);
+        Dirty(actionId.Value, action);
     }
 
     private void OnActionsGetState(EntityUid uid, ActionsComponent component, ref ComponentGetState args)
@@ -424,12 +401,13 @@ public abstract class SharedActionsSystem : EntitySystem
             return;
 
         var curTime = GameTiming.CurTime;
-        if (IsCooldownActive(action, curTime))
+        // TODO: Check for charge recovery timer
+        if (action.Cooldown.HasValue && action.Cooldown.Value.End > curTime)
             return;
 
         // TODO: Replace with individual charge recovery when we have the visuals to aid it
         if (action is { Charges: < 1, RenewCharges: true })
-            ResetCharges(actionEnt, true, true);
+            ResetCharges(actionEnt);
 
         BaseActionEvent? performEvent = null;
 
@@ -473,7 +451,7 @@ public abstract class SharedActionsSystem : EntitySystem
                 }
 
                 var entityCoordinatesTarget = GetCoordinates(netCoordinatesTarget);
-                _rotateToFaceSystem.TryFaceCoordinates(user, _transformSystem.ToMapCoordinates(entityCoordinatesTarget).Position);
+                _rotateToFaceSystem.TryFaceCoordinates(user, entityCoordinatesTarget.ToMapPos(EntityManager, _transformSystem));
 
                 if (!ValidateWorldTarget(user, entityCoordinatesTarget, (actionEnt, worldAction)))
                     return;
@@ -701,7 +679,11 @@ public abstract class SharedActionsSystem : EntitySystem
             dirty = true;
             action.Charges--;
             if (action is { Charges: 0, RenewCharges: false })
+            {
+                var disabledEv = new ActionGettingDisabledEvent(performer);
+                RaiseLocalEvent(actionId, ref disabledEv);
                 action.Enabled = false;
+            }
         }
 
         action.Cooldown = null;
@@ -806,7 +788,7 @@ public abstract class SharedActionsSystem : EntitySystem
         if (!ResolveActionData(actionId, ref action))
             return false;
 
-        DebugTools.Assert(action.Container == null ||
+        DebugTools.Assert(_net.IsClient || action.Container == null ||
                           (TryComp(action.Container, out ActionsContainerComponent? containerComp)
                            && containerComp.Container.Contains(actionId)));
 
@@ -988,8 +970,8 @@ public abstract class SharedActionsSystem : EntitySystem
         Dirty(actionId.Value, action);
         Dirty(performer, comp);
         ActionRemoved(performer, actionId.Value, comp, action);
-        if (action.Temporary)
-            QueueDel(actionId.Value);
+        if (action.Temporary && GameTiming.IsFirstTimePredicted)
+            Del(actionId.Value);
     }
 
     /// <summary>
@@ -1111,20 +1093,5 @@ public abstract class SharedActionsSystem : EntitySystem
 
         action.EntityIcon = icon;
         Dirty(uid, action);
-    }
-
-    /// <summary>
-    ///     Checks if the action has a cooldown and if it's still active
-    /// </summary>
-    protected bool IsCooldownActive(BaseActionComponent action, TimeSpan? curTime = null)
-    {
-        curTime ??= GameTiming.CurTime;
-        // TODO: Check for charge recovery timer
-        return action.Cooldown.HasValue && action.Cooldown.Value.End > curTime;
-    }
-
-    protected bool ShouldResetCharges(BaseActionComponent action)
-    {
-        return action is { Charges: < 1, RenewCharges: true };
     }
 }

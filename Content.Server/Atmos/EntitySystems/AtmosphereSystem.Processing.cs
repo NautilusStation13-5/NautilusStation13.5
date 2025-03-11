@@ -231,7 +231,7 @@ namespace Content.Server.Atmos.EntitySystems
             tile.MapAtmosphere = false;
             atmos.MapTiles.Remove(tile);
             tile.Air = null;
-            tile.AirArchived = null;
+            Array.Clear(tile.MolesArchived);
             tile.ArchivedCycle = 0;
             tile.LastShare = 0f;
             tile.Space = false;
@@ -261,7 +261,7 @@ namespace Content.Server.Atmos.EntitySystems
                     return;
 
                 tile.Air = null;
-                tile.AirArchived = null;
+                Array.Clear(tile.MolesArchived);
                 tile.ArchivedCycle = 0;
                 tile.LastShare = 0f;
                 tile.Hotspot = new Hotspot();
@@ -381,7 +381,7 @@ namespace Content.Server.Atmos.EntitySystems
             return true;
         }
 
-        private bool ProcessHighPressureDelta(Entity<GridAtmosphereComponent> ent)
+        private bool ProcessHighPressureDelta(Entity<GridAtmosphereComponent> ent, float frameTime)
         {
             var atmosphere = ent.Comp;
             if (!atmosphere.ProcessingPaused)
@@ -397,7 +397,7 @@ namespace Content.Server.Atmos.EntitySystems
 
             while (atmosphere.CurrentRunTiles.TryDequeue(out var tile))
             {
-                HighPressureMovements(ent, tile, bodies, xforms, pressureQuery, metas);
+                HighPressureMovements(ent, tile, bodies, xforms, pressureQuery, metas, frameTime);
                 tile.PressureDifference = 0f;
                 tile.LastPressureDirection = tile.PressureDirection;
                 tile.PressureDirection = AtmosDirection.Invalid;
@@ -647,7 +647,7 @@ namespace Content.Server.Atmos.EntitySystems
                         atmosphere.State = AtmosphereProcessingState.HighPressureDelta;
                         continue;
                     case AtmosphereProcessingState.HighPressureDelta:
-                        if (!ProcessHighPressureDelta((ent, ent)))
+                        if (!ProcessHighPressureDelta((ent, ent), frameTime))
                         {
                             atmosphere.ProcessingPaused = true;
                             return;

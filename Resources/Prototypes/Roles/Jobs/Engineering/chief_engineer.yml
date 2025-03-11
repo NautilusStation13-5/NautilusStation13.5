@@ -4,17 +4,15 @@
   description: job-description-ce
   playTimeTracker: JobChiefEngineer
   requirements:
-    - !type:RoleTimeRequirement
-      role: JobStationEngineer
-      time: 3600 #1 hrs
-    - !type:DepartmentTimeRequirement
-      department: Engineering
-      time: 3600 #1 hr
-    - !type:OverallPlaytimeRequirement
-      time: 7200 #2 hrs 
+    - !type:CharacterTraitRequirement
+      inverted: true
+      traits:
+        - Foreigner
+        - ForeignerLight
   weight: 10
   startingGear: ChiefEngineerGear
   icon: "JobIconChiefEngineer"
+  requireAdminNotify: true
   supervisors: job-supervisors-captain
   canBeAntag: false
   access:
@@ -24,7 +22,6 @@
   - External
   - ChiefEngineer
   - Atmospherics
-  - Brig
   - Cryogenics
   special:
   - !type:AddImplantSpecial
@@ -32,14 +29,30 @@
   - !type:AddComponentSpecial
     components:
       - type: CommandStaff
+  afterLoadoutSpecial:
+  - !type:ModifyEnvirosuitSpecial
+    charges: 8
+  - !type:ModifyEnvirohelmSpecial
+    powerCell: PowerCellPotato
 
 - type: startingGear
   id: ChiefEngineerGear
+  subGear:
+  - ChiefEngineerPlasmamanGear
   equipment:
+    jumpsuit: ClothingUniformJumpsuitChiefEngineer
+    back: ClothingBackpackChiefEngineerFilled
+    shoes: ClothingShoesColorBrown
     id: CEPDA
-    eyes: ClothingEyesGlassesMeson
     ears: ClothingHeadsetCE
-    belt: ClothingBeltUtilityEngineering
-  storage:
-    back:
-    - Flash
+  innerClothingSkirt: ClothingUniformJumpskirtChiefEngineer
+  satchel: ClothingBackpackSatchelChiefEngineerFilled
+  duffelbag: ClothingBackpackDuffelChiefEngineerFilled
+
+- type: startingGear
+  id: ChiefEngineerPlasmamanGear
+  parent: BasePlasmamanGear
+  equipment:
+    jumpsuit: ClothingUniformEnvirosuitChiefEngineer
+    head: ClothingHeadEnvirohelmChiefEngineer
+    gloves: ClothingHandsGlovesEnviroglovesChiefEngineer

@@ -4,9 +4,9 @@
   description: job-description-engineer
   playTimeTracker: JobStationEngineer
   requirements:
-    - !type:DepartmentTimeRequirement
+    - !type:CharacterDepartmentTimeRequirement
       department: Engineering
-      time: 14400 #4 hrs
+      min: 14400 #4 hrs
   startingGear: StationEngineerGear
   icon: "JobIconStationEngineer"
   supervisors: job-supervisors-ce
@@ -19,10 +19,24 @@
 
 - type: startingGear
   id: StationEngineerGear
+  subGear:
+  - StationEngineerPlasmamanGear
   equipment:
+    jumpsuit: ClothingUniformJumpsuitEngineering
+    back: ClothingBackpackEngineeringFilled
+    shoes: ClothingShoesBootsWork
+    id: EngineerPDA
     eyes: ClothingEyesGlassesMeson
     belt: ClothingBeltUtilityEngineering
     ears: ClothingHeadsetEngineering
-  #storage:
-    #back:
-    #- Stuff
+  innerClothingSkirt: ClothingUniformJumpskirtEngineering
+  satchel: ClothingBackpackSatchelEngineeringFilled
+  duffelbag: ClothingBackpackDuffelEngineeringFilled
+
+- type: startingGear
+  id: StationEngineerPlasmamanGear
+  parent: BasePlasmamanGear
+  equipment:
+    jumpsuit: ClothingUniformEnvirosuitEngineering
+    head: ClothingHeadEnvirohelmEngineering
+    gloves: ClothingHandsGlovesEnviroglovesEngineering

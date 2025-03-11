@@ -3,6 +3,7 @@ using Content.Shared.Chemistry.Components;
 using Content.Shared.Chemistry.EntitySystems;
 using Content.Shared.Chemistry.Reaction;
 using Content.Shared.Chemistry;
+using Content.Shared.Chemistry.Reagent;
 using Content.Shared.Clothing;
 using Content.Shared.CombatMode.Pacification;
 using Content.Shared.Database;

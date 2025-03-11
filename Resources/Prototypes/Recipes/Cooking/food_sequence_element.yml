@@ -67,10 +67,10 @@
   - Cooked
   - Meat
 
-# Bacon
+# Becon
 
 - type: foodSequenceElement
-  id: MeatBacon
+  id: MeatBecon
   sprites:
   - sprite: Objects/Consumable/Food/meat.rsi
     state: bacon-cooked
@@ -276,7 +276,7 @@
   tags:
   - Cooked
   - Meat
-
+  
 # Snail meat
 
 - type: foodSequenceElement
@@ -583,7 +583,6 @@
   sprites:
   - sprite: Objects/Specific/Hydroponics/extradimensional_orange.rsi
     state: produce
-  scale: 0.5,0.5
   tags:
     - Fruit
 
@@ -593,7 +592,6 @@
   sprites:
   - sprite: Objects/Specific/Hydroponics/extradimensional_orange.rsi
     state: produce
-  scale: 0.5,0.5
   tags:
     - Fruit
 
@@ -773,8 +771,6 @@
   tags:
   - Fruit
   - Slice
-
-# Holymelon
 
 - type: foodSequenceElement
   id: HolymelonSliceBurger
@@ -1110,26 +1106,6 @@
   tags:
   - Vegetable
 
-# World Pea
-
-- type: foodSequenceElement
-  id: WorldPea
-  name: food-sequence-content-world-pea
-  sprites:
-  - sprite: Objects/Specific/Hydroponics/world_pea.rsi
-    state: produce
-  tags:
-  - Vegetable
-
-- type: foodSequenceElement
-  id: WorldPeaBurger
-  name: food-sequence-burger-content-world-pea
-  sprites:
-  - sprite: Objects/Specific/Hydroponics/world_pea.rsi
-    state: produce
-  tags:
-  - Vegetable
-
 # Cherry
 
 - type: foodSequenceElement
@@ -1176,20 +1152,3 @@
   sprites:
   - sprite: Objects/Consumable/Food/Baked/cake.rsi
     state: suppermatter-shard
-
-
-# Anomaly berries
-
-- type: foodSequenceElement
-  id: AnomalyBerry
-  name: food-sequence-content-anomaly-berry
-  sprites:
-  - sprite: Objects/Specific/Hydroponics/anomaly_berry.rsi
-    state: produce
-
-- type: foodSequenceElement
-  id: AnomalyBerryBurger
-  name: food-sequence-burger-content-anomaly-berry
-  sprites:
-  - sprite: Objects/Specific/Hydroponics/anomaly_berry.rsi
-    state: produce

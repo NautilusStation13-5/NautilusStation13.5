@@ -101,36 +101,18 @@
       mode: 6
 
 - type: entity
-  name: Atmos Fix Water Marker
-  id: TP14AtmosFixWaterMarker
-  description: "Water @ gas miner pressure, T20C"
-  parent: MarkerBase
-  components:
-    - type: Sprite
-      layers:
-        - sprite: Markers/atmos.rsi # {
-          state: base
-          shader: unshaded
-        - sprite: Markers/atmos.rsi
-          shader: unshaded # }
-          state: watervapour
-    - type: AtmosFixMarker
-      mode: 7
-
-- type: entity
   parent: AtmosFixNitrogenMarker
   id: AtmosFixVoxMarker
   suffix: Vox Atmosphere
   description: "Nitrogen @ 101 kPa, 20C"
   components:
   - type: AtmosFixMarker
-    mode: 8
+    mode: 7
 
 - type: entity
-  name: Atmos Fix Abyss Marker
-  suffix: (Extremely High Pressure, Trench)
-  id: TP14AtmosFixWaterTrenchMarker
-  description: "Water @ trench pressure, T20C"
+  id: AtmosFixCoolant
+  suffix: Coolant
+  description: "Supermatter coolant, equivalent to a liquid nitrogen canister"
   parent: MarkerBase
   components:
     - type: Sprite
@@ -140,6 +122,11 @@
           shader: unshaded
         - sprite: Markers/atmos.rsi
           shader: unshaded # }
-          state: plasma
-    - type: AtmosFixMarker # EXTREMELY high pressure. Only abyssal suits will prevent you from being popped like a balloon.
-      mode: 9
+          state: nitrogen
+    - type: AtmosFixMarker
+      gasMix:
+        volume: 2500
+        moles:
+          - 0 # oxygen
+          - 18710.71051 # nitrogen
+        temperature: 72

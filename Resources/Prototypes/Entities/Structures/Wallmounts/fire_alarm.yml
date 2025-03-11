@@ -83,7 +83,7 @@
     graph: FireAlarm
     node: fire_alarm
   - type: Damageable
-    damageContainer: StructuralInorganic
+    damageContainer: Inorganic
     damageModifierSet: Metallic
   - type: Destructible
     thresholds:
@@ -104,7 +104,6 @@
               collection: MetalGlassBreak
               params:
                 volume: -4
-  - type: StationAiWhitelist
   placement:
     mode: SnapgridCenter
     snap:

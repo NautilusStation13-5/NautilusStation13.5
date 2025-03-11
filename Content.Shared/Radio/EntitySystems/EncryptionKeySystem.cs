@@ -174,7 +174,9 @@ public sealed partial class EncryptionKeySystem : EntitySystem
 
     private void OnHolderExamined(EntityUid uid, EncryptionKeyHolderComponent component, ExaminedEvent args)
     {
-        if (!args.IsInDetailsRange)
+        if (!args.IsInDetailsRange
+            || !component.ExamineWhileLocked && !component.KeysUnlocked
+            || !component.ExamineWhileLocked && TryComp<WiresPanelComponent>(uid, out var panel) && !panel.Open)
             return;
 
         if (component.KeyContainer.ContainedEntities.Count == 0)
@@ -239,14 +241,14 @@ public sealed partial class EncryptionKeySystem : EntitySystem
             {
                 var msg = Loc.GetString("examine-headset-default-channel",
                 ("prefix", SharedChatSystem.DefaultChannelPrefix),
-                ("channel", proto.LocalizedName),
+                ("channel", defaultChannel),
                 ("color", proto.Color));
                 examineEvent.PushMarkup(msg);
             }
             if (HasComp<EncryptionKeyComponent>(examineEvent.Examined))
             {
                 var msg = Loc.GetString("examine-encryption-default-channel",
-                ("channel", proto.LocalizedName),
+                ("channel", defaultChannel),
                 ("color", proto.Color));
                 examineEvent.PushMarkup(msg);
             }

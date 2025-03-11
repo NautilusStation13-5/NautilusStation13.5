@@ -1,9 +1,12 @@
 using Content.Shared.Access;
-using Content.Shared.Guidebook;
+using Content.Shared.Customization.Systems;
+using Content.Shared.Dataset;
 using Content.Shared.Players.PlayTimeTracking;
+using Content.Shared.Roles;
 using Content.Shared.StatusIcon;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
+using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype.List;
 
 namespace Content.Shared.Roles
 {
@@ -20,9 +23,6 @@ namespace Content.Shared.Roles
         [DataField("playTimeTracker", required: true, customTypeSerializer: typeof(PrototypeIdSerializer<PlayTimeTrackerPrototype>))]
         public string PlayTimeTracker { get; private set; } = string.Empty;
 
-        /// <summary>
-        ///     Who is the supervisor for this job.
-        /// </summary>
         [DataField("supervisors")]
         public string Supervisors { get; private set; } = "nobody";
 
@@ -44,35 +44,17 @@ namespace Content.Shared.Roles
         [ViewVariables(VVAccess.ReadOnly)]
         public string? LocalizedDescription => Description is null ? null : Loc.GetString(Description);
 
-        /// <summary>
-        ///     Requirements for the job.
-        /// </summary>
-        [DataField, Access(typeof(SharedRoleSystem), Other = AccessPermissions.None)]
-        public HashSet<JobRequirement>? Requirements;
+        [DataField("requirements")]
+        public List<CharacterRequirement>? Requirements;
 
-        /// <summary>
-        ///     When true - the station will have anouncement about arrival of this player.
-        /// </summary>
         [DataField("joinNotifyCrew")]
         public bool JoinNotifyCrew { get; private set; } = false;
 
-        /// <summary>
-        ///     When true - the player will recieve a message about importancy of their job.
-        /// </summary>
         [DataField("requireAdminNotify")]
         public bool RequireAdminNotify { get; private set; } = false;
 
-        /// <summary>
-        ///     Should this job appear in preferences menu?
-        /// </summary>
         [DataField("setPreference")]
         public bool SetPreference { get; private set; } = true;
-
-        /// <summary>
-        ///     Should the selected traits be applied for this job?
-        /// </summary>
-        [DataField]
-        public bool ApplyTraits { get; private set; } = true;
 
         /// <summary>
         ///     Whether this job should show in the ID Card Console.
@@ -85,8 +67,14 @@ namespace Content.Shared.Roles
         public bool CanBeAntag { get; private set; } = true;
 
         /// <summary>
-        ///     The "weight" or importance of this job. If this number is large, the job system will assign this job
-        ///     before assigning other jobs.
+        /// Nyano/DV: For e.g. prisoners, they'll never use their latejoin spawner.
+        /// </summary>
+        [DataField("alwaysUseSpawner")]
+        public bool AlwaysUseSpawner { get; } = false;
+
+        /// <summary>
+        ///     Whether this job is a head.
+        ///     The job system will try to pick heads before other jobs on the same priority level.
         /// </summary>
         [DataField("weight")]
         public int Weight { get; private set; }
@@ -108,8 +96,21 @@ namespace Content.Shared.Roles
         [DataField("antagAdvantage")]
         public int AntagAdvantage = 0;
 
+        [DataField("startingGear", customTypeSerializer: typeof(PrototypeIdSerializer<StartingGearPrototype>))]
+        public string? StartingGear { get; private set; }
+
+        /// <summary>
+        ///     If this has a value, it will randomly set the entity name of the
+        ///     entity upon spawn based on the dataset.
+        /// </summary>
         [DataField]
-        public ProtoId<StartingGearPrototype>? StartingGear { get; private set; }
+        public ProtoId<LocalizedDatasetPrototype>? NameDataset;
+
+        /// <summary>
+        ///   A list of requirements that when satisfied, add or replace from the base starting gear.
+        /// </summary>
+        [DataField("conditionalStartingGear")]
+        public List<ConditionalStartingGear>? ConditionalStartingGears { get; private set; }
 
         /// <summary>
         /// Use this to spawn in as a non-humanoid (borg, test subject, etc.)
@@ -119,18 +120,14 @@ namespace Content.Shared.Roles
         [DataField("jobEntity", customTypeSerializer: typeof(PrototypeIdSerializer<EntityPrototype>))]
         public string? JobEntity = null;
 
-        /// <summary>
-        /// Entity to use as a preview in the lobby/character editor.
-        /// Same restrictions as <see cref="JobEntity"/> apply.
-        /// </summary>
-        [DataField]
-        public EntProtoId? JobPreviewEntity = null;
-
         [DataField]
         public ProtoId<JobIconPrototype> Icon { get; private set; } = "JobIconUnknown";
 
         [DataField("special", serverOnly: true)]
         public JobSpecial[] Special { get; private set; } = Array.Empty<JobSpecial>();
+
+        [DataField("afterLoadoutSpecial", serverOnly: true)]
+        public JobSpecial[] AfterLoadoutSpecial { get; private set; } = [];
 
         [DataField("access")]
         public IReadOnlyCollection<ProtoId<AccessLevelPrototype>> Access { get; private set; } = Array.Empty<ProtoId<AccessLevelPrototype>>();
@@ -147,12 +144,30 @@ namespace Content.Shared.Roles
         [DataField]
         public bool Whitelisted;
 
-        /// <summary>
-        /// Optional list of guides associated with this role. If the guides are opened, the first entry in this list
-        /// will be used to select the currently selected guidebook.
-        /// </summary>
         [DataField]
-        public List<ProtoId<GuideEntryPrototype>>? Guides;
+        public bool SpawnLoadout = true;
+
+        [DataField]
+        public bool ApplyTraits = true;
+    }
+
+    /// <summary>
+    ///   Starting gear that will only be applied upon satisfying requirements.
+    /// </summary>
+    [DataDefinition]
+    public sealed partial class ConditionalStartingGear
+    {
+        /// <summary>
+        ///   The requirements to check.
+        /// </summary>
+        [DataField(required: true)]
+        public List<CharacterRequirement> Requirements;
+
+        /// <summary>
+        ///   The starting gear to apply, replacing the equivalent slots.
+        /// </summary>
+        [DataField(required: true)]
+        public ProtoId<StartingGearPrototype> Id { get; private set; }
     }
 
     /// <summary>

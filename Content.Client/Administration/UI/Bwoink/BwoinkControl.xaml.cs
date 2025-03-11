@@ -74,7 +74,7 @@ namespace Content.Client.Administration.UI.Bwoink
                 if (info.Antag && info.ActiveThisRound)
                     sb.Append(new Rune(0x1F5E1)); // 🗡
 
-                if (info.OverallPlaytime <= TimeSpan.FromMinutes(_cfg.GetCVar(CCVars.NewPlayerThreshold)))
+                if (info.OverallPlaytime <= TimeSpan.FromSeconds(_cfg.GetCVar(CCVars.NewPlayerThreshold)))
                     sb.Append(new Rune(0x23F2)); // ⏲
 
                 sb.AppendFormat("\"{0}\"", text);
@@ -91,7 +91,8 @@ namespace Content.Client.Administration.UI.Bwoink
                 if (a.IsPinned != b.IsPinned)
                     return a.IsPinned ? -1 : 1;
 
-                // First, sort by unread. Any chat with unread messages appears first.
+                // First, sort by unread. Any chat with unread messages appears first. We just sort based on unread
+                // status, not number of unread messages, so that more recent unread messages take priority.
                 var aUnread = ach.Unread > 0;
                 var bUnread = bch.Unread > 0;
                 if (aUnread != bUnread)
@@ -250,7 +251,7 @@ namespace Content.Client.Administration.UI.Bwoink
             if (pl.Antag)
                 sb.Append(new Rune(0x1F5E1)); // 🗡
 
-            if (pl.OverallPlaytime <= TimeSpan.FromMinutes(_cfg.GetCVar(CCVars.NewPlayerThreshold)))
+            if (pl.OverallPlaytime <= TimeSpan.FromSeconds(_cfg.GetCVar(CCVars.NewPlayerThreshold)))
                 sb.Append(new Rune(0x23F2)); // ⏲
 
             sb.AppendFormat("\"{0}\"", pl.CharacterName);
@@ -267,9 +268,9 @@ namespace Content.Client.Administration.UI.Bwoink
         {
             UpdateButtons();
 
-            AHelpHelper.HideAllPanels();
             if (ch != null)
             {
+                AHelpHelper.HideAllPanels();
                 var panel = AHelpHelper.EnsurePanel(ch.Value);
                 panel.Visible = true;
             }

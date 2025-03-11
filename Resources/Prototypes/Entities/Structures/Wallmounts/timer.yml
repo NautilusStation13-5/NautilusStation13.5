@@ -45,14 +45,6 @@
   - type: Construction
     graph: Timer
     node: signal
-    containers:
-    - board
-  - type: ContainerContainer
-    containers:
-      board: !type:Container
-  - type: ContainerFill
-    containers:
-      board: [ SignalTimerElectronics ]
 
 - type: entity
   id: ScreenTimer
@@ -64,8 +56,8 @@
     canEditLabel: true
   - type: TextScreenVisuals
     color: FloralWhite
-    textOffset: 0,6
-    timerOffset: 0,6
+    textOffset: 0,8
+    timerOffset: 0,8
     textLength: 5
     rows: 1
   - type: Sprite
@@ -76,11 +68,6 @@
   - type: Construction
     graph: Timer
     node: screen
-    containers:
-    - board
-  - type: ContainerFill
-    containers:
-      board: [ ScreenTimerElectronics ]
 
 - type: entity
   id: BrigTimer
@@ -93,11 +80,6 @@
   - type: Construction
     graph: Timer
     node: brig
-    containers:
-    - board
-  - type: ContainerFill
-    containers:
-      board: [ BrigTimerElectronics ]
 
 # Construction Frame
 

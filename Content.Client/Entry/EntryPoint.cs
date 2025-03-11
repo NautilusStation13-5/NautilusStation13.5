@@ -1,10 +1,12 @@
 using Content.Client.Administration.Managers;
 using Content.Client.Changelog;
 using Content.Client.Chat.Managers;
+using Content.Client.DiscordAuth;
+using Content.Client.JoinQueue;
 using Content.Client.DebugMon;
 using Content.Client.Eui;
+using Content.Client.Flash;
 using Content.Client.Fullscreen;
-using Content.Client.GameTicking.Managers;
 using Content.Client.GhostKick;
 using Content.Client.Guidebook;
 using Content.Client.Input;
@@ -70,8 +72,10 @@ namespace Content.Client.Entry
         [Dependency] private readonly IResourceManager _resourceManager = default!;
         [Dependency] private readonly IReplayLoadManager _replayLoad = default!;
         [Dependency] private readonly ILogManager _logManager = default!;
+        [Dependency] private readonly JoinQueueManager _joinQueue = default!;
+        [Dependency] private readonly DiscordAuthManager _discordAuth = default!;
+        [Dependency] private readonly ContentReplayPlaybackManager _replayMan = default!;
         [Dependency] private readonly DebugMonitorManager _debugMonitorManager = default!;
-        [Dependency] private readonly TitleWindowManager _titleWindowManager = default!;
 
         public override void Init()
         {
@@ -120,6 +124,7 @@ namespace Content.Client.Entry
             _prototypeManager.RegisterIgnore("wireLayout");
             _prototypeManager.RegisterIgnore("alertLevels");
             _prototypeManager.RegisterIgnore("nukeopsRole");
+            _prototypeManager.RegisterIgnore("stationGoal");
             _prototypeManager.RegisterIgnore("ghostRoleRaffleDecider");
 
             _componentFactory.GenerateNetIds();
@@ -141,12 +146,6 @@ namespace Content.Client.Entry
             _configManager.SetCVar("interface.resolutionAutoScaleMinimum", 0.5f);
         }
 
-        public override void Shutdown()
-        {
-            base.Shutdown();
-            _titleWindowManager.Shutdown();
-        }
-
         public override void PostInit()
         {
             base.PostInit();
@@ -159,6 +158,7 @@ namespace Content.Client.Entry
             _parallaxManager.LoadDefaultParallax();
 
             _overlayManager.AddOverlay(new SingularityOverlay());
+            _overlayManager.AddOverlay(new FlashOverlay());
             _overlayManager.AddOverlay(new RadiationPulseOverlay());
             _chatManager.Initialize();
             _clientPreferencesManager.Initialize();
@@ -167,7 +167,8 @@ namespace Content.Client.Entry
             _userInterfaceManager.SetDefaultTheme("SS14DefaultTheme");
             _userInterfaceManager.SetActiveTheme(_configManager.GetCVar(CVars.InterfaceTheme));
             _documentParsingManager.Initialize();
-            _titleWindowManager.Initialize();
+            _joinQueue.Initialize();
+            _discordAuth.Initialize();
 
             _baseClient.RunLevelChanged += (_, args) =>
             {
@@ -199,7 +200,6 @@ namespace Content.Client.Entry
                     _resourceManager,
                     ReplayConstants.ReplayZipFolder.ToRootedPath());
 
-                _playbackMan.LastLoad = (null, ReplayConstants.ReplayZipFolder.ToRootedPath());
                 _replayLoad.LoadAndStartReplay(reader);
             }
             else if (_gameController.LaunchState.FromLauncher)

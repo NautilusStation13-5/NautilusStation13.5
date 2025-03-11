@@ -1,53 +1,53 @@
-# Head
-- type: loadout
-  id: DetectiveFedora
-  equipment:
-    head: ClothingHeadHatFedoraBrown
+# Detective
+# Backpacks
 
-- type: loadout
-  id: DetectiveFedoraGrey
-  equipment:
-    head: ClothingHeadHatFedoraGrey
+# Belt
+
+# Ears
+
+# Equipment
+
+# Eyes
+
+# Gloves
+
+# Head
+
+# Id
 
 # Neck
-- type: loadout
-  id: DetectiveTie
-  equipment:
-    neck: ClothingNeckTieDet
 
-# Jumpsuit
-- type: loadout
-  id: DetectiveJumpsuit
-  equipment:
-    jumpsuit: ClothingUniformJumpsuitDetective
+# Mask
 
+# Outer
 - type: loadout
-  id: DetectiveJumpskirt
-  equipment:
-    jumpsuit: ClothingUniformJumpskirtDetective
-
-- type: loadout
-  id: NoirJumpsuit
-  equipment:
-    jumpsuit: ClothingUniformJumpsuitDetectiveGrey
+  id: LoadoutClothingOuterCoatDetective
+  category: JobsSecurityDetective
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: LoadoutDetectiveOuter
+    - !type:CharacterJobRequirement
+      jobs:
+        - Detective
+  items:
+    - ClothingOuterCoatDetective
 
 - type: loadout
-  id: NoirJumpskirt
-  equipment:
-    jumpsuit: ClothingUniformJumpskirtDetectiveGrey
+  id: LoadoutOuterVestDetective
+  category: JobsSecurityDetective
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: LoadoutDetectiveOuter
+    - !type:CharacterJobRequirement
+      jobs:
+        - Detective
+  items:
+    - ClothingOuterVestDetective
 
-# OuterClothing
-- type: loadout
-  id: DetectiveArmorVest
-  equipment:
-    outerClothing: ClothingOuterVestDetective
+# Shoes
 
-- type: loadout
-  id: DetectiveCoat
-  equipment:
-    outerClothing: ClothingOuterCoatDetectiveLoadout
-
-- type: loadout
-  id: DetectiveCoatGrey
-  equipment:
-    outerClothing: ClothingOuterCoatDetectiveLoadoutGrey
+# Uniforms

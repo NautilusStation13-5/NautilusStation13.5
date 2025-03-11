@@ -1,6 +1,7 @@
 using System.IO;
 using System.Linq;
 using Content.Shared.Actions;
+using Content.Shared.Mapping;
 using JetBrains.Annotations;
 using Robust.Client.Player;
 using Robust.Shared.ContentPack;
@@ -51,29 +52,6 @@ namespace Content.Client.Actions
             SubscribeLocalEvent<EntityWorldTargetActionComponent, ComponentHandleState>(OnEntityWorldTargetHandleState);
         }
 
-        public override void FrameUpdate(float frameTime)
-        {
-            base.FrameUpdate(frameTime);
-
-            var worldActionQuery = EntityQueryEnumerator<WorldTargetActionComponent>();
-            while (worldActionQuery.MoveNext(out var uid, out var action))
-            {
-                UpdateAction(uid, action);
-            }
-
-            var instantActionQuery = EntityQueryEnumerator<InstantActionComponent>();
-            while (instantActionQuery.MoveNext(out var uid, out var action))
-            {
-                UpdateAction(uid, action);
-            }
-
-            var entityActionQuery = EntityQueryEnumerator<EntityTargetActionComponent>();
-            while (entityActionQuery.MoveNext(out var uid, out var action))
-            {
-                UpdateAction(uid, action);
-            }
-        }
-
         private void OnInstantHandleState(EntityUid uid, InstantActionComponent component, ref ComponentHandleState args)
         {
             if (args.Current is not InstantActionComponentState state)
@@ -88,6 +66,7 @@ namespace Content.Client.Actions
                 return;
 
             component.Whitelist = state.Whitelist;
+            component.Blacklist = state.Blacklist;
             component.CanTargetSelf = state.CanTargetSelf;
             BaseHandleState<EntityTargetActionComponent>(uid, component, state);
         }
@@ -118,8 +97,6 @@ namespace Content.Client.Actions
             component.Icon = state.Icon;
             component.IconOn = state.IconOn;
             component.IconColor = state.IconColor;
-            component.OriginalIconColor = state.OriginalIconColor;
-            component.DisabledIconColor = state.DisabledIconColor;
             component.Keywords.Clear();
             component.Keywords.UnionWith(state.Keywords);
             component.Enabled = state.Enabled;
@@ -145,12 +122,10 @@ namespace Content.Client.Actions
             UpdateAction(uid, component);
         }
 
-        public override void UpdateAction(EntityUid? actionId, BaseActionComponent? action = null)
+        protected override void UpdateAction(EntityUid? actionId, BaseActionComponent? action = null)
         {
             if (!ResolveActionData(actionId, ref action))
                 return;
-
-            action.IconColor = action.Charges < 1 ? action.DisabledIconColor : action.OriginalIconColor;
 
             base.UpdateAction(actionId, action);
             if (_playerManager.LocalEntity != action.AttachedEntity)
@@ -258,13 +233,13 @@ namespace Content.Client.Actions
 
         public void LinkAllActions(ActionsComponent? actions = null)
         {
-            if (_playerManager.LocalEntity is not { } user ||
-                !Resolve(user, ref actions, false))
-            {
-                return;
-            }
+             if (_playerManager.LocalEntity is not { } user ||
+                 !Resolve(user, ref actions, false))
+             {
+                 return;
+             }
 
-            LinkActions?.Invoke(actions);
+             LinkActions?.Invoke(actions);
         }
 
         public override void Shutdown()
@@ -333,6 +308,70 @@ namespace Content.Client.Actions
 
                 if (map.TryGet<ValueDataNode>("name", out var nameNode))
                     _metaData.SetEntityName(actionId, nameNode.Value);
+
+                if (!map.TryGet("assignments", out var assignmentNode))
+                    continue;
+
+                var nodeAssignments = _serialization.Read<List<(byte Hotbar, byte Slot)>>(assignmentNode, notNullableOverride: true);
+
+                foreach (var index in nodeAssignments)
+                {
+                    var assignment = new SlotAssignment(index.Hotbar, index.Slot, actionId);
+                    assignments.Add(assignment);
+                }
+            }
+
+            AssignSlot?.Invoke(assignments);
+        }
+
+        /// <summary>
+        ///     Load actions and their toolbar assignments from a file.
+        ///     DeltaV - Load from an existing yaml stream instead
+        /// </summary>
+        public void LoadActionAssignments(YamlStream stream)
+        {
+            if (_playerManager.LocalEntity is not { } user)
+                return;
+
+            if (stream.Documents[0].RootNode.ToDataNode() is not SequenceDataNode sequence)
+                return;
+
+            ClearAssignments?.Invoke();
+
+            var assignments = new List<SlotAssignment>();
+            var existingActions = GetClientActions();
+            var existingActionsList = existingActions.ToList();
+
+            foreach (var entry in sequence.Sequence)
+            {
+                if (entry is not MappingDataNode map)
+                    continue;
+
+                if (!map.TryGet("action", out var actionNode))
+                    continue;
+
+                if (!map.TryGet<ValueDataNode>("name", out var nameNode))
+                    continue;
+
+                var action = _serialization.Read<BaseActionComponent>(actionNode, notNullableOverride: true);
+
+                // Prevent spawning actions multiple times
+                var existing = existingActionsList.FirstOrNull(a =>
+                    Name(a.Id) == nameNode.Value);
+
+                EntityUid actionId;
+                if (existing == null)
+                {
+                    actionId = Spawn(null);
+                    AddComp(actionId, action);
+                    _metaData.SetEntityName(actionId, nameNode.Value);
+                    DirtyEntity(actionId);
+                    AddActionDirect(user, actionId);
+                }
+                else
+                {
+                    actionId = existing.Value.Id;
+                }
 
                 if (!map.TryGet("assignments", out var assignmentNode))
                     continue;

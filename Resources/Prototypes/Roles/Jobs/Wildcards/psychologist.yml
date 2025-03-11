@@ -9,15 +9,28 @@
   access:
   - Medical
   - Maintenance
+  - Psychologist # DeltaV - Add Psychologist access
   extendedAccess:
   - Chemistry
 
 - type: startingGear
   id: PsychologistGear
+  subGear:
+  - PsychologistPlasmamanGear
   equipment:
+    jumpsuit: ClothingUniformJumpsuitPsychologist
+    back: ClothingBackpackPsychologistFilled #DeltaV - stamp included
     shoes: ClothingShoesLeather
     id: PsychologistPDA
     ears: ClothingHeadsetMedical
-  storage:
-    back:
-    - RubberStampPsychologist
+  innerClothingSkirt: ClothingUniformJumpsuitPsychologist
+  satchel: ClothingBackpackSatchelPsychologistFilled #DeltaV - stamp included
+  duffelbag: ClothingBackpackDuffelPsychologistFilled #DeltaV - stamp included
+
+- type: startingGear
+  id: PsychologistPlasmamanGear
+  parent: BasePlasmamanGear
+  equipment:
+    jumpsuit: ClothingUniformEnvirosuitEnviroslacksPsychologist
+    head: ClothingHeadEnvirohelmMedicalDoctor
+    gloves: ClothingHandsGlovesEnviroglovesWhite

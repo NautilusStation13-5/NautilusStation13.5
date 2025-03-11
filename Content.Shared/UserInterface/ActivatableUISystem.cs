@@ -10,6 +10,8 @@ using Content.Shared.Popups;
 using Content.Shared.Verbs;
 using Content.Shared.Whitelist;
 using Robust.Shared.Utility;
+using Content.Shared.Whitelist;
+using Robust.Shared.Containers;
 
 namespace Content.Shared.UserInterface;
 
@@ -17,6 +19,7 @@ public sealed partial class ActivatableUISystem : EntitySystem
 {
     [Dependency] private readonly ISharedAdminManager _adminManager = default!;
     [Dependency] private readonly ActionBlockerSystem _blockerSystem = default!;
+    [Dependency] private readonly EntityWhitelistSystem _entityWhitelist = default!;
     [Dependency] private readonly SharedUserInterfaceSystem _uiSystem = default!;
     [Dependency] private readonly SharedPopupSystem _popupSystem = default!;
     [Dependency] private readonly SharedHandsSystem _hands = default!;
@@ -98,7 +101,8 @@ public sealed partial class ActivatableUISystem : EntitySystem
         if (!args.CanAccess)
             return false;
 
-        if (_whitelistSystem.IsWhitelistFail(component.RequiredItems, args.Using ?? default))
+        if (_whitelistSystem.IsWhitelistFail(component.RequiredItems, args.Using ?? default)
+            || _whitelistSystem.IsWhitelistFail(component.UserWhitelist, args.User))
             return false;
 
         if (component.RequiresComplex)
@@ -155,10 +159,8 @@ public sealed partial class ActivatableUISystem : EntitySystem
         if (component.VerbOnly)
             return;
 
-        if (component.RequiredItems == null)
-            return;
-
-        if (_whitelistSystem.IsWhitelistFail(component.RequiredItems, args.Used))
+        if (_whitelistSystem.IsWhitelistFailOrNull(component.RequiredItems, args.Used) ||
+            !_whitelistSystem.IsWhitelistFail(component.UserWhitelist, args.User))
             return;
 
         args.Handled = InteractUI(args.User, uid, component);
@@ -215,7 +217,7 @@ public sealed partial class ActivatableUISystem : EntitySystem
         if (aui.SingleUser && aui.CurrentSingleUser != null && user != aui.CurrentSingleUser)
         {
             var message = Loc.GetString("machine-already-in-use", ("machine", uiEntity));
-            _popupSystem.PopupClient(message, uiEntity, user);
+            _popupSystem.PopupEntity(message, uiEntity, user);
 
             if (_uiSystem.IsUiOpen(uiEntity, aui.Key))
                 return true;

@@ -1,5 +1,8 @@
 food-sequence-no-space = You can't put any more!
 
+food-sequence-standart-gen = {$prefix}{$content}{$suffix}
+
+food-sequence-burger-suffix = burger
 # GENERAL
 
 food-sequence-content-chicken = chicken
@@ -14,7 +17,6 @@ food-sequence-content-salami = salami
 food-sequence-content-slime = slime
 food-sequence-content-clown = clown
 food-sequence-content-pea = pea
-food-sequence-content-world-pea = world pea
 food-sequence-content-bungo = bungo
 food-sequence-content-banana = banana
 food-sequence-content-mimana = mimana
@@ -73,10 +75,9 @@ food-sequence-content-hamster = hamster
 food-sequence-content-suppermatter = suppermatter
 food-sequence-content-capfruit = capfruit
 food-sequence-content-berries = berries
-food-sequence-content-spacemans-trumpet = spaceman's trupmet
+food-sequence-content-spacemans-trumpet = spacemans trupmet
 food-sequence-content-cherry = cherry
 food-sequence-content-snail = snail
-food-sequence-content-anomaly-berry = anomaly berry
 
 # BURGERS
 
@@ -113,11 +114,19 @@ food-sequence-burger-content-holymelon = holy
 food-sequence-burger-content-cannabis = funny
 food-sequence-burger-content-rainbow-cannabis = FUNNY
 food-sequence-burger-content-tobacco = tobaco
+
+food-sequence-burger-content-cheese = cheese
+
+food-sequence-burger-content-brain = brain
+food-sequence-burger-content-tongue = tongue
+food-sequence-burger-content-appendix = appendi
+food-sequence-burger-content-ears = ear
+food-sequence-burger-content-stomach = stomach
+food-sequence-burger-content-liver = liver
 food-sequence-burger-content-suppermatter = supper
 food-sequence-burger-content-hamster = hams
 food-sequence-burger-content-berries = berri
 food-sequence-burger-content-spacemans-trumpet = spacetrump
-food-sequence-burger-content-anomaly-berry = anom
 food-sequence-burger-content-extradimensional-orange = 3d
 food-sequence-burger-content-world-pea = peace
 

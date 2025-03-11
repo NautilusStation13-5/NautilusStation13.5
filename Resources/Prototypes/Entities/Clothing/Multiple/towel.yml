@@ -33,7 +33,6 @@
     delay: 1
   - type: Fiber
     fiberColor: fibers-white
-  - type: DnaSubstanceTrace
   - type: Item
     size: Small
 
@@ -734,7 +733,7 @@
 - type: entity
   id: TowelColorSyndicate
   name: syndicate towel
-  parent: [ BaseTowel, BaseSyndicateContraband ]
+  parent: BaseTowel
   components:
   - type: Sprite
     layers:

@@ -22,8 +22,8 @@
         layer:
         - MachineLayer
   - type: Damageable
-    damageContainer: StructuralInorganic
-    damageModifierSet: StructuralMetallic
+    damageContainer: Inorganic
+    damageModifierSet: Metallic
   - type: Destructible
     thresholds:
     - trigger:
@@ -41,6 +41,9 @@
       - !type:PlaySoundBehavior
         sound:
           collection: MetalBreak
+  - type: InteractionVerbs
+    allowedVerbs:
+    - KnockOn
 
 - type: entity
   abstract: true
@@ -70,7 +73,6 @@
     - machine_board
   - type: LightningTarget
     priority: 1
-  - type: FallSystem
 
 - type: entity
   abstract: true

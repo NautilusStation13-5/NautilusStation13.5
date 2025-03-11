@@ -17,6 +17,10 @@
         Glass: 230
       chemicalComposition:
         Silicon: 20
+    - type: Tag
+      tags:
+        - ComputerBoard
+
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -24,8 +28,6 @@
   name: atmospheric alerts computer board
   description: A computer printed circuit board for an atmospheric alerts computer.
   components:
-    - type: Sprite
-      state: cpu_engineering
     - type: ComputerBoard
       prototype: ComputerAlert
 
@@ -35,8 +37,6 @@
   name: atmospheric network monitor board
   description: A computer printed circuit board for an atmospheric network monitor.
   components:
-    - type: Sprite
-      state: cpu_engineering
     - type: ComputerBoard
       prototype: ComputerAtmosMonitoring
 
@@ -50,6 +50,9 @@
       state: cpu_engineering
     - type: ComputerBoard
       prototype: ComputerPowerMonitoring
+    - type: ReverseEngineering # Nyano
+      recipes:
+        - PowerComputerCircuitboard
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -75,6 +78,17 @@
 
 - type: entity
   parent: BaseComputerCircuitboard
+  id: PsionicsRecordsComputerCircuitboard
+  name: psionics registry computer board
+  description: A computer printed circuit board for a psionics registry computer.
+  components:
+    - type: Sprite
+      state: cpu_science
+    - type: ComputerBoard
+      prototype: ComputerPsionicsRecords
+
+- type: entity
+  parent: BaseComputerCircuitboard
   id: StationRecordsComputerCircuitboard
   name: station records computer board
   description: A computer printed circuit board for a station records computer.
@@ -96,17 +110,6 @@
       prototype: ComputerCargoOrders
     - type: StaticPrice
       price: 750
-
-- type: entity
-  parent: BaseComputerCircuitboard
-  id: CargoSaleComputerCircuitboard
-  name: cargo sale computer board
-  description: A computer printed circuit board for a cargo sale computer.
-  components:
-    - type: Sprite
-      state: cpu_supply
-    - type: ComputerBoard
-      prototype: ComputerPalletConsole
 
 - type: entity
   id: CargoBountyComputerCircuitboard
@@ -143,6 +146,10 @@
       prototype: ComputerSalvageExpedition
     - type: StealTarget
       stealGroup: SalvageExpeditionsComputerCircuitboard
+    - type: ReverseEngineering # Nyano
+      difficulty: 2
+      recipes:
+        - SalvageExpeditionsComputerCircuitboard
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -150,12 +157,21 @@
   name: cargo shuttle console board
   description: A computer printed circuit board for a cargo shuttle console.
   components:
-  - type: Sprite
-    state: cpu_supply
-  - type: ComputerBoard
-    prototype: ComputerShuttleCargo
-  - type: StealTarget
-    stealGroup: CargoShuttleConsoleCircuitboard
+    - type: ComputerBoard
+      prototype: ComputerShuttleCargo
+    - type: StealTarget
+      stealGroup: CargoShuttleConsoleCircuitboard
+
+- type: entity
+  parent: BaseComputerCircuitboard
+  id: SalvageShuttleConsoleCircuitboard
+  name: salvage shuttle console board
+  description: A computer printed circuit board for a salvage shuttle console.
+  components:
+    - type: ComputerBoard
+      prototype: ComputerShuttleSalvage
+    - type: StealTarget
+      stealGroup: SalvageShuttleConsoleCircuitboard
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -163,13 +179,11 @@
   name: surveillance camera monitor board
   description: A computer printed circuit board for a surveillance camera monitor.
   components:
-  - type: Sprite
-    state: cpu_security
-  - type: ComputerBoard
-    prototype: ComputerSurveillanceCameraMonitor
-  - type: Tag
-    tags:
-    - SurveillanceCameraMonitorCircuitboard
+    - type: ComputerBoard
+      prototype: ComputerSurveillanceCameraMonitor
+    - type: Tag
+      tags:
+        - SurveillanceCameraMonitorCircuitboard
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -177,10 +191,8 @@
   name: surveillance wireless camera monitor board
   description: A computer printed circuit board for a surveillance wireless camera monitor.
   components:
-  - type: Sprite
-    state: cpu_security
-  - type: ComputerBoard
-    prototype: ComputerSurveillanceWirelessCameraMonitor
+    - type: ComputerBoard
+      prototype: ComputerSurveillanceWirelessCameraMonitor
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -192,6 +204,10 @@
       prototype: ComputerTelevision
     - type: Tag
       tags:
+        - ComputerTelevisionCircuitboard
+    - type: ReverseEngineering # Nyano
+      difficulty: 2
+      recipes:
         - ComputerTelevisionCircuitboard
 
 - type: entity
@@ -215,6 +231,10 @@
       state: cpu_science
     - type: ComputerBoard
       prototype: ComputerAnalysisConsole
+    - type: ReverseEngineering # Nyano
+      difficulty: 2
+      recipes:
+        - AnalysisComputerCircuitboard
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -226,6 +246,10 @@
     state: cpu_science
   - type: ComputerBoard
     prototype: ComputerTechnologyDiskTerminal
+  - type: ReverseEngineering # Nyano
+    difficulty: 2
+    recipes:
+      - TechDiskComputerCircuitboard
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -233,13 +257,15 @@
   name: crew monitoring computer board
   description: A computer printed circuit board for a crew monitoring console.
   components:
-  - type: Sprite
-    state: cpu_medical
-  - type: ComputerBoard
-    prototype: ComputerCrewMonitoring
+    - type: ComputerBoard
+      prototype: ComputerCrewMonitoring
+    - type: ReverseEngineering # Nyano
+      difficulty: 2
+      recipes:
+        - CrewMonitoringComputerCircuitboard
 
 - type: entity
-  parent: [BaseComputerCircuitboard, BaseGrandTheftContraband]
+  parent: BaseComputerCircuitboard
   id: IDComputerCircuitboard
   name: ID card computer board
   description: A computer printed circuit board for an ID card console.
@@ -266,7 +292,7 @@
       prototype: computerBodyScanner
 
 - type: entity
-  parent: [ BaseComputerCircuitboard, BaseGrandTheftContraband ]
+  parent: BaseComputerCircuitboard
   id: CommsComputerCircuitboard
   name: communications computer board
   description: A computer printed circuit board for a communications console.
@@ -275,27 +301,28 @@
       state: cpu_command
     - type: ComputerBoard
       prototype: ComputerComms
+      modularComputerProgramPrototype: CommunicationsConsoleDiskPrototype
 
 - type: entity
-  parent: [ BaseComputerCircuitboard, BaseSyndicateContraband ]
+  parent: BaseComputerCircuitboard
   id: SyndicateCommsComputerCircuitboard
   name: syndicate communications computer board
   description: A computer printed circuit board for a syndicate communications console.
   components:
-  - type: Sprite
-    state: cpu_syndicate
-  - type: ComputerBoard
-    prototype: SyndicateComputerComms
+    - type: ComputerBoard
+      prototype: SyndicateComputerComms
 
 - type: entity
   parent: BaseComputerCircuitboard
   id: RadarConsoleCircuitboard
   name: radar console computer board
   components:
-  - type: Sprite
-    state: cpu_supply
   - type: ComputerBoard
     prototype: ComputerRadar
+  - type: ReverseEngineering # Nyano
+    difficulty: 2
+    recipes:
+       - RadarConsoleCircuitboard
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -307,6 +334,10 @@
       state: cpu_engineering
     - type: ComputerBoard
       prototype: ComputerSolarControl
+    - type: ReverseEngineering # Nyano
+      difficulty: 2
+      recipes:
+        - SolarControlComputerCircuitboard
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -343,10 +374,12 @@
   name: shuttle console board
   description: A computer printed circuit board for a shuttle console.
   components:
-  - type: Sprite
-    state: cpu_supply
-  - type: ComputerBoard
-    prototype: ComputerShuttle
+    - type: ComputerBoard
+      prototype: ComputerShuttle
+    - type: ReverseEngineering # Nyano
+      difficulty: 3
+      recipes:
+        - ShuttleConsoleCircuitboard
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -354,10 +387,8 @@
   name: syndicate shuttle console board
   description: A computer printed circuit board for a syndicate shuttle console.
   components:
-  - type: Sprite
-    state: cpu_syndicate
-  - type: ComputerBoard
-    prototype: ComputerShuttleSyndie
+    - type: ComputerBoard
+      prototype: ComputerShuttleSyndie
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -369,6 +400,10 @@
       state: cpu_medical
     - type: ComputerBoard
       prototype: ComputerCloningConsole
+    - type: ReverseEngineering # Nyano
+      difficulty: 3
+      recipes:
+        - CloningConsoleComputerCircuitboard
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -387,10 +422,8 @@
   name: syndicate IFF console board
   description: Allows you to control the IFF and stealth characteristics of this vessel.
   components:
-  - type: Sprite
-    state: cpu_syndicate
-  - type: ComputerBoard
-    prototype: ComputerIFFSyndicate
+    - type: ComputerBoard
+      prototype: ComputerIFFSyndicate
 
 - type: entity
   parent: BaseComputerCircuitboard
@@ -430,8 +463,8 @@
 - type: entity
   parent: BaseComputerCircuitboard
   id: StationAiUploadCircuitboard
-  name: AI upload console board
-  description: A computer printed circuit board for a AI upload console.
+  name: station ai upload console board
+  description: A computer printed circuit board for a station AI upload console.
   components:
     - type: Sprite
       state: cpu_science

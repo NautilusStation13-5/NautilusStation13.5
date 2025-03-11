@@ -9,8 +9,8 @@
   - type: Transform
   - type: Prayable
   - type: Damageable
-    damageContainer: StructuralInorganic
-    damageModifierSet: Wood
+    damageContainer: Inorganic
+    damageModifierSet: Metallic
   - type: PlaceableSurface
   - type: Fixtures
     fixtures:
@@ -25,8 +25,14 @@
         - TableLayer
   - type: Sprite
     snapCardinals: true
-  - type: Climbable
   - type: Clickable
+  - type: SacrificialAltar
+  - type: Strap
+    position: Down
+    rotation: -90
+  - type: GuideHelp
+    guides:
+    - AltarsGolemancy
 
 - type: entity
   id: AltarNanotrasen
@@ -64,6 +70,9 @@
             max: 3
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
+  - type: Construction #Nyano
+    graph: Altar
+    node: nanotrasen
   - type: StealTarget
     stealGroup: AltarNanotrasen
 
@@ -78,6 +87,9 @@
   - type: Icon
     sprite: Structures/Furniture/Altars/Gods/nanotrasen.rsi
     state: chaos
+  - type: Construction #Nyano
+    graph: Altar
+    node: chaos
 
 - type: entity
   id: AltarDruid
@@ -90,6 +102,9 @@
   - type: Icon
     sprite: Structures/Furniture/Altars/Gods/nanotrasen.rsi
     state: druid
+  - type: Construction #Nyano
+    graph: Altar
+    node: druid
 
 - type: entity
   id: AltarToolbox
@@ -102,6 +117,9 @@
   - type: Icon
     sprite: Structures/Furniture/Altars/Gods/nanotrasen.rsi
     state: toolbox
+  - type: Construction #Nyano
+    graph: Altar
+    node: toolbox
 
 - type: entity
   id: AltarSpaceChristian
@@ -121,6 +139,9 @@
     radius: 1.5
     energy: 1
     color: "#fbceb1"
+  - type: Construction #Nyano
+    graph: Altar
+    node: spacechristian
 
 - type: entity
   id: AltarSatana
@@ -140,6 +161,9 @@
     radius: 1.5
     energy: 1
     color: "#ff6347"
+  - type: Construction #Nyano
+    graph: Altar
+    node: satana
 
 - type: entity
   id: AltarTechnology
@@ -159,6 +183,9 @@
     radius: 1.5
     energy: 1
     color: "#e0ffff"
+  - type: Construction #Nyano
+    graph: Altar
+    node: technology
 
 - type: entity
   id: AltarConvertFestival
@@ -201,6 +228,9 @@
   - type: Tag
     tags:
     - Wooden
+  - type: Construction #Nyano
+    graph: Altar
+    node: festival
 
 - type: entity
   id: AltarConvertMaint
@@ -220,6 +250,9 @@
     radius: 1.5
     energy: 1
     color: "#fbceb1"
+  - type: Construction #Nyano
+    graph: Altar
+    node: maint
 
 - type: entity
   id: AltarConvertBlue
@@ -239,6 +272,9 @@
     radius: 1.5
     energy: 1
     color: "#fbceb1"
+  - type: Construction #Nyano
+    graph: Altar
+    node: blue
 
 - type: entity
   id: AltarConvertBurden
@@ -258,6 +294,9 @@
     radius: 1.5
     energy: 1
     color: "#fbceb1"
+  - type: Construction #Nyano
+    graph: Altar
+    node: burden
 
 - type: entity
   id: AltarConvert
@@ -277,6 +316,9 @@
     radius: 1.5
     energy: 1
     color: "#fbceb1"
+  - type: Construction #Nyano
+    graph: Altar
+    node: convert
 
 - type: entity
   id: AltarConvertOrange
@@ -296,6 +338,9 @@
     radius: 1.5
     energy: 1
     color: "#fbceb1"
+  - type: Construction #Nyano
+    graph: Altar
+    node: orange
 
 - type: entity
   id: AltarConvertRed
@@ -315,6 +360,9 @@
     radius: 1.5
     energy: 1
     color: "#fbceb1"
+  - type: Construction #Nyano
+    graph: Altar
+    node: red
 
 - type: entity
   id: AltarConvertWhite
@@ -334,6 +382,9 @@
     radius: 1.5
     energy: 1
     color: "#fbceb1"
+  - type: Construction #Nyano
+    graph: Altar
+    node: white
 
 - type: entity
   id: AltarConvertYellow
@@ -353,6 +404,9 @@
     radius: 1.5
     energy: 1
     color: "#fbceb1"
+  - type: Construction #Nyano
+    graph: Altar
+    node: yellow
 
 - type: entity
   id: AltarHeaven
@@ -394,6 +448,9 @@
     radius: 1.5
     energy: 1
     color: "#f08080"
+  - type: Construction #Nyano
+    graph: Altar
+    node: heaven
 
 - type: entity
   id: AltarFangs
@@ -404,6 +461,9 @@
     sprite: Structures/Furniture/Altars/Cults/fangs.rsi
   - type: Icon
     sprite: Structures/Furniture/Altars/Cults/fangs.rsi
+  - type: Construction #Nyano
+    graph: Altar
+    node: fanged
 
 
 - type: entity

@@ -1,6 +1,6 @@
 - type: entity
   id: ElectricalDisruptionKit
-  parent: [BoxCardboard, BaseSyndicateContraband]
+  parent: BoxCardboard
   name: electrical disruption kit
   suffix: Filled
   components:
@@ -12,7 +12,7 @@
           amount: 1
 
 - type: entity
-  parent: [BoxVial, BaseSyndicateContraband]
+  parent: BoxVial
   id: ChemicalSynthesisKit
   name: chemical synthesis kit
   description: A starter kit for the aspiring chemist, includes toxin and vestine for all your criminal needs!
@@ -33,41 +33,24 @@
       - id: SyringeStimulants
 
 - type: entity
-  parent: BoxVial
-  id: LubeBoxNT
-  name: space lube box
-  description: A box containing three vials of space lube.
+  id: Observationskit
+  parent: BoxCardboard
+  name: observations kit
+  suffix: Filled
   components:
-  - type: Storage
-    grid:
-    - 0,0,3,2
   - type: StorageFill
     contents:
-      - id: LubeChemistryVial
-        amount: 3
+      - id: SyndiCrewMonitorEmpty
+        amount: 1
+      - id: PowerCellHigh
+        amount: 1
+      - id: ClothingEyesGlassesHiddenSecurity
+        amount: 1
+      - id: SurveillanceCameraMonitorCircuitboard
+        amount: 1
 
 - type: entity
   parent: BoxCardboard
-  id: CrimeCleanerKit
-  name: evidence cleaning kit
-  description: A kit designed to clean any evidence of a crime. Contains soap, space cleaner, nitrile gloves and a cleanade.
-  components:
-  - type: Storage
-    grid:
-    - 0,0,3,1
-  - type: StorageFill
-    contents:
-      - id: SoapNTTraitor
-        amount: 1
-      - id: SprayBottleSpaceCleaner
-        amount: 1
-      - id: CleanerGrenade
-        amount: 1
-      - id: ClothingHandsGlovesNitrile
-        amount: 1
-
-- type: entity
-  parent: [BoxCardboard, BaseSyndicateContraband]
   id: ThrowingKnivesKit
   name: throwing knives kit
   description: A set of 4 syndicate branded throwing knives, perfect for embedding into the body of your victims.
@@ -85,25 +68,7 @@
       - state: throwing_knives
 
 - type: entity
-  name: deathrattle implant box
-  parent: [BoxCardboard, BaseSyndicateContraband]
-  id: BoxDeathRattleImplants
-  description: Six deathrattle implants for the whole squad.
-  components:
-  - type: Sprite
-    layers:
-      - state: box_of_doom
-      - state: syringe
-  - type: Storage
-    grid:
-    - 0,0,5,3
-  - type: StorageFill
-    contents:
-      - id: DeathRattleImplanter
-        amount: 6
-
-- type: entity
-  parent: [BoxCardboard, BaseSyndicateContraband]
+  parent: BoxCardboard
   id: CombatBakeryKit
   name: combat bakery kit
   description: A kit of clandestine baked weapons.

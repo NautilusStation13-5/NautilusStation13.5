@@ -1,5 +1,5 @@
 - type: entity
-  parent: [BaseStructure, StructureWheeled, BaseMajorContraband]
+  parent: [BaseStructure, StructureWheeled]
   id: NuclearBomb
   name: nuclear fission explosive
   description: You probably shouldn't stick around to see if this is armed.
@@ -16,9 +16,6 @@
       map: ["enum.NukeVisualLayers.Unlit"]
       shader: unshaded
       visible: false
-    - state: nuclearbomb_gay
-      map: ["pride"]
-      visible: false
     - state: nukefestive
       map: ["christmas"]
       visible: false
@@ -27,15 +24,11 @@
     holidays:
       festive:
       - FestiveSeason
-      pride:
-      - PrideMonth
   - type: GenericVisualizer
     visuals:
       enum.HolidayVisuals.Holiday:
         christmas:
           festive: { visible: true }
-        pride:
-          pride: { visible: true }
       enum.NukeVisuals.Deployed:
         enum.NukeVisualLayers.Base:
           False: { state: nuclearbomb_base }
@@ -129,8 +122,6 @@
   suffix: keg
   description: You probably shouldn't stick around to see if this is armed. It has a tap on the side.
   components:
-  - type: Transform
-    anchored: false
   - type: NukeLabel
   - type: Sprite
     sprite: Objects/Devices/nuke.rsi
@@ -139,23 +130,16 @@
     - state: nukefestive
       map: ["christmas"]
       visible: false
-    - state: nuclearbomb_gay
-      map: [ "pride" ]
-      visible: false
   - type: Appearance
   - type: HolidayVisuals
     holidays:
       festive:
       - FestiveSeason
-      pride:
-      - PrideMonth
   - type: GenericVisualizer
     visuals:
       enum.HolidayVisuals.Holiday:
         christmas:
           festive: { visible: true }
-        pride:
-          pride: { visible: true }
   - type: Physics
     bodyType: Dynamic
   - type: Fixtures
@@ -164,11 +148,11 @@
         shape:
           !type:PhysShapeCircle
           radius: 0.45
-        density: 255
+        density: 80
         mask:
-        - MachineMask
+        - TabletopMachineMask
         layer:
-        - WallLayer
+        - TabletopMachineLayer
   - type: SolutionContainerManager
     solutions:
       tank:

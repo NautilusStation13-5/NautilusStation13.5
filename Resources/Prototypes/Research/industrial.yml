@@ -11,23 +11,13 @@
   cost: 7500
   recipeUnlocks:
   - MiningDrill
-  - MineralScannerEmpty
+  - WeaponGrapplingGun
+  - BorgModuleMining
+  - BorgModuleGrapplingGun
+  - MechEquipmentDrill # Goobstation
   - OreProcessorIndustrialMachineCircuitboard
   - ClothingMaskWeldingGas
-
-- type: technology
-  id: SpaceScanning
-  name: research-technology-space-scanning
-  icon:
-    sprite: Objects/Tools/handheld_mass_scanner.rsi
-    state: icon
-  discipline: Industrial
-  tier: 1
-  cost: 5000
-  recipeUnlocks:
-  - RadarConsoleCircuitboard
-  - HandHeldMassScanner
-  - BorgModuleGPS
+  - SalvageExpeditionsComputerCircuitboard
 
 - type: technology
   id: AdvancedPowercells
@@ -40,6 +30,7 @@
   cost: 7500
   recipeUnlocks:
   - PowerCellHigh
+  - PowerCellMicrortg
   - TurboItemRechargerCircuitboard
   - SMESAdvancedMachineCircuitboard
 
@@ -83,6 +74,7 @@
   - PortableGeneratorPacmanMachineCircuitboard
   - PortableGeneratorSuperPacmanMachineCircuitboard
   - PortableGeneratorJrPacmanMachineCircuitboard
+  - PowerComputerCircuitboard #the actual solar panel itself should be in here
   - SolarControlComputerCircuitboard
   - SolarTrackerElectronics
   - EmitterCircuitboard
@@ -99,6 +91,7 @@
   recipeUnlocks:
   - ThermomachineFreezerMachineCircuitBoard
   - GasRecyclerMachineCircuitboard
+  - AlertsComputerCircuitboard
 
 - type: technology
   id: RipleyAPLU
@@ -120,6 +113,20 @@
   - MechEquipmentGrabber
 
 # Tier 2
+
+- type: technology
+  id: SpaceScanning
+  name: research-technology-space-scanning
+  icon:
+    sprite: Objects/Tools/handheld_mass_scanner.rsi
+    state: icon
+  discipline: Industrial
+  tier: 2
+  cost: 7500
+  recipeUnlocks:
+  - RadarConsoleCircuitboard
+  - HandHeldMassScanner
+  - BorgModuleGPS
 
 - type: technology
   id: Shuttlecraft
@@ -149,8 +156,6 @@
   - HellfireFreezerMachineCircuitBoard
   - PortableScrubberMachineCircuitBoard
   - HolofanProjector
-  technologyPrerequisites:
-  - AtmosphericTech
 
 - type: technology
   id: AdvancedToolsTechnology
@@ -166,6 +171,8 @@
     - PowerDrill
     - JawsOfLife
     - BorgModuleAdvancedTool
+    - BorgModuleRCD
+    - BorgModuleRPD
 
 - type: technology
   id: MassExcavation
@@ -179,7 +186,44 @@
   recipeUnlocks:
     - OreBagOfHolding
     - MiningDrillDiamond
-    - AdvancedMineralScannerEmpty
+    - MechEquipmentDrillDiamond
+
+- type: technology
+  id: Ripley2
+  name: research-technology-ripley-mkii
+  icon:
+    sprite: Objects/Specific/Mech/mecha.rsi
+    state: ripleymkii
+  discipline: Industrial
+  tier: 2
+  cost: 8000
+  recipeUnlocks:
+  - RipleyMKIIHarness
+  - RipleyUpgradeKit
+  technologyPrerequisites:
+  - RipleyAPLU
+
+- type: technology
+  id: Clarke
+  name: research-technology-clarke
+  icon:
+    sprite: Objects/Specific/Mech/mecha.rsi
+    state: clarke
+  discipline: Industrial
+  tier: 2
+  cost: 10000
+  recipeUnlocks:
+  - BorgModulePka
+  - BorgModuleJetpack
+  - ClarkeHarness
+  - ClarkeHead
+  - ClarkeLArm
+  - ClarkeRArm
+  - ClarkeTreads
+  - ClarkeCentralElectronics
+  - ClarkePeripheralsElectronics
+  technologyPrerequisites:
+  - Ripley2
 
 # Tier 3
 
@@ -196,6 +240,8 @@
   - ClothingBackpackHolding
   - ClothingBackpackSatchelHolding
   - ClothingBackpackDuffelHolding
+  - MaterialSiloCircuitboard
+  softCapContribution: 1.5
 
 - type: technology
   id: PortableFission
@@ -210,3 +256,4 @@
   - PowerCellMicroreactor
   technologyPrerequisites:
   - AdvancedPowercells
+  softCapContribution: 1.5

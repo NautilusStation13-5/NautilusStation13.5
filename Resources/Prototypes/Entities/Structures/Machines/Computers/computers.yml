@@ -2,7 +2,7 @@
   parent: BaseComputerAiAccess
   id: ComputerAlert
   name: atmospheric alerts computer
-  description: Used to access the station's atmospheric automated alert system.
+  description: Used to access the station's automated atmospheric alert system.
   components:
   - type: Computer
     board: AlertsComputerCircuitboard
@@ -44,10 +44,10 @@
     key: enum.AtmosAlertsComputerUiKey.Key
   - type: UserInterface
     interfaces:
-        enum.AtmosAlertsComputerUiKey.Key:
-            type: AtmosAlertsComputerBoundUserInterface
-        enum.WiresUiKey.Key:
-          type: WiresBoundUserInterface
+      enum.AtmosAlertsComputerUiKey.Key:
+        type: AtmosAlertsComputerBoundUserInterface
+      enum.WiresUiKey.Key:
+        type: WiresBoundUserInterface
 
 - type: entity
   parent: BaseComputerAiAccess
@@ -201,6 +201,44 @@
     color: "#c94242"
   - type: Computer
     board: SyndicateShuttleConsoleCircuitboard
+  - type: ShuttleConsole
+    ftlToPlanets: true
+
+- type: entity
+  parent: BaseComputerShuttle
+  id: ComputerShuttleSyndieDropPod
+  name: syndicate drop pod console
+  description: "Used to launch a drop pod. It's a one way trip, make sure you've packed your lunch."
+  components:
+  - type: Sprite
+    layers:
+    - map: ["computerLayerBody"]
+      state: computer
+    - map: ["computerLayerKeyboard"]
+      state: generic_keyboard
+    - map: ["computerLayerScreen"]
+      state: syndishuttle
+    - map: ["computerLayerKeys"]
+      state: syndie_key
+    - map: [ "enum.WiresVisualLayers.MaintenancePanel" ]
+      state: generic_panel_open
+  - type: Tag
+    tags:
+      - Syndicate
+  - type: RadarConsole
+    maxRange: 384
+  - type: WorldLoader
+    radius: 1536
+  - type: PointLight
+    radius: 1.5
+    energy: 1.6
+    color: "#c94242"
+  - type: Computer
+    board: SyndicateShuttleConsoleCircuitboard
+  - type: ShuttleConsole
+    ftlToPlanets: true
+    ignoreExclusionZones: true # It can intentionally be crashed into the station, crushing whatever's underneath the target location.
+    oneWayTrip: true
 
 - type: entity
   parent: BaseComputerShuttle
@@ -228,11 +266,45 @@
   - type: PointLight
     radius: 1.5
     energy: 1.6
-    color: "#43ccb5"
+    color: "#c94242"
   - type: Computer
     board: CargoShuttleConsoleCircuitboard
   - type: StealTarget
     stealGroup: CargoShuttleConsoleCircuitboard
+  - type: ShuttleConsole
+    ftlToPlanets: true
+
+- type: entity
+  parent: BaseComputerShuttle
+  id: ComputerShuttleSalvage
+  name: salvage shuttle console
+  description: Used to pilot the salvage shuttle.
+  components:
+    - type: Sprite
+      layers:
+        - map: ["computerLayerBody"]
+          state: computer
+        - map: ["computerLayerKeyboard"]
+          state: generic_keyboard
+        - map: ["computerLayerScreen"]
+          state: shuttle
+        - map: ["computerLayerKeys"]
+          state: generic_keys
+    - type: DroneConsole
+      components:
+        - type: SalvageShuttle
+    - type: RadarConsole
+      maxRange: 256
+    - type: PointLight
+      radius: 1.5
+      energy: 1.6
+      color: "#c94242"
+    - type: Computer
+      board: SalvageShuttleConsoleCircuitboard
+    - type: StealTarget
+      stealGroup: SalvageShuttleConsoleCircuitboard
+    - type: ShuttleConsole
+      ftlToPlanets: true
 
 - type: entity
   parent: BaseComputerAiAccess
@@ -392,6 +464,46 @@
   - type: GuideHelp
     guides:
     - CriminalRecords
+
+- type: entity
+  parent: BaseComputerAiAccess
+  id: ComputerPsionicsRecords
+  name: psionics registry computer
+  description: This can be used to check psionics registry records. Only epistemics can modify them.
+  components:
+  - type: PsionicsRecordsConsole
+  - type: UserInterface
+    interfaces:
+      enum.PsionicsRecordsConsoleKey.Key:
+        type: PsionicsRecordsConsoleBoundUserInterface
+  - type: ActivatableUI
+    key: enum.PsionicsRecordsConsoleKey.Key
+  - type: Sprite
+    layers:
+    - map: ["computerLayerBody"]
+      state: computer
+    - map: ["computerLayerKeyboard"]
+      state: generic_keyboard
+    - map: ["computerLayerScreen"]
+      state: registry
+    - map: ["computerLayerKeys"]
+      state: rd_key
+    - map: [ "enum.WiresVisualLayers.MaintenancePanel" ]
+      state: generic_panel_open
+  - type: PointLight
+    radius: 1.5
+    energy: 1.6
+    color: "#1f8c28"
+  - type: Computer
+    board: PsionicsRecordsComputerCircuitboard
+  - type: AccessReader
+    access:
+      - [ Chapel ]
+      - [ Library ]
+      - [ Mantis ]
+      - [ ResearchDirector ]
+  # - type: GuideHelp
+    # guides: # TODO: Add a guide for Psionics Registry
 
 - type: entity
   parent: BaseComputerAiAccess
@@ -672,8 +784,8 @@
     energy: 1.6
     color: "#3c5eb5"
   - type: Damageable
-    damageContainer: StructuralInorganic
-    damageModifierSet: StructuralMetallicStrong
+    damageContainer: Inorganic
+    damageModifierSet: StrongMetallic
 
 - type: entity
   parent: ComputerComms
@@ -905,7 +1017,6 @@
   - type: GuideHelp
     guides:
     - CargoBounties
-    - Cargo
 
 - type: entity
   parent: BaseComputerAiAccess
@@ -954,8 +1065,8 @@
     speechVerb: Robotic
     speechSounds: Pai
   - type: Damageable
-    damageContainer: StructuralInorganic
-    damageModifierSet: StructuralMetallicStrong
+    damageContainer: Inorganic
+    damageModifierSet: StrongMetallic
   - type: GuideHelp
     guides:
     - Cloning
@@ -1097,7 +1208,7 @@
   id: ComputerPalletConsole
   parent: BaseComputerAiAccess
   name: cargo sale computer
-  description: Used to sell goods loaded onto cargo pallets.
+  description: Used to sell goods loaded onto cargo pallets
   components:
   - type: Sprite
     layers:
@@ -1124,7 +1235,7 @@
       enum.WiresUiKey.Key:
         type: WiresBoundUserInterface
   - type: Computer
-    board: CargoSaleComputerCircuitboard
+    board: CargoRequestComputerCircuitboard
   - type: PointLight
     radius: 1.5
     energy: 1.6
@@ -1156,7 +1267,7 @@
   - type: DeviceNetworkRequiresPower
   - type: NewsWriter
   - type: AccessReader
-    access: [[ "Service" ]]
+    access: [[ "Command" ]]
   - type: ActivatableUI
     key: enum.NewsWriterUiKey.Key
   - type: ActivatableUIRequiresVision
@@ -1265,6 +1376,8 @@
   name: AI upload console
   description: Used to update the laws of the station AI.
   components:
+  - type: Computer
+    board: StationAiUploadCircuitboard
   - type: Sprite
     layers:
     - map: [ "computerLayerBody" ]
@@ -1279,8 +1392,6 @@
       state: generic_panel_open
   - type: ApcPowerReceiver
     powerLoad: 1000
-  - type: Computer
-    board: StationAiUploadCircuitboard
   - type: AccessReader
     access: [ [ "ResearchDirector" ] ]
   - type: Lock
@@ -1298,7 +1409,6 @@
         name: circuit-holder
         insertSuccessPopup: silicon-laws-updated
         whitelist:
-          requireAll: true
           components:
           - SiliconLawProvider
           - Item
@@ -1306,60 +1416,3 @@
     containers:
       circuit_holder: !type:ContainerSlot
       board: !type:Container
-
-- type: entity
-  abstract: true
-  parent: BaseComputer
-  id: BaseComputerBell
-  components:
-  - type: Sprite
-    layers:
-    - map: [ "computerLayerBody" ]
-      state: computer
-    - map: [ "computerLayerKeyboard" ]
-      state: generic_keyboard
-    - map: [ "computerLayerScreen" ]
-      state: shuttle
-    - map: ["computerLayerKeys" ]
-      state: generic_keys
-    - map: [ "enum.WiresVisualLayers.MaintenancePanel" ]
-      state: generic_panel_open
-  - type: WorldLoader
-    radius: 256
-  - type: BellConsole
-  - type: PointLight
-    radius: 1.5
-    energy: 1.6
-    color: "#43ccb5"
-  - type: ActivatableUI
-    key: enum.BellUiKey.Key
-  - type: UserInterface
-    interfaces:
-      enum.BellUiKey.Key:
-        type: BellBoundUserInterface
-      enum.WiresUiKey.Key:
-        type: WiresBoundUserInterface
-
-- type: entity
-  parent: BaseComputerBell
-  id: ComputerBell
-  name: diving bell console
-  description: Lets you control the diving bell.
-  components:
-  - type: BellConsole
-    dockTag: DockBell
-    platformWhitelist:
-      components:
-      - BellPlatform
-
-- type: entity
-  parent: BaseComputerBell
-  id: ComputerTrench
-  name: trench bell control console
-  description: Operates the Trench exploration bell.
-  components:
-  - type: BellConsole
-    dockTag: DockTrench
-    platformWhitelist:
-      components:
-      - TrenchPlatform

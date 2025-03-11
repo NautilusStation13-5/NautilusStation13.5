@@ -1,6 +1,6 @@
 ﻿- type: body
   id: Arachnid
-  name: "arachnid"
+  name: "Arachnid"
   root: torso
   slots:
     head:
@@ -23,6 +23,7 @@
       - left arm
       - right leg
       - left leg
+      - head # Shitmed
     right arm:
       part: RightArmArachnid
       connections:

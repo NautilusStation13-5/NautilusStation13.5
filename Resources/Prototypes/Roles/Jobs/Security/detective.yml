@@ -4,34 +4,62 @@
   description: job-description-detective
   playTimeTracker: JobDetective
   requirements:
-    - !type:DepartmentTimeRequirement
-      department: Security
-      time: 54000 # 15 hours
+  - !type:CharacterDepartmentTimeRequirement
+    department: Security
+    min: 36000 # DeltaV - 10 hours
+  - !type:CharacterTraitRequirement
+    inverted: true
+    traits:
+      - Foreigner
+      - ForeignerLight
+      - Muted
+      - Blindness
+      - Pacifist
+      - BrittleBoneDisease
   startingGear: DetectiveGear
   icon: "JobIconDetective"
   supervisors: job-supervisors-hos
   canBeAntag: false
   access:
   - Security
-  - Brig
+  #- Brig # Delta V: Removed
   - Maintenance
   - Service
   - Detective
-  - Cryogenics
   - External
+  - Cryogenics
   special:
   - !type:AddImplantSpecial
     implants: [ MindShieldImplant ]
+  afterLoadoutSpecial:
+  - !type:ModifyEnvirosuitSpecial
+    charges: 6
+  - !type:ModifyEnvirohelmSpecial
+    powerCell: PowerCellHigh
 
 - type: startingGear
   id: DetectiveGear
+  subGear:
+  - DetectivePlasmamanGear
+
   equipment:
-    eyes: ClothingEyesGlassesSecurity
+    jumpsuit: ClothingUniformJumpsuitDetective
+    back: ClothingBackpackSecurity
+    shoes: ClothingShoesBootsCombatFilled
+    eyes: ClothingEyesGlassesSunglasses
+    head: ClothingHeadHatFedoraBrown
+    outerClothing: ClothingOuterVestDetective
     id: DetectivePDA
     ears: ClothingHeadsetSecurity
     belt: ClothingBeltHolsterFilled
-  storage:
-    back:
-    - Flash
-    - ForensicPad
-    - ForensicScanner
+  innerClothingSkirt: ClothingUniformJumpskirtDetective
+  satchel: ClothingBackpackSatchelSecurity
+  duffelbag: ClothingBackpackDuffelSecurity
+
+- type: startingGear
+  id: DetectivePlasmamanGear
+  parent: BasePlasmamanSecurityGear
+  equipment:
+    jumpsuit: ClothingUniformEnvirosuitDetective
+    head: ClothingHeadEnvirohelmDetective
+    gloves: ClothingHandsGlovesEnviroglovesWhite

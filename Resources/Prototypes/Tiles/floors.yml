@@ -67,7 +67,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepFloor
-  itemDrop: FloorTileItemSteelMini
+  itemDrop: FloorTileItemSteel
   heatCapacity: 10000
 
 - type: tile
@@ -85,7 +85,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepFloor
-  itemDrop: FloorTileItemSteelPavement
+  itemDrop: FloorTileItemSteel
   heatCapacity: 10000
 
 - type: tile
@@ -103,7 +103,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepFloor
-  itemDrop: FloorTileItemSteelDiagonal
+  itemDrop: FloorTileItemSteel
   heatCapacity: 10000
 
 - type: tile
@@ -115,7 +115,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepFloor
-  itemDrop: FloorTileItemSteelOffset
+  itemDrop: FloorTileItemSteel
   heatCapacity: 10000
 
 - type: tile
@@ -133,7 +133,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemSteelMono
+  itemDrop: FloorTileItemSteel
   heatCapacity: 10000
 
 - type: tile
@@ -151,7 +151,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemSteelPavementVertical
+  itemDrop: FloorTileItemSteel
   heatCapacity: 10000
 
 - type: tile
@@ -169,7 +169,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemSteelHerringbone
+  itemDrop: FloorTileItemSteel
   heatCapacity: 10000
 
 - type: tile
@@ -187,7 +187,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemSteelDiagonalMini
+  itemDrop: FloorTileItemSteel
   heatCapacity: 10000
 
 - type: tile
@@ -285,7 +285,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemWhiteMini
+  itemDrop: FloorTileItemWhite
   heatCapacity: 10000
 
 - type: tile
@@ -303,7 +303,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemWhitePavement
+  itemDrop: FloorTileItemWhite
   heatCapacity: 10000
 
 - type: tile
@@ -321,7 +321,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemWhiteDiagonal
+  itemDrop: FloorTileItemWhite
   heatCapacity: 10000
 
 - type: tile
@@ -333,7 +333,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemWhiteOffset
+  itemDrop: FloorTileItemWhite
   heatCapacity: 10000
 
 - type: tile
@@ -351,7 +351,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemWhiteMono
+  itemDrop: FloorTileItemWhite
   heatCapacity: 10000
 
 - type: tile
@@ -369,7 +369,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemWhitePavementVertical
+  itemDrop: FloorTileItemWhite
   heatCapacity: 10000
 
 - type: tile
@@ -387,7 +387,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemWhiteHerringbone
+  itemDrop: FloorTileItemWhite
   heatCapacity: 10000
 
 - type: tile
@@ -405,7 +405,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemWhiteDiagonalMini
+  itemDrop: FloorTileItemWhite
   heatCapacity: 10000
 
 - type: tile
@@ -459,7 +459,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemDarkMini
+  itemDrop: FloorTileItemDark
   heatCapacity: 10000
 
 - type: tile
@@ -477,7 +477,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemDarkPavement
+  itemDrop: FloorTileItemDark
   heatCapacity: 10000
 
 - type: tile
@@ -495,7 +495,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemDarkDiagonal
+  itemDrop: FloorTileItemDark
   heatCapacity: 10000
 
 - type: tile
@@ -507,7 +507,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemDarkOffset
+  itemDrop: FloorTileItemDark
   heatCapacity: 10000
 
 - type: tile
@@ -525,7 +525,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemDarkMono
+  itemDrop: FloorTileItemDark
   heatCapacity: 10000
 
 - type: tile
@@ -543,7 +543,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemDarkPavementVertical
+  itemDrop: FloorTileItemDark
   heatCapacity: 10000
 
 - type: tile
@@ -561,7 +561,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemDarkHerringbone
+  itemDrop: FloorTileItemDark
   heatCapacity: 10000
 
 - type: tile
@@ -579,7 +579,7 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemDarkDiagonalMini
+  itemDrop: FloorTileItemDark
   heatCapacity: 10000
 
 - type: tile
@@ -621,8 +621,9 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepHull
-  itemDrop: PartRodMetal1
+  itemDrop: FloorTileItemReinforced
   heatCapacity: 10000
+  reinforced: true
 
 - type: tile
   id: FloorMono
@@ -884,6 +885,22 @@
   itemDrop: FloorTileItemSteel #This should probably be made null when it becomes possible to make it such, in SS13 prying destroyed tiles wouldn't give you anything.
   heatCapacity: 10000
 
+- type: tile
+  id: FloorSteelBurnt
+  name: tiles-steel-floor
+  sprite: /Textures/Tiles/steel_burnt.png
+  variants: 2
+  placementVariants:
+  - 1.0
+  - 1.0
+  baseTurf: Plating
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepFloor
+  itemDrop: FloorTileItemSteel #Same case as FloorSteelDamaged, make it null when possible
+  heatCapacity: 10000
+
 # Concrete
 - type: tile
   id: FloorConcrete
@@ -902,6 +919,7 @@
     collection: FootstepTile
   itemDrop: FloorTileItemConcrete
   heatCapacity: 10000
+  weather: true
 
 - type: tile
   id: FloorConcreteMono
@@ -918,8 +936,9 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemConcreteMono
+  itemDrop: FloorTileItemConcrete
   heatCapacity: 10000
+  weather: true
 
 - type: tile
   id: FloorConcreteSmooth
@@ -936,8 +955,9 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemConcreteSmooth
+  itemDrop: FloorTileItemConcrete
   heatCapacity: 10000
+  weather: true
 
 - type: tile
   id: FloorGrayConcrete
@@ -956,6 +976,7 @@
     collection: FootstepTile
   itemDrop: FloorTileItemGrayConcrete
   heatCapacity: 10000
+  weather: true
 
 - type: tile
   id: FloorGrayConcreteMono
@@ -972,8 +993,9 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemGrayConcreteMono
+  itemDrop: FloorTileItemGrayConcrete
   heatCapacity: 10000
+  weather: true
 
 - type: tile
   id: FloorGrayConcreteSmooth
@@ -990,8 +1012,9 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemGrayConcreteSmooth
+  itemDrop: FloorTileItemGrayConcrete
   heatCapacity: 10000
+  weather: true
 
 - type: tile
   id: FloorOldConcrete
@@ -1010,6 +1033,7 @@
     collection: FootstepTile
   itemDrop: FloorTileItemOldConcrete
   heatCapacity: 10000
+  weather: true
 
 - type: tile
   id: FloorOldConcreteMono
@@ -1026,8 +1050,9 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemOldConcreteMono
+  itemDrop: FloorTileItemOldConcrete
   heatCapacity: 10000
+  weather: true
 
 - type: tile
   id: FloorOldConcreteSmooth
@@ -1044,8 +1069,9 @@
   deconstructTools: [ Prying ]
   footstepSounds:
     collection: FootstepTile
-  itemDrop: FloorTileItemOldConcreteSmooth
+  itemDrop: FloorTileItemOldConcrete
   heatCapacity: 10000
+  weather: true
 
 # Carpets (non smoothing)
 - type: tile
@@ -1181,12 +1207,6 @@
   id: FloorShuttleWhite
   name: tiles-white-shuttle-floor
   sprite: /Textures/Tiles/shuttlewhite.png
-  variants: 4
-  placementVariants:
-  - 1.0
-  - 1.0
-  - 1.0
-  - 1.0
   baseTurf: Plating
   isSubfloor: false
   deconstructTools: [ Prying ]
@@ -1199,12 +1219,6 @@
   id: FloorShuttleGrey
   name: tiles-grey-shuttle-floor
   sprite: /Textures/Tiles/shuttlegrey.png
-  variants: 4
-  placementVariants:
-  - 1.0
-  - 1.0
-  - 1.0
-  - 1.0
   baseTurf: Plating
   isSubfloor: false
   deconstructTools: [ Prying ]
@@ -1217,12 +1231,6 @@
   id: FloorShuttleBlack
   name: tiles-black-shuttle-floor
   sprite: /Textures/Tiles/shuttleblack.png
-  variants: 4
-  placementVariants:
-  - 1.0
-  - 1.0
-  - 1.0
-  - 1.0
   baseTurf: Plating
   isSubfloor: false
   deconstructTools: [ Prying ]
@@ -1235,12 +1243,6 @@
   id: FloorShuttleBlue
   name: tiles-blue-shuttle-floor
   sprite: /Textures/Tiles/shuttleblue.png
-  variants: 4
-  placementVariants:
-  - 1.0
-  - 1.0
-  - 1.0
-  - 1.0
   baseTurf: Plating
   isSubfloor: false
   deconstructTools: [ Prying ]
@@ -1253,12 +1255,6 @@
   id: FloorShuttleOrange
   name: tiles-orange-shuttle-floor
   sprite: /Textures/Tiles/shuttleorange.png
-  variants: 4
-  placementVariants:
-  - 1.0
-  - 1.0
-  - 1.0
-  - 1.0
   baseTurf: Plating
   isSubfloor: false
   deconstructTools: [ Prying ]
@@ -1271,12 +1267,6 @@
   id: FloorShuttlePurple
   name: tiles-purple-shuttle-floor
   sprite: /Textures/Tiles/shuttlepurple.png
-  variants: 4
-  placementVariants:
-  - 1.0
-  - 1.0
-  - 1.0
-  - 1.0
   baseTurf: Plating
   isSubfloor: false
   deconstructTools: [ Prying ]
@@ -1289,12 +1279,6 @@
   id: FloorShuttleRed
   name: tiles-red-shuttle-floor
   sprite: /Textures/Tiles/shuttlered.png
-  variants: 4
-  placementVariants:
-  - 1.0
-  - 1.0
-  - 1.0
-  - 1.0
   baseTurf: Plating
   isSubfloor: false
   deconstructTools: [ Prying ]
@@ -1302,7 +1286,6 @@
     collection: FootstepFloor
   itemDrop: FloorTileItemShuttleRed
   heatCapacity: 10000
-
 
 # Materials
 - type: tile
@@ -1332,7 +1315,7 @@
 - type: tile
   id: FloorGlass
   name: tiles-glass-floor
-  sprite: /Textures/Tiles/glass.png
+  sprite: /Textures/DeltaV/Tiles/glass.png # DeltaV - Replace glass texture so it's easier to see
   variants: 4
   placementVariants:
   - 1.0
@@ -1363,21 +1346,6 @@
   footstepSounds:
     collection: FootstepTile
   itemDrop: SheetRGlass1
-  heatCapacity: 10000
-
-- type: tile
-  id: FloorMetalFoam
-  name: tiles-metal-foam
-  sprite: /Textures/Tiles/foammetal.png
-  variants: 1
-  placementVariants:
-  - 1.0
-  baseTurf: Plating
-  isSubfloor: false
-  deconstructTools: [ Prying ]
-  footstepSounds:
-    collection: FootstepHull
-  itemDrop: SheetSteel1
   heatCapacity: 10000
 
 # Circuits
@@ -1435,7 +1403,7 @@
   - 1.0
   - 1.0
   baseTurf: FloorDirt
-  isSubfloor: true
+  isSubfloor: false
   footstepSounds:
     collection: FootstepTile
   heatCapacity: 10000
@@ -1446,7 +1414,8 @@
   name: tiles-planet-grass-floor
   sprite: /Textures/Tiles/grass.png
   baseTurf: FloorDirt
-  isSubfloor: true
+  isSubfloor: false
+  canShovel: true #DV
   footstepSounds:
     collection: FootstepGrass
   itemDrop: FloorTileItemGrass
@@ -1458,7 +1427,8 @@
   name: tiles-jungle-grass-floor
   sprite: /Textures/Tiles/grassjungle.png
   baseTurf: FloorDirt
-  isSubfloor: true
+  isSubfloor: false
+  canShovel: true # Delta V
   footstepSounds:
     collection: FootstepGrass
   itemDrop: FloorTileItemGrassJungle
@@ -1476,9 +1446,11 @@
   - 1.0
   - 1.0
   baseTurf: FloorDirt
-  isSubfloor: true
+  isSubfloor: false
+  canShovel: true # Delta V
   footstepSounds:
     collection: FootstepGrass
+  itemDrop: FloorTileItemGrassDark # Delta V
   heatCapacity: 10000
   weather: true
 
@@ -1493,9 +1465,11 @@
   - 1.0
   - 1.0
   baseTurf: FloorDirt
-  isSubfloor: true
+  isSubfloor: false
+  canShovel: true # Delta V
   footstepSounds:
     collection: FootstepGrass
+  itemDrop: FloorTileItemGrassLight
   heatCapacity: 10000
   weather: true
 
@@ -1511,10 +1485,12 @@
   - 1.0
   baseTurf: Plating
   isSubfloor: true
+  canShovel: true # Delta V
   footstepSounds:
     collection: FootstepAsteroid
+  itemDrop: FloorTileItemDirt # Delta V
   heatCapacity: 10000
-  weather: true
+  weather: True
 
 # Asteroid
 
@@ -1831,6 +1807,7 @@
   itemDrop: FloorTileItemSteel
   heatCapacity: 100000 #/tg/ has this set as "INFINITY." I don't know if that exists here so I've just added an extra 0
   indestructible: true
+  reinforced: true
 
 - type: tile
   id: FloorReinforcedHardened
@@ -1840,7 +1817,8 @@
   isSubfloor: false
   footstepSounds:
     collection: FootstepHull
-  itemDrop: PartRodMetal1 #same case as FloorHull
+  itemDrop: FloorTileItemReinforced #same case as FloorHull
+  reinforced: true
 
 # Faux sci tiles
 

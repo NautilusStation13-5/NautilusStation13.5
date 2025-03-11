@@ -39,7 +39,7 @@
 - type: entity
   name: explosive grenade
   description: Grenade that creates a small but devastating explosion.
-  parent: [GrenadeBase, BaseSyndicateContraband]
+  parent: GrenadeBase
   id: ExGrenade
   components:
   - type: ExplodeOnTrigger
@@ -59,8 +59,8 @@
 
 - type: entity
   name: flashbang
-  description: Eeeeeeeeeeeeeeeeeeeeee.
-  parent: [ GrenadeBase, BaseRestrictedContraband ]
+  description: Eeeeeeeeeeeeeeeeeeeeee
+  parent: GrenadeBase
   id: GrenadeFlashBang
   components:
   - type: Sprite
@@ -80,10 +80,6 @@
   - type: GuideHelp
     guides:
     - Security
-    - Antagonists
-  - type: Tag
-    tags:
-    - GrenadeFlashBang
 
 - type: entity
   id: GrenadeFlashEffect
@@ -104,27 +100,11 @@
 - type: entity
   name: syndicate minibomb
   description: A syndicate-manufactured explosive used to stow destruction and cause chaos.
-  parent: [GrenadeBase, BaseSyndicateContraband]
+  parent: GrenadeBase
   id: SyndieMiniBomb
   components:
   - type: Sprite
     sprite: Objects/Weapons/Grenades/syndgrenade.rsi
-  - type: ExplosionResistance
-    damageCoefficient: 0.1
-  - type: Destructible
-    thresholds:
-    - trigger:
-        !type:DamageTrigger
-        damage: 10
-      behaviors:
-      - !type:TimerStartBehavior
-    - trigger:
-        !type:DamageTrigger
-        damage: 45
-      behaviors:
-      - !type:TriggerBehavior
-      - !type:DoActsBehavior
-        acts: ["Destruction"]
   - type: OnUseTimerTrigger
     delay: 5
   - type: ExplodeOnTrigger
@@ -141,7 +121,7 @@
         volume: 12
 
 - type: entity
-  name: self destruct
+  name: Self Destruct
   description: Go out on your own terms!
   parent: GrenadeBase
   id: SelfDestructSeq
@@ -167,7 +147,7 @@
 - type: entity
   name: supermatter grenade
   description: Grenade that simulates delamination of the supermatter engine, pulling things in a heap and exploding after some time.
-  parent: [GrenadeBase, BaseSyndicateContraband]
+  parent: GrenadeBase
   id: SupermatterGrenade
   components:
   - type: Sprite
@@ -340,26 +320,25 @@
           emptyCase: { state: empty }
           wiredCase: { state: wired }
           caseWithTrigger: { state: no-payload }
-          caseWithPayload: { state: no-trigger }
           grenade: { state: complete }
       enum.Trigger.TriggerVisuals.VisualState:
         enum.ConstructionVisuals.Layer:
           Primed: { state: primed }
-          # Unprimed: <Use state determined by enum.ConstructionVisuals.Layer>
+          Unprimed: { state: complete }
   - type: StaticPrice
-    price: 75
+    price: 25
 
 - type: entity
   name: EMP grenade
   description: A grenade designed to wreak havoc on electronic systems.
-  parent: [GrenadeBase, BaseSyndicateContraband]
+  parent: GrenadeBase
   id: EmpGrenade
   components:
   - type: Sprite
     sprite: Objects/Weapons/Grenades/empgrenade.rsi
   - type: EmpOnTrigger
-    range: 5.5
-    energyConsumption: 50000
+    range: 4
+    energyConsumption: 2700000
   - type: DeleteOnTrigger
   - type: Appearance
   - type: TimerTriggerVisuals
@@ -369,7 +348,7 @@
 - type: entity
   name: holy hand grenade
   description: O Lord, bless this thy hand grenade, that with it thou mayst blow thine enemies to tiny bits, in thy mercy.
-  parent: [GrenadeBase, BaseSyndicateContraband]
+  parent: GrenadeBase
   id: HolyHandGrenade
   components:
   - type: Sprite
@@ -392,7 +371,7 @@
       path: /Audio/Effects/hallelujah.ogg
 
 - type: entity
-  parent: [ GrenadeBase, BaseRestrictedContraband ]
+  parent: GrenadeBase
   id: SmokeGrenade
   name: smoke grenade
   description: A tactical grenade that releases a large, long-lasting cloud of smoke when used.
@@ -410,10 +389,10 @@
       path: /Audio/Items/smoke_grenade_prime.ogg
 
 - type: entity
-  parent: [ BaseCivilianContraband, SmokeGrenade ]
+  parent: SmokeGrenade
   id: CleanerGrenade
   name: cleanade
-  description: Special grenade for janitors, releasing large cloud of space cleaner foam.
+  description: Special grenade for janitors, releasing large cloud of space cleaner foam
   components:
   - type: Sprite
     sprite: Objects/Weapons/Grenades/janitor.rsi
@@ -442,21 +421,6 @@
       - ReagentId: TearGas
         Quantity: 50
 
-- type: entity
-  parent: [ BaseEngineeringContraband, SmokeGrenade ]
-  id: MetalFoamGrenade
-  name: metal foam grenade
-  description: An emergency tool used for patching up holes. Almost as good as real walls.
-  components:
-  - type: Sprite
-    sprite: Objects/Weapons/Grenades/metalfoam.rsi
-  - type: SmokeOnTrigger
-    duration: 10
-    spreadAmount: 13
-    smokePrototype: AluminiumMetalFoam
-  - type: StaticPrice
-    price: 350
-
 # Non-explosive "dummy" grenades to use as a distraction.
 
 - type: entity
@@ -481,7 +445,7 @@
 - type: entity
   name: syndicate trickybomb
   description: A syndicate-manufactured explosive used to make an excellent distraction.
-  parent: [GrenadeDummy, BaseSyndicateContraband]
+  parent: GrenadeDummy
   id: SyndieTrickyBomb
   components:
   - type: Sprite
@@ -495,42 +459,3 @@
       path: /Audio/Effects/minibombcountdown.ogg
       params:
         volume: 12
-
-- type: entity
-  name: beachball
-  description: A NT-brand beachball. This one is strangely firm.
-  parent: BaseGrenade
-  id: TP14BeachballGrenade
-  components:
-  - type: Item
-    size: Normal
-    sprite: Objects/Fun/toys.rsi
-    heldPrefix: beachb
-  - type: Destructible
-    thresholds:
-    - trigger:
-        !type:DamageTrigger
-        damage: 10
-      behaviors:
-      - !type:TriggerBehavior
-  - type: DamageOnLand
-    damage:
-      types:
-        Blunt: 10
-  - type: Sprite
-    sprite: Objects/Fun/toys.rsi
-    state: beachball
-  - type: TwoStageTrigger
-    triggerDelay: 2.14
-    components:
-      - type: GravityWell
-        maxRange: 10
-        baseRadialAcceleration: -200
-        baseTangentialAcceleration: -7
-        gravPulsePeriod: 0.01
-      - type: SoundOnTrigger
-        sound:
-          path: /Audio/Effects/pop_high.ogg
-          params:
-            volume: 15
-      - type: DeleteOnTrigger

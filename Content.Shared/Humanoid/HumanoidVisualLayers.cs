@@ -1,4 +1,4 @@
-﻿using Content.Shared.Humanoid.Markings;
+using Content.Shared.Humanoid.Markings;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared.Humanoid
@@ -6,11 +6,14 @@ namespace Content.Shared.Humanoid
     [Serializable, NetSerializable]
     public enum HumanoidVisualLayers : byte
     {
-        Special, // for the cat ears
+        Face,
         Tail,
+        Wings,
         Hair,
         FacialHair,
         Chest,
+        Underwear,
+        Undershirt,
         Head,
         Snout,
         HeadSide, // side parts (i.e., frills)
@@ -19,7 +22,6 @@ namespace Content.Shared.Humanoid
         RArm,
         LArm,
         RHand,
-
         LHand,
         RLeg,
         LLeg,
@@ -29,6 +31,5 @@ namespace Content.Shared.Humanoid
         StencilMask,
         Ensnare,
         Fire,
-
     }
 }

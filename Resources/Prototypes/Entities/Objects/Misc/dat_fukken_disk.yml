@@ -1,8 +1,8 @@
 - type: entity
-  name: Artifact Bypass Code
+  name: nuclear authentication disk
   parent: BaseItem
   id: NukeDisk
-  description: This disk contains the radio signal utilized by the early settlers that re-awakened the dormant artifact. It has been passed down from overseer to overseer. keep it safe.
+  description: A nuclear auth disk, capable of arming a nuke if used along with a code. Note from nanotrasen reads "THIS IS YOUR MOST IMPORTANT POSESSION, SECURE DAT FUKKEN DISK!"
   components:
   - type: NukeDisk
   - type: SpecialRespawn
@@ -16,36 +16,34 @@
   - type: ArrivalsBlacklist
   - type: WarpPoint
     follow: true
-    location: Bypass Disk
+    location: nuke disk
   - type: Tag
     tags:
     - HighRiskItem
   - type: StealTarget
     stealGroup: NukeDisk
+  - type: EmitSoundOnPickup
+    sound: /Audio/SimpleStation14/Items/Handling/disk_pickup.ogg
+  - type: EmitSoundOnDrop
+    sound: /Audio/SimpleStation14/Items/Handling/disk_drop.ogg
+  - type: EmitSoundOnLand
+    sound: /Audio/SimpleStation14/Items/Handling/disk_drop.ogg
 
 - type: entity
-  name: Artifact Bypass Code
+  name: nuclear authentication disk
   parent: BaseItem
   id: NukeDiskFake
   suffix: Fake
-  description: This disk contains the radio signal utilized by the early settlers that re-awakened the dormant artifact. It has been passed down from overseer to overseer. keep it safe.
+  description: A nuclear auth disk, capable of arming a nuke if used along with a code. Note from nanotrasen reads "THIS IS YOUR MOST IMPORTANT POSESSION, SECURE DAT FUKKEN DISK!"
   components:
   - type: Sprite
     sprite: Objects/Misc/nukedisk.rsi
     state: icon
   - type: StaticPrice
     price: 1 # it's worth even less than normal items. Perfection.
-
-- type: entity
-  name: resonance delaminator
-  parent: BaseItem
-  id: TP14ResonanceDelaminator
-  description: A highly experimental device, with the NT logo forebodingly stamped on the front. It's designed to use The Artifact to destroy the planet.
-  components:
-  - type: Sprite
-    sprite: Objects/Misc/nukedisk.rsi
-    state: icon
-  - type: Delaminator
-  - type: Item
-    size: Ginormous
-  - type: MultiHandedItem
+  - type: EmitSoundOnPickup
+    sound: /Audio/SimpleStation14/Items/Handling/disk_pickup.ogg
+  - type: EmitSoundOnDrop
+    sound: /Audio/SimpleStation14/Items/Handling/disk_drop.ogg
+  - type: EmitSoundOnLand
+    sound: /Audio/SimpleStation14/Items/Handling/disk_drop.ogg

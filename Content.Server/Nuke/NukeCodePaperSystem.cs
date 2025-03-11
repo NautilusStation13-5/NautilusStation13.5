@@ -2,11 +2,14 @@ using System.Diagnostics.CodeAnalysis;
 using Content.Server.Chat.Systems;
 using Content.Server.Fax;
 using Content.Shared.Fax.Components;
+using Content.Server.Paper;
 using Content.Server.Station.Components;
 using Content.Server.Station.Systems;
 using Content.Shared.Paper;
 using Robust.Shared.Random;
 using Robust.Shared.Utility;
+using Content.Server.Announcements.Systems;
+using Robust.Shared.Player;
 
 namespace Content.Server.Nuke
 {
@@ -17,6 +20,7 @@ namespace Content.Server.Nuke
         [Dependency] private readonly StationSystem _station = default!;
         [Dependency] private readonly PaperSystem _paper = default!;
         [Dependency] private readonly FaxSystem _faxSystem = default!;
+        [Dependency] private readonly AnnouncerSystem _announcer = default!;
 
         public override void Initialize()
         {
@@ -37,8 +41,7 @@ namespace Content.Server.Nuke
 
             if (TryGetRelativeNukeCode(uid, out var paperContent, station, onlyCurrentStation: component.AllNukesAvailable))
             {
-                if (TryComp<PaperComponent>(uid, out var paperComp))
-                    _paper.SetContent((uid, paperComp), paperContent);
+                _paper.SetContent(uid, paperContent);
             }
         }
 
@@ -58,9 +61,7 @@ namespace Content.Server.Nuke
             while (faxes.MoveNext(out var faxEnt, out var fax))
             {
                 if (!fax.ReceiveNukeCodes || !TryGetRelativeNukeCode(faxEnt, out var paperContent, station))
-                {
                     continue;
-                }
 
                 var printout = new FaxPrintout(
                     paperContent,
@@ -79,10 +80,8 @@ namespace Content.Server.Nuke
             }
 
             if (wasSent)
-            {
-                var msg = Loc.GetString("nuke-component-announcement-send-codes");
-                _chatSystem.DispatchStationAnnouncement(station, msg, colorOverride: Color.Red);
-            }
+                _announcer.SendAnnouncement(_announcer.GetAnnouncementId("NukeCodes"), Filter.Broadcast(),
+                    "nuke-component-announcement-send-codes", colorOverride: Color.Red);
 
             return wasSent;
         }
@@ -124,7 +123,7 @@ namespace Content.Server.Nuke
                 }
 
                 codesMessage.PushNewline();
-                codesMessage.AddMarkupOrThrow(Loc.GetString("nuke-codes-list", ("name", MetaData(nukeUid).EntityName), ("code", nuke.Code)));
+                codesMessage.AddMarkup(Loc.GetString("nuke-codes-list", ("name", MetaData(nukeUid).EntityName), ("code", nuke.Code)));
                 break;
             }
 

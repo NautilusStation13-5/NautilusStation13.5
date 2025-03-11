@@ -22,7 +22,7 @@ public sealed class AirlockSystem : SharedAirlockSystem
         SubscribeLocalEvent<AirlockComponent, SignalReceivedEvent>(OnSignalReceived);
 
         SubscribeLocalEvent<AirlockComponent, PowerChangedEvent>(OnPowerChanged);
-        SubscribeLocalEvent<AirlockComponent, ActivateInWorldEvent>(OnActivate, before: new[] { typeof(DoorSystem) });
+        SubscribeLocalEvent<AirlockComponent, ActivateInWorldEvent>(OnActivate, after: new[] { typeof(DoorSystem) });
     }
 
     private void OnAirlockInit(EntityUid uid, AirlockComponent component, ComponentInit args)
@@ -35,10 +35,9 @@ public sealed class AirlockSystem : SharedAirlockSystem
 
     private void OnSignalReceived(EntityUid uid, AirlockComponent component, ref SignalReceivedEvent args)
     {
-        if (args.Port == component.AutoClosePort && component.AutoClose)
+        if (args.Port == component.AutoClosePort)
         {
             component.AutoClose = false;
-            Dirty(uid, component);
         }
     }
 
@@ -85,11 +84,10 @@ public sealed class AirlockSystem : SharedAirlockSystem
             return;
         }
 
-        if (component.KeepOpenIfClicked && component.AutoClose)
+        if (component.KeepOpenIfClicked)
         {
             // Disable auto close
             component.AutoClose = false;
-            Dirty(uid, component);
         }
     }
 }

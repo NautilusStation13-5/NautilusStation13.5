@@ -83,7 +83,7 @@
   id: SpawnPointGhostNukeOperative
   name: ghost role spawn point
   suffix: nukeops
-  parent: MarkerBase
+  parent: BaseAntagSpawner
   components:
   - type: GhostRole
     rules: ghost-role-information-rules-default-team-antagonist
@@ -102,8 +102,10 @@
 
 - type: entity
   categories: [ HideSpawnMenu, Spawner ]
-  parent: BaseAntagSpawner
   id: SpawnPointLoneNukeOperative
+  name: ghost role spawn point
+  suffix: loneops
+  parent: BaseAntagSpawner
   components:
   - type: GhostRole
     name: ghost-role-information-loneop-name
@@ -172,9 +174,11 @@
       state: alive
 
 - type: entity
-  categories: [ HideSpawnMenu, Spawner ]
   parent: BaseAntagSpawner
   id: SpawnPointGhostSpaceNinja
+  categories: [ HideSpawnMenu, Spawner ]
+  name: ghost role spawn point
+  suffix: space ninja
   components:
   - type: GhostRole
     name: ghost-role-information-space-ninja-name
@@ -190,21 +194,3 @@
     - state: green
     - sprite: Objects/Weapons/Melee/energykatana.rsi
       state: icon
-
-- type: entity
-  categories: [ HideSpawnMenu, Spawner ]
-  parent: BaseAntagSpawner
-  id: SpawnPointGhostDerelictCyborg
-  components:
-  - type: GhostRole
-    name: ghost-role-information-derelict-cyborg-name
-    description: ghost-role-information-derelict-cyborg-description
-    rules: ghost-role-information-silicon-rules
-    raffle:
-      settings: default
-  - type: Sprite
-    sprite: Markers/jobs.rsi
-    layers:
-    - state: green
-    - sprite: Mobs/Silicon/chassis.rsi
-      state: derelict_icon

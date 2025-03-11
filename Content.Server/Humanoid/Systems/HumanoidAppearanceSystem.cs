@@ -41,6 +41,8 @@ public sealed partial class HumanoidAppearanceSystem : SharedHumanoidAppearanceS
         targetHumanoid.SkinColor = sourceHumanoid.SkinColor;
         targetHumanoid.EyeColor = sourceHumanoid.EyeColor;
         targetHumanoid.Age = sourceHumanoid.Age;
+        targetHumanoid.Height = sourceHumanoid.Height;
+        targetHumanoid.Width = sourceHumanoid.Width;
         SetSex(target, sourceHumanoid.Sex, false, targetHumanoid);
         targetHumanoid.CustomBaseLayers = new(sourceHumanoid.CustomBaseLayers);
         targetHumanoid.MarkingSet = new(sourceHumanoid.MarkingSet);
@@ -51,6 +53,7 @@ public sealed partial class HumanoidAppearanceSystem : SharedHumanoidAppearanceS
             grammar.Gender = sourceHumanoid.Gender;
         }
 
+        targetHumanoid.LastProfileLoaded = sourceHumanoid.LastProfileLoaded;
         Dirty(target, targetHumanoid);
     }
 

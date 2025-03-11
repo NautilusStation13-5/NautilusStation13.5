@@ -12,10 +12,13 @@
           map: ["base"]
     - type: StepTrigger
       intersectRatio: 0.2
-      requiredTriggeredSpeed: 2
+      requiredTriggeredSpeed: 0
+      triggerGroups:
+        types:
+        - Mousetrap
     - type: Mousetrap
     - type: TriggerOnStepTrigger
-    - type: PreventableStepTrigger
+    - type: ClothingRequiredStepTrigger
     - type: DamageUserOnTrigger
       damage:
         types:

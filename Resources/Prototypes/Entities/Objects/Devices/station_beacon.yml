@@ -24,7 +24,7 @@
   - type: NavMapBeacon
     defaultText: station-beacon-general
     color: "#D4D4D496"
-  - type: WarpPoint
+  #- type: WarpPoint # Delta V - Removes in favor of Warp Point Markers
   - type: ActivatableUI
     key: enum.NavMapBeaconUiKey.Key
     singleUser: true
@@ -139,14 +139,6 @@
 
 - type: entity
   parent: DefaultStationBeaconCommand
-  id: DefaultStationBeaconGateway
-  suffix: Gateway
-  components:
-  - type: NavMapBeacon
-    defaultText: station-beacon-gateway
-
-- type: entity
-  parent: DefaultStationBeaconCommand
   id: DefaultStationBeaconCaptainsQuarters
   suffix: Captain's Quarters
   components:
@@ -177,14 +169,6 @@
   components:
   - type: NavMapBeacon
     defaultText: station-beacon-brig
-
-- type: entity
-  parent: DefaultStationBeaconSecurity
-  id: DefaultStationBeaconBrigMed
-  suffix: Brig Med
-  components:
-  - type: NavMapBeacon
-    defaultText: station-beacon-brig-med
 
 - type: entity
   parent: DefaultStationBeaconSecurity
@@ -235,7 +219,7 @@
     defaultText: station-beacon-courtroom
 
 - type: entity
-  parent: DefaultStationBeaconSecurity
+  parent: DefaultStationBeaconService #Delta V - Lawer is Service until Justice Dept is a thing
   id: DefaultStationBeaconLawOffice
   suffix: Law Office
   components:
@@ -308,28 +292,12 @@
     defaultText: station-beacon-surgery
 
 - type: entity
-  parent: DefaultStationBeaconMedical
-  id: DefaultStationBeaconPsychology
-  suffix: Psychology
-  components:
-  - type: NavMapBeacon
-    defaultText: station-beacon-psychology
-
-- type: entity
-  parent: DefaultStationBeaconMedical
-  id: DefaultStationBeaconClinic
-  suffix: Clinic
-  components:
-  - type: NavMapBeacon
-    defaultText: station-beacon-clinic
-
-- type: entity
   parent: DefaultStationBeacon
   id: DefaultStationBeaconScience
-  suffix: Science
+  suffix: Epistemics #Delta V - Renamed
   components:
   - type: NavMapBeacon
-    defaultText: station-beacon-science
+    defaultText: station-beacon-epistemics #Delta V - Renamed
     color: "#D381C9"
 
 - type: entity
@@ -351,10 +319,10 @@
 - type: entity
   parent: DefaultStationBeaconScience
   id: DefaultStationBeaconRDRoom
-  suffix: RD's Room
+  suffix: MG's Room
   components:
   - type: NavMapBeacon
-    defaultText: station-beacon-research-director
+    defaultText: station-beacon-mystagogue  #Delta V - Renamed
 
 - type: entity
   parent: DefaultStationBeaconScience
@@ -383,19 +351,19 @@
 - type: entity
   parent: DefaultStationBeacon
   id: DefaultStationBeaconSupply
-  suffix: Supply
+  suffix: Logistics #Delta V - Renamed
   components:
   - type: NavMapBeacon
-    defaultText: station-beacon-supply
+    defaultText: station-beacon-logistics #Delta V - Renamed
     color: "#A46106"
 
 - type: entity
   parent: DefaultStationBeaconSupply
   id: DefaultStationBeaconCargoReception
-  suffix: Cargo Reception
+  suffix: Logistics Reception #Delta V - Renamed
   components:
   - type: NavMapBeacon
-    defaultText: station-beacon-cargo
+    defaultText: station-beacon-logistics-reception #Delta V - Renamed
 
 - type: entity
   parent: DefaultStationBeaconSupply
@@ -408,10 +376,10 @@
 - type: entity
   parent: DefaultStationBeaconSupply
   id: DefaultStationBeaconQMRoom
-  suffix: QM's Room
+  suffix: LO #Delta V - Renamed
   components:
   - type: NavMapBeacon
-    defaultText: station-beacon-qm
+    defaultText: station-beacon-lo #Delta V - Renamed
 
 - type: entity
   parent: DefaultStationBeaconSupply
@@ -557,7 +525,7 @@
   suffix: Janitor's Closet
   components:
   - type: NavMapBeacon
-    defaultText: station-beacon-janitor
+    defaultText: station-beacon-janitor-closet #Delta V - Add for closet/outpost
 
 - type: entity
   parent: DefaultStationBeacon
@@ -566,7 +534,7 @@
   components:
   - type: NavMapBeacon
     defaultText: station-beacon-ai
-    color: "#5ed7aa"
+    color: "#2ed2fd"
 
 - type: entity
   parent: DefaultStationBeaconAI
@@ -583,22 +551,6 @@
   components:
   - type: NavMapBeacon
     defaultText: station-beacon-ai-core
-
-- type: entity
-  parent: DefaultStationBeaconAI
-  id: DefaultStationBeaconAIUpload
-  suffix: AI Upload
-  components:
-  - type: NavMapBeacon
-    defaultText: station-beacon-ai-upload
-
-- type: entity
-  parent: DefaultStationBeaconAI
-  id: DefaultStationBeaconAIPower
-  suffix: AI Power
-  components:
-  - type: NavMapBeacon
-    defaultText: station-beacon-ai-power
 
 - type: entity
   parent: DefaultStationBeacon
@@ -618,14 +570,6 @@
 
 - type: entity
   parent: DefaultStationBeacon
-  id: DefaultStationBeaconDockingArm
-  suffix: Docking Arm
-  components:
-  - type: NavMapBeacon
-    defaultText: station-beacon-docking-arm
-
-- type: entity
-  parent: DefaultStationBeacon
   id: DefaultStationBeaconEVAStorage
   suffix: EVA Storage
   components:
@@ -633,7 +577,7 @@
     defaultText: station-beacon-eva-storage
 
 - type: entity
-  parent: DefaultStationBeacon
+  parent: DefaultStationBeaconScience #Delta V - Chapel in Epi
   id: DefaultStationBeaconChapel
   suffix: Chapel
   components:
@@ -647,14 +591,6 @@
   components:
   - type: NavMapBeacon
     defaultText: station-beacon-library
-
-- type: entity
-  parent: DefaultStationBeacon
-  id: DefaultStationBeaconReporter
-  suffix: Reporter
-  components:
-  - type: NavMapBeacon
-    defaultText: station-beacon-reporter
 
 - type: entity
   parent: DefaultStationBeacon
@@ -703,75 +639,3 @@
   components:
   - type: NavMapBeacon
     defaultText: station-beacon-escape-pod
-
-- type: entity
-  parent: DefaultStationBeacon
-  id: DefaultStationBeaconVox
-  suffix: Vox
-  components:
-  - type: NavMapBeacon
-    defaultText: station-beacon-vox
-
-- type: entity
-  parent: DefaultStationBeacon
-  id: DefaultStationBeaconTriesteDorms
-  suffix: Trieste Dorms
-  components:
-  - type: NavMapBeacon
-    defaultText: station-beacon-trieste-dorms
-
-- type: entity
-  parent: DefaultStationBeacon
-  id: DefaultStationBeaconSweetwaterDorms
-  suffix: Sweetwater Dorms
-  components:
-  - type: NavMapBeacon
-    defaultText: station-beacon-sweetwater-dorms
-
-- type: entity
-  parent: DefaultStationBeacon
-  id: DefaultStationBeaconTriesteEngineering
-  suffix: Trieste Engineering
-  components:
-  - type: NavMapBeacon
-    defaultText: station-beacon-trieste-engineering
-
-- type: entity
-  parent: DefaultStationBeacon
-  id: DefaultStationBeaconSweetwaterEngineering
-  suffix: Sweetwater Engineering
-  components:
-  - type: NavMapBeacon
-    defaultText: station-beacon-sweetwater-engineering
-
-- type: entity
-  parent: DefaultStationBeacon
-  id: DefaultStationBeaconWastes
-  suffix: Wastes
-  components:
-  - type: NavMapBeacon
-    defaultText: station-beacon-wastes
-
-- type: entity
-  parent: DefaultStationBeacon
-  id: DefaultStationBeaconTrieste
-  suffix: Trieste Platform
-  components:
-  - type: NavMapBeacon
-    defaultText: station-beacon-trieste
-
-- type: entity
-  parent: DefaultStationBeacon
-  id: DefaultStationBeaconSweetwater
-  suffix: Sweetwater
-  components:
-  - type: NavMapBeacon
-    defaultText: station-beacon-sweetwater
-
-- type: entity
-  parent: DefaultStationBeacon
-  id: DefaultStationBeaconSettlers
-  suffix: Settlers
-  components:
-  - type: NavMapBeacon
-    defaultText: station-beacon-settlers

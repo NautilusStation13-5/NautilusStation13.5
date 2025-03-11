@@ -39,12 +39,13 @@
       fix1:
         shape:
           !type:PhysShapeAabb
-          bounds: "-0.7,-0.7,0.7,0.7"
+          bounds: "-0.7,-0.8,0.7,0.8"
         density: 190
         mask:
         - LargeMobMask
         layer:
         - WallLayer
+
 
 - type: entity
   id: StationAnchorIndestructible
@@ -54,6 +55,8 @@
 - type: entity
   id: StationAnchor
   parent: [StationAnchorBase, BaseMachinePowered, ConstructibleMachine]
+  name: station anchor
+  description: Prevents stations from moving
   placement:
     mode: AlignTileAny
   components:

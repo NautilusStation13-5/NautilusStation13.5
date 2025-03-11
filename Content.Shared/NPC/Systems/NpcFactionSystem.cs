@@ -1,4 +1,5 @@
 using Content.Shared.NPC.Components;
+using Content.Shared.NPC.Events;
 using Content.Shared.NPC.Prototypes;
 using Robust.Shared.Prototypes;
 using System.Collections.Frozen;
@@ -8,6 +9,7 @@ namespace Content.Shared.NPC.Systems;
 
 /// <summary>
 ///     Outlines faction relationships with each other.
+///     part of psionics rework was making this a partial class. Should've already been handled upstream, based on the linter.
 /// </summary>
 public sealed partial class NpcFactionSystem : EntitySystem
 {
@@ -28,6 +30,8 @@ public sealed partial class NpcFactionSystem : EntitySystem
         SubscribeLocalEvent<PrototypesReloadedEventArgs>(OnProtoReload);
 
         InitializeException();
+        InitializeCore();
+        InitializeItems();
         RefreshFactions();
     }
 
@@ -58,15 +62,6 @@ public sealed partial class NpcFactionSystem : EntitySystem
 
             ent.Comp.FriendlyFactions.UnionWith(factionData.Friendly);
             ent.Comp.HostileFactions.UnionWith(factionData.Hostile);
-        }
-        // Add additional factions if it is written in prototype
-        if (ent.Comp.AddFriendlyFactions != null)
-        {
-            ent.Comp.FriendlyFactions.UnionWith(ent.Comp.AddFriendlyFactions);
-        }
-        if (ent.Comp.AddHostileFactions != null)
-        {
-            ent.Comp.HostileFactions.UnionWith(ent.Comp.AddHostileFactions);
         }
     }
 
@@ -114,12 +109,14 @@ public sealed partial class NpcFactionSystem : EntitySystem
         if (!ent.Comp.Factions.Add(faction))
             return;
 
+        RaiseLocalEvent(ent.Owner, new NpcFactionAddedEvent(faction));
+
         if (dirty)
             RefreshFactions((ent, ent.Comp));
     }
 
     /// <summary>
-    /// Adds this entity to the particular faction.
+    /// Adds this entity to the particular factions.
     /// </summary>
     public void AddFactions(Entity<NpcFactionMemberComponent?> ent, HashSet<ProtoId<NpcFactionPrototype>> factions, bool dirty = true)
     {
@@ -132,6 +129,8 @@ public sealed partial class NpcFactionSystem : EntitySystem
                 Log.Error($"Unable to find faction {faction}");
                 continue;
             }
+
+            RaiseLocalEvent(ent.Owner, new NpcFactionAddedEvent(faction));
 
             ent.Comp.Factions.Add(faction);
         }
@@ -156,6 +155,8 @@ public sealed partial class NpcFactionSystem : EntitySystem
 
         if (!ent.Comp.Factions.Remove(faction))
             return;
+
+        RaiseLocalEvent(ent.Owner, new NpcFactionRemovedEvent(faction));
 
         if (dirty)
             RefreshFactions((ent, ent.Comp));
@@ -225,7 +226,12 @@ public sealed partial class NpcFactionSystem : EntitySystem
         if (!Resolve(ent, ref ent.Comp, false) || !Resolve(other, ref other.Comp, false))
             return false;
 
-        return ent.Comp.Factions.Overlaps(other.Comp.Factions) || ent.Comp.FriendlyFactions.Overlaps(other.Comp.Factions);
+        var intersect = ent.Comp.Factions.Intersect(other.Comp.Factions); // factions which have both ent and other as members
+        foreach (var faction in intersect)
+            if (_factions[faction].IsHostileToSelf)
+                return false;
+
+        return intersect.Count() > 0 || ent.Comp.FriendlyFactions.Overlaps(other.Comp.Factions);
     }
 
     public bool IsFactionFriendly(string target, string with)
@@ -309,8 +315,9 @@ public sealed partial class NpcFactionSystem : EntitySystem
     {
         _factions = _proto.EnumeratePrototypes<NpcFactionPrototype>().ToFrozenDictionary(
             faction => faction.ID,
-            faction =>  new FactionData
+            faction => new FactionData
             {
+                IsHostileToSelf = faction.Hostile.Contains(faction.ID),
                 Friendly = faction.Friendly.ToHashSet(),
                 Hostile = faction.Hostile.ToHashSet()
             });

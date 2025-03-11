@@ -34,7 +34,7 @@
         sound:
           collection: MetalBreak
   - type: StaticPrice
-    price: 75
+    price: 25
 
 - type: entity
   abstract: true
@@ -245,6 +245,8 @@
     whitelist:
       components:
       - BorgChassis
+      - Silicon # Parkstation IPCs
+      - Inventory # Goobstation - Modsuits
   - type: Construction
     containers:
     - machine_parts

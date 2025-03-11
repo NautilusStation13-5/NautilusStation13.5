@@ -163,46 +163,6 @@
         type: StoreBoundUserInterface
 
 - type: entity
-  parent: [ BaseSubdermalImplant, StorePresetUplink ]
-  id: UplinkImplantFull
-  name: uplink implant
-  description: This implant lets the user access a hidden Syndicate uplink at will.
-  noSpawn: true
-  components:
-  - type: SubdermalImplant
-    implantAction: ActionOpenUplinkImplant
-    whitelist:
-      components:
-      - Hands # prevent mouse buying grenade penguin since its not telepathic
-  - type: Store
-    balance:
-      Telecrystal: 20
-  - type: UserInterface
-    interfaces:
-      enum.StoreUiKey.Key:
-        type: StoreBoundUserInterface
-
-- type: entity
-  parent: [ BaseSubdermalImplant, StorePresetUplinkNT ]
-  id: UplinkImplantNT
-  name: uplink implant
-  description: This implant lets the user access a hidden NT uplink at will.
-  noSpawn: true
-  components:
-  - type: SubdermalImplant
-    implantAction: ActionOpenUplinkImplant
-    whitelist:
-      components:
-      - Hands # prevent mouse buying grenade penguin since its not telepathic
-  - type: Store
-    balance:
-      BluespaceCrystal: 20
-  - type: UserInterface
-    interfaces:
-      enum.StoreUiKey.Key:
-        type: StoreBoundUserInterface
-
-- type: entity
   parent: BaseSubdermalImplant
   id: EmpImplant
   name: EMP implant
@@ -213,7 +173,7 @@
       implantAction: ActionActivateEmpImplant
     - type: TriggerImplantAction
     - type: EmpOnTrigger
-      range: 2.75
+      range: 1.75
       energyConsumption: 50000
       disableDuration: 10
 
@@ -356,7 +316,7 @@
 - type: entity
   parent: BaseSubdermalImplant
   id: MindShieldImplant
-  name: mindshield implant
+  name: mind-shield implant
   description: This implant will ensure loyalty to Nanotrasen and prevent mind control devices.
   categories: [ HideSpawnMenu ]
   components:

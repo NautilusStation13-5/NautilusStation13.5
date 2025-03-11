@@ -8,41 +8,20 @@
     - UplinkWeaponry
     - UplinkAmmo
     - UplinkExplosives
+    - UplinkWearables
     - UplinkChemicals
     - UplinkDeception
     - UplinkDisruption
     - UplinkImplants
-    - UplinkAllies
-    - UplinkWearables
     - UplinkJob
+    - UplinkAllies
     - UplinkPointless
+    - UplinkSales
+    - UplinkFaction
     currencyWhitelist:
     - Telecrystal
     balance:
       Telecrystal: 0
-
-- type: entity
-  id: StorePresetUplinkNT
-  abstract: true
-  components:
-  - type: Store
-    name: store-preset-name-uplink-nt
-    categories:
-    - UplinkNtWeaponry
-    - UplinkNtAmmo
-    - UplinkNtExplosives
-    - UplinkNtChemicals
-    - UplinkNtDeception
-    - UplinkNtDisruption
-    - UplinkNtImplants
-    - UplinkNtAllies
-    - UplinkNtArmor
-    - UplinkNtJob
-    - UplinkNtPointless
-    currencyWhitelist:
-    - BluespaceCrystal
-    balance:
-      BluespaceCrystal: 0
 
 - type: entity
   id: StorePresetSpellbook

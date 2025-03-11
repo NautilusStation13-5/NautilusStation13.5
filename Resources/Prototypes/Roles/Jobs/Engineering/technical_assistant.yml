@@ -1,19 +1,12 @@
-﻿- type: job
+- type: job
   id: TechnicalAssistant
   name: job-name-technical-assistant
   description: job-description-technical-assistant
   playTimeTracker: JobTechnicalAssistant
-  requirements:
-    - !type:OverallPlaytimeRequirement
-      time: 3600 #1 hr
-    - !type:DepartmentTimeRequirement
-      department: Engineering
-      time: 54000 #15 hrs
-      inverted: true # stop playing intern if you're good at engineering!
   startingGear: TechnicalAssistantGear
   icon: "JobIconTechnicalAssistant"
   supervisors: job-supervisors-engineering
-  canBeAntag: false
+  canBeAntag: true # DeltaV - Can be antagonist
   access:
   - Maintenance
   - Engineering
@@ -21,12 +14,16 @@
 
 - type: startingGear
   id: TechnicalAssistantGear
+  subGear:
+  - StationEngineerPlasmamanGear
   equipment:
+    jumpsuit: ClothingUniformJumpsuitColorYellow
+    back: ClothingBackpackEngineeringFilled
     shoes: ClothingShoesBootsWork
     id: TechnicalAssistantPDA
     belt: ClothingBeltUtilityEngineering
     ears: ClothingHeadsetEngineering
     pocket2: BookEngineersHandbook
-  #storage:
-    #back:
-    #- Stuff
+  innerClothingSkirt: ClothingUniformJumpskirtColorYellow
+  satchel: ClothingBackpackSatchelEngineeringFilled
+  duffelbag: ClothingBackpackDuffelEngineeringFilled

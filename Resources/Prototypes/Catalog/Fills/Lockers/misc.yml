@@ -30,7 +30,7 @@
     - id: MedkitOxygenFilled
       prob: 0.2
     - id: WeaponFlareGun
-      prob: 0.1
+      prob: 0.05
     - id: BoxMRE
       prob: 0.1
 
@@ -118,6 +118,7 @@
       - id: ClothingUniformJumpsuitOperative
       - id: ClothingUniformJumpskirtOperative
     - id: ClothingBackpackDuffelSyndicate
+    - id: CyberPen
     - id: CigPackSyndicate
     - id: ClothingBackpackDuffelSyndicatePyjamaBundle
     - id: ClothingBeltMilitaryWebbing
@@ -126,6 +127,10 @@
     - id: BalloonSyn
     - id: WeaponSniperMosin
       weight: 2
+    - !type:EntSelector
+      id: ClothingEyesNightVisionGogglesSyndie
+    - !type:EntSelector
+      id: ClothingEyesThermalVisionGogglesSyndie
 
 - type: entityTable
   id: MaintenanceLockerLoot
@@ -133,8 +138,8 @@
     children:
     - id: StrangePill
       prob: 0.20
-    - id: TP14FoodJonkpocketBanana #TP
-      prob: 0.1
+    - id: CrayonMagic # Delta V - Just another way to get it
+      prob: .01
     # Tools
     - !type:NestedSelector
       tableId: MaintToolsTable
@@ -180,3 +185,21 @@
     containers:
       entity_storage: !type:NestedSelector
         tableId: MaintenanceLockerLoot
+
+- type: entity
+  id: ClosetWallRadiationFilled
+  suffix: Filled
+  parent: ClosetWallRadiation
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      entity_storage: !type:AllSelector
+        children:
+        - !type:EntSelector
+          id: ClothingOuterSuitRad
+          amount: !type:ConstantNumberSelector
+            value: 2
+        - !type:EntSelector
+          id: GeigerCounter
+          amount: !type:ConstantNumberSelector
+            value: 2

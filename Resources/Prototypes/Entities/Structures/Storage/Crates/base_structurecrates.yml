@@ -77,23 +77,19 @@
       whitelist:
         components:
         - Paper
-      blacklist:
-        tags:
-        - Book
   - type: ContainerContainer
     containers:
       entity_storage: !type:Container
       paper_label: !type:ContainerSlot
   - type: ItemSlots
   - type: StaticPrice
-    price: 75
+    price: 50
   - type: Construction
     graph: CrateGenericSteel
     node: crategenericsteel
     containers:
       - entity_storage
   - type: RequireProjectileTarget
-  - type: FallSystem
 
 - type: entity
   parent: CrateGeneric
@@ -128,7 +124,6 @@
       shader: unshaded
     - state: paper
       sprite: Structures/Storage/Crates/labels.rsi
-      offset: "-0.5,0"
       map: ["enum.PaperLabelVisuals.Layer"]
   - type: Damageable
     damageContainer: StructuralInorganic
@@ -154,3 +149,23 @@
     - Energy
     reflectProb: 0.2
     spread: 90
+
+- type: entity
+  parent: CrateBaseSecure
+  id: CrateBaseSecureReinforced
+  suffix: Secure, Reinforced
+  components:
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 150
+      behaviors:
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
+  - type: Damageable
+    damageContainer: StructuralInorganic
+    damageModifierSet: StructuralMetallicStrong

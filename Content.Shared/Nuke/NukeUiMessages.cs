@@ -5,7 +5,6 @@ namespace Content.Shared.Nuke
     public abstract partial class SharedNukeComponent : Component
     {
         public const string NukeDiskSlotId = "Nuke";
-        public const string NukeResonanceSlotId = "Resonance";
     }
 
     [Serializable, NetSerializable]

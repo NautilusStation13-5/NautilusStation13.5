@@ -64,8 +64,6 @@
         orGroup: GiftPool
       - id: PlushieLizard #Weh!
         orGroup: GiftPool
-      - id: PlushieRainbowLizard
-        orGroup: GiftPool
       - id: PlushieNar
         orGroup: GiftPool
       - id: PlushieCarp
@@ -96,7 +94,17 @@
         orGroup: GiftPool
       - id: PlushieDiona
         orGroup: GiftPool
+      - id: PlushieMoth
+        orGroup: GiftPool
+      - id: PlushieMothRandom # Nyanotrasen Random Moth Plushie
+        orGroup: GiftPool
+      - id: PlushieMothBartender # Nyanotrasen Moth Bartender Plushie
+        orGroup: GiftPool
+      - id: PlushieMothMusician # Nyanotrasen Moth Musician Plushie
+        orGroup: GiftPool
       - id: PlushieArachind
+        orGroup: GiftPool
+      - id: PlushieShadowkin
         orGroup: GiftPool
       - id: ClothingNeckCloakMoth
         orGroup: GiftPool
@@ -370,27 +378,22 @@
         orGroup: GiftPool
       - id: RGBStaff
         orGroup: GiftPool
+      - id: ToyRenault # DeltaV Toy, see Resources/Prototypes/DeltaV/Entities/Objects/Fun/toys.yml
+        orGroup: GiftPool
+      - id: ToySiobhan # DeltaV Toy, see Resources/Prototypes/DeltaV/Entities/Objects/Fun/toys.yml
+        orGroup: GiftPool
     sound:
       path: /Audio/Effects/unwrap.ogg
 
 - type: entity
-  id: PresentRandomCoal
+  id: PresentRandomAsh
   parent: [PresentBase, BaseItem]
-  suffix: Filled Coal
+  suffix: Filled Ash
   components:
   - type: SpawnItemsOnUse
     items:
       - id: PresentTrash
-      - id: Coal1
-        orGroup: GiftPool
-      - id: Coal5
-        prob: .4
-        orGroup: GiftPool
-      - id: Coal10
-        prob: .2
-        orGroup: GiftPool
-      - id: Coal15
-        prob: .1
+      - id: Ash # No coal yet!
         orGroup: GiftPool
     sound:
       path: /Audio/Effects/unwrap.ogg
@@ -436,7 +439,7 @@
   id: PresentTrash
   categories: [ HideSpawnMenu ]
   parent: BaseItem
-  name: wrapping paper
+  name: Wrapping Paper
   description: Carefully folded, taped, and tied with a bow. Then ceremoniously ripped apart and tossed on the floor.
   components:
   - type: Sprite

@@ -2,7 +2,9 @@
   id: CrateCargoLuxuryHardsuit
   parent: CratePirate
   name: luxury mining hardsuit crate
-  description: Finally, a hardsuit Quartermasters could call their own. Centcomm has heard you, now stop asking.
+  # DeltaV - Logistics Department - Replace Quartermaster with Logistics Officer
+  description: Finally, a hardsuit the Logistics Officer could call their own. Centcomm has heard you, now stop asking.
+  # End of modified code
   components:
   - type: StorageFill
     contents:
@@ -103,14 +105,14 @@
     - id: WaterVaporCanister
       prob: 0.001
       orGroup: Canister
-    - id: WaterCanister
-      prob: 0.001
-      orGroup: Canister
     #weapons
     - id: WeaponPulseCarbine
       prob: 0.0001
       orGroup: Weapons
     - id: WeaponRifleAk
+      prob: 0.0001
+      orGroup: Weapons
+    - id: Throngler
       prob: 0.0001
       orGroup: Weapons
     - id: WeaponLauncherPirateCannon
@@ -272,9 +274,6 @@
       prob: 0.01
       orGroup: Swag
     #plushies
-    - id: TP14carbatteryplushie #TP
-      prob: 0.01
-      orGroup: Plushies
     - id: PlushieRGBee
       prob: 0.01
       orGroup: Plushies
@@ -311,8 +310,11 @@
     - id: PlushieArachind
       prob: 0.01
       orGroup: Plushies
-    - id: PlushieThrongler #hehe
+    - id: PlushieThrongler
       prob: 0.0005
+      orGroup: Plushies
+    - id: PlushieShadowkin
+      prob: 0.01
       orGroup: Plushies
     #useful
     - id: AmeJar
@@ -348,16 +350,10 @@
     - id: Lamp
       prob: 0.01
       orGroup: Useful
-    - id: FloraTreeLarge
-      prob: 0.01
-      orGroup: Useful
-    - id: LightTree #Funny mobs maybe
+    - id: FloraTreeLarge05
       prob: 0.01
       orGroup: Useful
     #notuseful
-    - id: TP14FoodBoxJonkpocketJonk #TP
-      prob: 0.0001
-      orGroup: NotUseful
     - id: LidSalami
       prob: 0.01
       orGroup: NotUseful

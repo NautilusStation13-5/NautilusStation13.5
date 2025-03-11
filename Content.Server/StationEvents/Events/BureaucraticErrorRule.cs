@@ -1,9 +1,9 @@
 using System.Linq;
+using Content.Server.GameTicking.Rules.Components;
 using Content.Server.Station.Components;
 using Content.Server.Station.Systems;
 using Content.Server.StationEvents.Components;
 ﻿using Content.Shared.GameTicking.Components;
-using Content.Shared.Roles;
 using JetBrains.Annotations;
 using Robust.Shared.Random;
 
@@ -23,9 +23,6 @@ public sealed class BureaucraticErrorRule : StationEventSystem<BureaucraticError
 
         var jobList = _stationJobs.GetJobs(chosenStation.Value).Keys.ToList();
 
-        foreach(var job in component.IgnoredJobs)
-            jobList.Remove(job);
-
         if (jobList.Count == 0)
             return;
 
@@ -35,12 +32,14 @@ public sealed class BureaucraticErrorRule : StationEventSystem<BureaucraticError
         {
             var chosenJob = RobustRandom.PickAndTake(jobList);
             _stationJobs.MakeJobUnlimited(chosenStation.Value, chosenJob); // INFINITE chaos.
+            /* DeltaV - don't close all other jobs
             foreach (var job in jobList)
             {
                 if (_stationJobs.IsJobUnlimited(chosenStation.Value, job))
                     continue;
                 _stationJobs.TrySetJobSlot(chosenStation.Value, job, 0);
             }
+            */
         }
         else
         {

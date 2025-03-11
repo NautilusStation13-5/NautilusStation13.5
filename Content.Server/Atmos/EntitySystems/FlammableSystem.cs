@@ -24,14 +24,11 @@ using Content.Shared.Toggleable;
 using Content.Shared.Weapons.Melee.Events;
 using Content.Shared.FixedPoint;
 using Robust.Server.Audio;
+using Content.Shared.Mood;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Events;
 using Robust.Shared.Physics.Systems;
 using Robust.Shared.Random;
-using Content.Shared.Hands;
-using Content.Shared.Hands.Components;
-using Content.Shared.Hands.EntitySystems;
-using Content.Server.Chemistry.EntitySystems;
 
 namespace Content.Server.Atmos.EntitySystems
 {
@@ -76,7 +73,6 @@ namespace Content.Server.Atmos.EntitySystems
             SubscribeLocalEvent<FlammableComponent, IsHotEvent>(OnIsHot);
             SubscribeLocalEvent<FlammableComponent, TileFireEvent>(OnTileFire);
             SubscribeLocalEvent<FlammableComponent, RejuvenateEvent>(OnRejuvenate);
-            SubscribeLocalEvent<FlammableComponent, ResistFireAlertEvent>(OnResistFireAlert);
 
             SubscribeLocalEvent<IgniteOnCollideComponent, StartCollideEvent>(IgniteOnCollide);
             SubscribeLocalEvent<IgniteOnCollideComponent, LandEvent>(OnIgniteLand);
@@ -87,8 +83,6 @@ namespace Content.Server.Atmos.EntitySystems
 
             SubscribeLocalEvent<IgniteOnHeatDamageComponent, DamageChangedEvent>(OnDamageChanged);
         }
-
-
 
         private void OnMeleeHit(EntityUid uid, IgniteOnMeleeHitComponent component, MeleeHitEvent args)
         {
@@ -102,7 +96,6 @@ namespace Content.Server.Atmos.EntitySystems
                     Ignite(entity, args.Weapon, flammable, args.User);
             }
         }
-
 
         private void OnIgniteLand(EntityUid uid, IgniteOnCollideComponent component, ref LandEvent args)
         {
@@ -212,30 +205,47 @@ namespace Content.Server.Atmos.EntitySystems
             if (!flammable.OnFire && !otherFlammable.OnFire)
                 return; // Neither are on fire
 
-            // Both are on fire -> equalize fire stacks.
-            // Weight each thing's firestacks by its mass
-            var mass1 = 1f;
-            var mass2 = 1f;
-            if (_physicsQuery.TryComp(uid, out var physics) && _physicsQuery.TryComp(otherUid, out var otherPhys))
+            if (flammable.OnFire && otherFlammable.OnFire)
             {
-                mass1 = physics.Mass;
-                mass2 = otherPhys.Mass;
+                // Both are on fire -> equalize fire stacks.
+                // Weight each thing's firestacks by its mass
+                var mass1 = 1f;
+                var mass2 = 1f;
+                if (_physicsQuery.TryComp(uid, out var physics) && _physicsQuery.TryComp(otherUid, out var otherPhys))
+                {
+                    mass1 = physics.Mass;
+                    mass2 = otherPhys.Mass;
+                }
+
+                var total = mass1 + mass2;
+                var avg = (flammable.FireStacks * mass1 + otherFlammable.FireStacks * mass2) / total;
+                flammable.FireStacks = flammable.CanExtinguish ? avg : Math.Max(flammable.FireStacks, avg);
+                otherFlammable.FireStacks = otherFlammable.CanExtinguish ? avg : Math.Max(otherFlammable.FireStacks, avg);
+                UpdateAppearance(uid, flammable);
+                UpdateAppearance(otherUid, otherFlammable);
+                return;
             }
 
-            // when the thing on fire is more massive than the other, the following happens:
-            // - the thing on fire loses a small number of firestacks
-            // - the other thing gains a large number of firestacks
-            // so a person on fire engulfs a mouse, but an engulfed mouse barely does anything to a person
-            var total = mass1 + mass2;
-            var avg = (flammable.FireStacks + otherFlammable.FireStacks) / total;
+            // Only one is on fire -> attempt to spread the fire.
+            var (srcUid, srcFlammable, destUid, destFlammable) = flammable.OnFire
+                ? (uid, flammable, otherUid, otherFlammable)
+                : (otherUid, otherFlammable, uid, flammable);
 
-            // swap the entity losing stacks depending on whichever has the most firestack kilos
-            var (src, dest) = flammable.FireStacks * mass1 > otherFlammable.FireStacks * mass2
-                ? (-1f, 1f)
-                : (1f, -1f);
-            // bring each entity to the same firestack mass, firestacks being scaled by the other's mass
-            AdjustFireStacks(uid, src * avg * mass2, flammable, ignite: true);
-            AdjustFireStacks(otherUid, dest * avg * mass1, otherFlammable, ignite: true);
+            // if the thing on fire has less mass, spread less firestacks and vice versa
+            var ratio = 0.5f;
+            if (_physicsQuery.TryComp(srcUid, out var srcPhysics) && _physicsQuery.TryComp(destUid, out var destPhys))
+            {
+                ratio *= srcPhysics.Mass / destPhys.Mass;
+            }
+
+            var lost = srcFlammable.FireStacks * ratio;
+            destFlammable.FireStacks += lost;
+            Ignite(destUid, srcUid, destFlammable);
+            if (srcFlammable.CanExtinguish)
+            {
+                srcFlammable.FireStacks -= lost;
+                UpdateAppearance(srcUid, srcFlammable);
+            }
         }
 
         private void OnIsHot(EntityUid uid, FlammableComponent flammable, IsHotEvent args)
@@ -258,15 +268,6 @@ namespace Content.Server.Atmos.EntitySystems
             Extinguish(uid, component);
         }
 
-        private void OnResistFireAlert(Entity<FlammableComponent> ent, ref ResistFireAlertEvent args)
-        {
-            if (args.Handled)
-                return;
-
-            Resist(ent, ent);
-            args.Handled = true;
-        }
-
         public void UpdateAppearance(EntityUid uid, FlammableComponent? flammable = null, AppearanceComponent? appearance = null)
         {
             if (!Resolve(uid, ref flammable, ref appearance))
@@ -282,30 +283,20 @@ namespace Content.Server.Atmos.EntitySystems
             _appearance.SetData(uid, ToggleableLightVisuals.Enabled, flammable.OnFire, appearance);
         }
 
-        public void AdjustFireStacks(EntityUid uid, float relativeFireStacks, FlammableComponent? flammable = null, bool ignite = false)
+        public void AdjustFireStacks(EntityUid uid, float relativeFireStacks, FlammableComponent? flammable = null)
         {
             if (!Resolve(uid, ref flammable))
                 return;
 
-            SetFireStacks(uid, flammable.FireStacks + relativeFireStacks, flammable, ignite);
-        }
+            if (relativeFireStacks > 0)
+                relativeFireStacks *= flammable.FireStackIncreaseMultiplier;
 
-        public void SetFireStacks(EntityUid uid, float stacks, FlammableComponent? flammable = null, bool ignite = false)
-        {
-            if (!Resolve(uid, ref flammable))
-                return;
+            flammable.FireStacks = MathF.Min(MathF.Max(flammable.MinimumFireStacks, flammable.FireStacks + relativeFireStacks), flammable.MaximumFireStacks);
 
-            flammable.FireStacks = MathF.Min(MathF.Max(flammable.MinimumFireStacks, stacks), flammable.MaximumFireStacks);
-
-            if (flammable.FireStacks <= 0)
-            {
+            if (flammable.OnFire && flammable.FireStacks <= 0)
                 Extinguish(uid, flammable);
-            }
             else
-            {
-                flammable.OnFire |= ignite;
                 UpdateAppearance(uid, flammable);
-            }
         }
 
         public void Extinguish(EntityUid uid, FlammableComponent? flammable = null)
@@ -319,6 +310,7 @@ namespace Content.Server.Atmos.EntitySystems
             _adminLogger.Add(LogType.Flammable, $"{ToPrettyString(uid):entity} stopped being on fire damage");
             flammable.OnFire = false;
             flammable.FireStacks = 0;
+            flammable.IgnoreFireProtection = false;
 
             _ignitionSourceSystem.SetIgnited(uid, false);
 
@@ -326,9 +318,9 @@ namespace Content.Server.Atmos.EntitySystems
         }
 
         public void Ignite(EntityUid uid, EntityUid ignitionSource, FlammableComponent? flammable = null,
-            EntityUid? ignitionSourceUser = null)
+            EntityUid? ignitionSourceUser = null, bool ignoreFireProtection = false)
         {
-            if (!Resolve(uid, ref flammable))
+            if (!Resolve(uid, ref flammable, false)) // Lavaland Change: SHUT THE FUCK UP FLAMMABLE
                 return;
 
             if (flammable.AlwaysCombustible)
@@ -344,6 +336,9 @@ namespace Content.Server.Atmos.EntitySystems
                     _adminLogger.Add(LogType.Flammable, $"{ToPrettyString(uid):target} set on fire by {ToPrettyString(ignitionSource):actor}");
                 flammable.OnFire = true;
             }
+
+            if (ignoreFireProtection)
+                flammable.IgnoreFireProtection = ignoreFireProtection;
 
             UpdateAppearance(uid, flammable);
         }
@@ -391,7 +386,7 @@ namespace Content.Server.Atmos.EntitySystems
             uid.SpawnTimer(2000, () =>
             {
                 flammable.Resisting = false;
-                flammable.FireStacks -= 1f;
+                flammable.FireStacks -= flammable.FirestackFade * 10f;
                 UpdateAppearance(uid, flammable);
             });
         }
@@ -433,10 +428,12 @@ namespace Content.Server.Atmos.EntitySystems
                 if (!flammable.OnFire)
                 {
                     _alertsSystem.ClearAlert(uid, flammable.FireAlert);
+                    RaiseLocalEvent(uid, new MoodRemoveEffectEvent("OnFire"));
                     continue;
                 }
 
                 _alertsSystem.ShowAlert(uid, flammable.FireAlert);
+                RaiseLocalEvent(uid, new MoodEffectEvent("OnFire"));
 
                 if (flammable.FireStacks > 0)
                 {
@@ -455,47 +452,28 @@ namespace Content.Server.Atmos.EntitySystems
                     if (TryComp(uid, out TemperatureComponent? temp))
                         _temperatureSystem.ChangeHeat(uid, 12500 * flammable.FireStacks, false, temp);
 
-                    var ev = new GetFireProtectionEvent();
-                    // let the thing on fire handle it
-                    RaiseLocalEvent(uid, ref ev);
-                    // and whatever it's wearing
-                    if (_inventoryQuery.TryComp(uid, out var inv))
-                        _inventory.RelayEvent((uid, inv), ref ev);
+                    var multiplier = 1f;
+                    if (!flammable.IgnoreFireProtection)
+                    {
+                        var ev = new GetFireProtectionEvent();
+                        // let the thing on fire handle it
+                        RaiseLocalEvent(uid, ref ev);
+                        // and whatever it's wearing
+                        if (_inventoryQuery.TryComp(uid, out var inv))
+                            _inventory.RelayEvent((uid, inv), ref ev);
 
-                    _damageableSystem.TryChangeDamage(uid, flammable.Damage * flammable.FireStacks * ev.Multiplier, interruptsDoAfters: false);
+                        multiplier = ev.Multiplier;
+                    }
 
-                    AdjustFireStacks(uid, flammable.FirestackFade * (flammable.Resisting ? 10f : 1f), flammable, flammable.OnFire);
+                    _damageableSystem.TryChangeDamage(uid, flammable.Damage * flammable.FireStacks * multiplier, interruptsDoAfters: false);
+
+                    AdjustFireStacks(uid, flammable.FirestackFade * (flammable.Resisting ? 10f : 1f), flammable);
                 }
                 else
                 {
                     Extinguish(uid, flammable);
                 }
             }
-
-            var playerQuery = EntityQueryEnumerator<HandsComponent>();
-        while (playerQuery.MoveNext(out var playerUid, out var handsComponent))
-       {
-           if (!HasComp<JellidComponent>(playerUid))
-              {
-                  continue;
-              }
-
-           if (handsComponent.ActiveHand?.HeldEntity is not EntityUid heldItem)
-               {
-                   continue;
-               }
-
-           if (!TryComp<FlammableComponent>(heldItem, out var flammable))
-              {
-            continue;
-              }
-
-        AdjustFireStacks(heldItem, flammable.FireStacks, flammable);
-        if (flammable.FireStacks >= 0)
-        {
-            Ignite(heldItem, heldItem, flammable, playerUid);
-        }
-      }
         }
     }
 }

@@ -2,12 +2,13 @@ using Content.Server.Emp;
 using Content.Server.Popups;
 using Content.Server.Power.Components;
 using Content.Server.Power.Pow3r;
+using Content.Shared.Access.Components;
 using Content.Shared.Access.Systems;
 using Content.Shared.APC;
 using Content.Shared.Emag.Components;
 using Content.Shared.Emag.Systems;
+using Content.Shared.Emp;
 using Content.Shared.Popups;
-using Content.Shared.Rounding;
 using Robust.Server.GameObjects;
 using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
@@ -31,12 +32,13 @@ public sealed class ApcSystem : EntitySystem
         UpdatesAfter.Add(typeof(PowerNetSystem));
 
         SubscribeLocalEvent<ApcComponent, BoundUIOpenedEvent>(OnBoundUiOpen);
-        SubscribeLocalEvent<ApcComponent, ComponentStartup>(OnApcStartup);
+        SubscribeLocalEvent<ApcComponent, MapInitEvent>(OnApcInit);
         SubscribeLocalEvent<ApcComponent, ChargeChangedEvent>(OnBatteryChargeChanged);
         SubscribeLocalEvent<ApcComponent, ApcToggleMainBreakerMessage>(OnToggleMainBreaker);
         SubscribeLocalEvent<ApcComponent, GotEmaggedEvent>(OnEmagged);
 
         SubscribeLocalEvent<ApcComponent, EmpPulseEvent>(OnEmpPulse);
+        SubscribeLocalEvent<ApcComponent, EmpDisabledRemoved>(OnEmpDisabledRemoved);
     }
 
     public override void Update(float deltaTime)
@@ -44,15 +46,10 @@ public sealed class ApcSystem : EntitySystem
         var query = EntityQueryEnumerator<ApcComponent, PowerNetworkBatteryComponent, UserInterfaceComponent>();
         while (query.MoveNext(out var uid, out var apc, out var battery, out var ui))
         {
-            if (apc.LastUiUpdate + ApcComponent.VisualsChangeDelay < _gameTiming.CurTime && _ui.IsUiOpen((uid, ui), ApcUiKey.Key))
+            if (apc.LastUiUpdate + ApcComponent.VisualsChangeDelay < _gameTiming.CurTime)
             {
                 apc.LastUiUpdate = _gameTiming.CurTime;
                 UpdateUIState(uid, apc, battery);
-            }
-
-            if (apc.NeedStateUpdate)
-            {
-                UpdateApcState(uid, apc, battery);
             }
         }
     }
@@ -63,15 +60,16 @@ public sealed class ApcSystem : EntitySystem
         UpdateApcState(uid, component);
     }
 
-    private static void OnApcStartup(EntityUid uid, ApcComponent component, ComponentStartup args)
+    private void OnApcInit(EntityUid uid, ApcComponent component, MapInitEvent args)
     {
-        // We cannot update immediately, as various network/battery state is not valid yet.
-        // Defer until the next tick.
-        component.NeedStateUpdate = true;
+        UpdateApcState(uid, component);
     }
 
+    //Update the HasAccess var for UI to read
     private void OnBoundUiOpen(EntityUid uid, ApcComponent component, BoundUIOpenedEvent args)
     {
+        // TODO: this should be per-player not stored on the apc
+        component.HasAccess = _accessReader.IsAllowed(args.Actor, uid);
         UpdateApcState(uid, component);
     }
 
@@ -122,18 +120,15 @@ public sealed class ApcSystem : EntitySystem
         if (!Resolve(uid, ref apc, ref battery, false))
             return;
 
-        if (apc.LastChargeStateTime == null || apc.LastChargeStateTime + ApcComponent.VisualsChangeDelay < _gameTiming.CurTime)
+        var newState = CalcChargeState(uid, battery.NetworkBattery);
+        if (newState != apc.LastChargeState && apc.LastChargeStateTime + ApcComponent.VisualsChangeDelay < _gameTiming.CurTime)
         {
-            var newState = CalcChargeState(uid, battery.NetworkBattery);
-            if (newState != apc.LastChargeState)
-            {
-                apc.LastChargeState = newState;
-                apc.LastChargeStateTime = _gameTiming.CurTime;
+            apc.LastChargeState = newState;
+            apc.LastChargeStateTime = _gameTiming.CurTime;
 
-                if (TryComp(uid, out AppearanceComponent? appearance))
-                {
-                    _appearance.SetData(uid, ApcVisuals.ChargeState, newState, appearance);
-                }
+            if (TryComp(uid, out AppearanceComponent? appearance))
+            {
+                _appearance.SetData(uid, ApcVisuals.ChargeState, newState, appearance);
             }
         }
 
@@ -143,8 +138,6 @@ public sealed class ApcSystem : EntitySystem
             apc.LastExternalState = extPowerState;
             UpdateUIState(uid, apc, battery);
         }
-
-        apc.NeedStateUpdate = false;
     }
 
     public void UpdateUIState(EntityUid uid,
@@ -156,21 +149,17 @@ public sealed class ApcSystem : EntitySystem
             return;
 
         var battery = netBat.NetworkBattery;
-        const int ChargeAccuracy = 5;
 
-        // TODO: Fix ContentHelpers or make a new one coz this is cooked.
-        var charge = ContentHelpers.RoundToNearestLevels(battery.CurrentStorage / battery.Capacity, 1.0, 100 / ChargeAccuracy) / 100f * ChargeAccuracy;
-
-        var state = new ApcBoundInterfaceState(apc.MainBreakerEnabled,
+        var state = new ApcBoundInterfaceState(apc.MainBreakerEnabled, apc.HasAccess,
             (int) MathF.Ceiling(battery.CurrentSupply), apc.LastExternalState,
-            charge);
+            battery.CurrentStorage / battery.Capacity);
 
         _ui.SetUiState((uid, ui), ApcUiKey.Key, state);
     }
 
     private ApcChargeState CalcChargeState(EntityUid uid, PowerState.Battery battery)
     {
-        if (HasComp<EmaggedComponent>(uid))
+        if (HasComp<EmaggedComponent>(uid) || HasComp<EmpDisabledComponent>(uid))
             return ApcChargeState.Emag;
 
         if (battery.CurrentStorage / battery.Capacity > ApcComponent.HighPowerThreshold)
@@ -197,15 +186,16 @@ public sealed class ApcSystem : EntitySystem
 
         return ApcExternalPowerState.Good;
     }
-
+    
     private void OnEmpPulse(EntityUid uid, ApcComponent component, ref EmpPulseEvent args)
     {
-        if (component.MainBreakerEnabled)
-        {
-            args.Affected = true;
-            args.Disabled = true;
-            ApcToggleBreaker(uid, component);
-        }
+        EnsureComp<EmpDisabledComponent>(uid, out var emp); //event calls before EmpDisabledComponent is added, ensure it to force sprite update
+        UpdateApcState(uid);
+    }
+
+    private void OnEmpDisabledRemoved(EntityUid uid, ApcComponent component, ref EmpDisabledRemoved args)
+    {
+        UpdateApcState(uid);
     }
 }
 

@@ -1,3 +1,4 @@
+using Content.Shared.Tools;
 using Content.Shared.Storage;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
@@ -9,30 +10,18 @@ namespace Content.Shared.Tools.Components;
 /// Used for something that can be refined by welder.
 /// For example, glass shard can be refined to glass sheet.
 /// </summary>
-[RegisterComponent, NetworkedComponent, Access(typeof(ToolRefinablSystem))]
+[RegisterComponent, NetworkedComponent, Access(typeof(ToolRefinableSystem))]
 public sealed partial class ToolRefinableComponent : Component
 {
-    /// <summary>
-    /// The items created when the item is refined.
-    /// </summary>
     [DataField(required: true)]
-    public List<EntitySpawnEntry> RefineResult = new();
+    public HashSet<EntitySpawnEntry> RefineResult;
 
-    /// <summary>
-    /// The amount of time it takes to refine a given item.
-    /// </summary>
     [DataField]
     public float RefineTime = 2f;
 
-    /// <summary>
-    /// The amount of fuel it takes to refine a given item.
-    /// </summary>
     [DataField]
     public float RefineFuel = 3f;
 
-    /// <summary>
-    /// The tool type needed in order to refine this item.
-    /// </summary>
     [DataField]
     public ProtoId<ToolQualityPrototype> QualityNeeded = "Welding";
 }

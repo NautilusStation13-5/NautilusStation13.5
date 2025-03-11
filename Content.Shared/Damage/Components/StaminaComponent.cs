@@ -21,7 +21,7 @@ public sealed partial class StaminaComponent : Component
     /// How much stamina reduces per second.
     /// </summary>
     [ViewVariables(VVAccess.ReadWrite), DataField, AutoNetworkedField]
-    public float Decay = 3f;
+    public float Decay = 5f; // Stun meta
 
     /// <summary>
     /// How much time after receiving damage until stamina starts decreasing.
@@ -42,10 +42,17 @@ public sealed partial class StaminaComponent : Component
     public float CritThreshold = 100f;
 
     /// <summary>
+    /// A dictionary of active stamina drains, with the key being the source of the drain,
+    /// DrainRate how much it changes per tick, and ModifiesSpeed if it should slow down the user.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public Dictionary<EntityUid, (float DrainRate, bool ModifiesSpeed)> ActiveDrains = new();
+
+    /// <summary>
     /// How long will this mob be stunned for?
     /// </summary>
     [ViewVariables(VVAccess.ReadWrite), DataField]
-    public TimeSpan StunTime = TimeSpan.FromSeconds(6);
+    public TimeSpan StunTime = TimeSpan.FromSeconds(5); //Stunmeta
 
     /// <summary>
     /// To avoid continuously updating our data we track the last time we updated so we can extrapolate our current stamina.

@@ -17,6 +17,14 @@ public static class SkinColor
     public const float MinFeathersValue = 36f / 100;
     public const float MaxFeathersValue = 55f / 100;
 
+    // Einstein Engines - Tajaran
+    public const float MinAnimalFurHue = 20f / 360;
+    public const float MaxAnimalFurHue = 60f / 360;
+    public const float MinAnimalFurSaturation = 0f / 100;
+    public const float MaxAnimalFurSaturation = 100f / 100;
+    public const float MinAnimalFurValue = 0f / 100;
+    public const float MaxAnimalFurValue = 100f / 100;
+
     public static Color ValidHumanSkinTone => Color.FromHsv(new Vector4(0.07f, 0.2f, 1f, 1f));
 
     /// <summary>
@@ -24,9 +32,9 @@ public static class SkinColor
     /// </summary>
     /// <param name="color">The color to validate</param>
     /// <returns>Validated tinted hue skin tone</returns>
-    public static Color ValidTintedHuesSkinTone(Color color)
+    public static Color ValidTintedHuesSkinTone(Color color, Color? skinTone = null)
     {
-        return TintedHues(color);
+        return skinTone != null ? TintedHuesSkin(color, skinTone.Value) : TintedHues(color);
     }
 
     /// <summary>
@@ -140,6 +148,25 @@ public static class SkinColor
     }
 
     /// <summary>
+    ///     DeltaV - Convert a color to the 'tinted hues' skin tone type, and blend it into skinColor
+    /// </summary>
+    /// <param name="color">Color to convert</param>
+    /// <param name="skinColor">The skin color to blend with</param>
+    /// <param name="blendFactor">Blending factor (0.0 to 1.0)</param>
+    /// <returns>Tinted hue color</returns>
+    public static Color TintedHuesSkin(Color color, Color skinColor, float blendFactor = 0.0f)
+    {
+        blendFactor = MathHelper.Clamp(blendFactor, 0.0f, 1.0f);
+
+        var r = MathHelper.Lerp(skinColor.R, color.R, blendFactor);
+        var g = MathHelper.Lerp(skinColor.G, color.G, blendFactor);
+        var b = MathHelper.Lerp(skinColor.B, color.B, blendFactor);
+        var a = color.A;
+
+        return new Color(r, g, b, a);
+    }
+
+    /// <summary>
     ///     Verify if this color is a valid tinted hue color type, or not.
     /// </summary>
     /// <param name="color">The color to verify</param>
@@ -205,6 +232,60 @@ public static class SkinColor
     }
 
     /// <summary>
+    ///     Converts a Color proportionally to the allowed animal fur color range.
+    ///     Will NOT preserve the specific input color even if it is within the allowed animal fur color range.
+    /// </summary>
+    /// <param name="color">Color to convert</param>
+    /// <returns>Vox feather coloration</returns>
+    public static Color ProportionalAnimalFurColor(Color color)
+    {
+        var newColor = Color.ToHsv(color);
+
+        newColor.X = newColor.X * (MaxAnimalFurHue - MinAnimalFurHue) + MinAnimalFurHue;
+        newColor.Y = newColor.Y * (MaxAnimalFurSaturation - MinAnimalFurSaturation) + MinAnimalFurSaturation;
+        newColor.Z = newColor.Z * (MaxAnimalFurValue - MinAnimalFurValue) + MinAnimalFurValue;
+
+        return Color.FromHsv(newColor);
+    }
+
+    // /// <summary>
+    // ///      Ensures the input Color is within the allowed animal fur color range.
+    // /// </summary>
+    // /// <param name="color">Color to convert</param>
+    // /// <returns>The same Color if it was within the allowed range, or the closest matching Color otherwise</returns>
+    public static Color ClosestAnimalFurColor(Color color)
+    {
+        var hsv = Color.ToHsv(color);
+
+        hsv.X = Math.Clamp(hsv.X, MinAnimalFurHue, MaxAnimalFurHue);
+        hsv.Y = Math.Clamp(hsv.Y, MinAnimalFurSaturation, MaxAnimalFurSaturation);
+        hsv.Z = Math.Clamp(hsv.Z, MinAnimalFurValue, MaxAnimalFurValue);
+
+        return Color.FromHsv(hsv);
+    }
+
+    /// <summary>
+    ///     Verify if this color is a valid animal fur coloration, or not.
+    /// </summary>
+    /// <param name="color">The color to verify</param>
+    /// <returns>True if valid, false otherwise</returns>
+    public static bool VerifyAnimalFur(Color color)
+    {
+        var colorHsv = Color.ToHsv(color);
+
+        if (colorHsv.X < MinAnimalFurHue || colorHsv.X > MaxAnimalFurHue)
+            return false;
+
+        if (colorHsv.Y < MinAnimalFurSaturation || colorHsv.Y > MaxAnimalFurSaturation)
+            return false;
+
+        if (colorHsv.Z < MinAnimalFurValue || colorHsv.Z > MaxAnimalFurValue)
+            return false;
+
+        return true;
+    }
+
+    /// <summary>
     ///     This takes in a color, and returns a color guaranteed to be above MinHuesLightness
     /// </summary>
     /// <param name="color"></param>
@@ -232,8 +313,10 @@ public static class SkinColor
         {
             HumanoidSkinColor.HumanToned => VerifyHumanSkinTone(color),
             HumanoidSkinColor.TintedHues => VerifyTintedHues(color),
+            HumanoidSkinColor.TintedHuesSkin => true, // DeltaV - Tone blending
             HumanoidSkinColor.Hues => VerifyHues(color),
             HumanoidSkinColor.VoxFeathers => VerifyVoxFeathers(color),
+            HumanoidSkinColor.AnimalFur => VerifyAnimalFur(color), // Einsetin Engines - Tajaran
             _ => false,
         };
     }
@@ -244,8 +327,10 @@ public static class SkinColor
         {
             HumanoidSkinColor.HumanToned => ValidHumanSkinTone,
             HumanoidSkinColor.TintedHues => ValidTintedHuesSkinTone(color),
+            HumanoidSkinColor.TintedHuesSkin => ValidTintedHuesSkinTone(color), // DeltaV - Tone blending
             HumanoidSkinColor.Hues => MakeHueValid(color),
             HumanoidSkinColor.VoxFeathers => ClosestVoxColor(color),
+            HumanoidSkinColor.AnimalFur => ClosestAnimalFurColor(color), // Einsetin Engines - Tajaran
             _ => color
         };
     }
@@ -257,4 +342,6 @@ public enum HumanoidSkinColor : byte
     Hues,
     VoxFeathers, // Vox feathers are limited to a specific color range
     TintedHues, //This gives a color tint to a humanoid's skin (10% saturation with full hue range).
+    TintedHuesSkin, // DeltaV - Default TintedHues assumes the texture will have the proper skin color, but moths dont
+    AnimalFur, // Einstein Engines - limits coloration to more or less what earthen animals might have
 }

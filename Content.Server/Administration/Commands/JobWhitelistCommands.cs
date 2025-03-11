@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Content.Server.Database;
 using Content.Server.Players.JobWhitelist;
 using Content.Shared.Administration;
@@ -47,7 +47,7 @@ public sealed class JobWhitelistAddCommand : LocalizedCommands
             var isWhitelisted = await _db.IsJobWhitelisted(guid, job);
             if (isWhitelisted)
             {
-                shell.WriteLine(Loc.GetString("cmd-jobwhitelistadd-already-whitelisted",
+                shell.WriteLine(Loc.GetString("cmd-jobwhitelist-already-whitelisted",
                     ("player", player),
                     ("jobId", job.Id),
                     ("jobName", jobPrototype.LocalizedName)));

@@ -271,7 +271,7 @@ namespace Content.Server.Construction
             }
 
             var newEntityProto = graph.Nodes[edge.Target].Entity.GetId(null, user, new(EntityManager));
-            var newEntity = EntityManager.SpawnAttachedTo(newEntityProto, coords, rotation: angle);
+            var newEntity = Spawn(newEntityProto, _transformSystem.ToMapCoordinates(coords), rotation: angle);
 
             if (!TryComp(newEntity, out ConstructionComponent? construction))
             {
@@ -325,13 +325,13 @@ namespace Content.Server.Construction
         // LEGACY CODE. See warning at the top of the file!
         public async Task<bool> TryStartItemConstruction(string prototype, EntityUid user)
         {
-            if (!PrototypeManager.TryIndex(prototype, out ConstructionPrototype? constructionPrototype))
+            if (!_prototypeManager.TryIndex(prototype, out ConstructionPrototype? constructionPrototype))
             {
                 Log.Error($"Tried to start construction of invalid recipe '{prototype}'!");
                 return false;
             }
 
-            if (!PrototypeManager.TryIndex(constructionPrototype.Graph,
+            if (!_prototypeManager.TryIndex(constructionPrototype.Graph,
                     out ConstructionGraphPrototype? constructionGraph))
             {
                 Log.Error(
@@ -386,7 +386,7 @@ namespace Content.Server.Construction
                 }
             }
 
-            if (await Construct(
+                if (await Construct(
                     user,
                     "item_construction",
                     constructionGraph,
@@ -404,14 +404,14 @@ namespace Content.Server.Construction
         // LEGACY CODE. See warning at the top of the file!
         private async void HandleStartStructureConstruction(TryStartStructureConstructionMessage ev, EntitySessionEventArgs args)
         {
-            if (!PrototypeManager.TryIndex(ev.PrototypeName, out ConstructionPrototype? constructionPrototype))
+            if (!_prototypeManager.TryIndex(ev.PrototypeName, out ConstructionPrototype? constructionPrototype))
             {
                 Log.Error($"Tried to start construction of invalid recipe '{ev.PrototypeName}'!");
                 RaiseNetworkEvent(new AckStructureConstructionMessage(ev.Ack));
                 return;
             }
 
-            if (!PrototypeManager.TryIndex(constructionPrototype.Graph, out ConstructionGraphPrototype? constructionGraph))
+            if (!_prototypeManager.TryIndex(constructionPrototype.Graph, out ConstructionGraphPrototype? constructionGraph))
             {
                 Log.Error($"Invalid construction graph '{constructionPrototype.Graph}' in recipe '{ev.PrototypeName}'!");
                 RaiseNetworkEvent(new AckStructureConstructionMessage(ev.Ack));
@@ -528,12 +528,12 @@ namespace Content.Server.Construction
             }
 
             if (await Construct(user,
-                    (ev.Ack + constructionPrototype.GetHashCode()).ToString(),
-                    constructionGraph,
-                    edge,
-                    targetNode,
-                    GetCoordinates(ev.Location),
-                    constructionPrototype.CanRotate ? ev.Angle : Angle.Zero) is not {Valid: true} structure)
+                (ev.Ack + constructionPrototype.GetHashCode()).ToString(),
+                constructionGraph,
+                edge,
+                targetNode,
+                GetCoordinates(ev.Location),
+                constructionPrototype.CanRotate ? ev.Angle : Angle.Zero) is not {Valid: true} structure)
             {
                 Cleanup();
                 return;

@@ -8,7 +8,7 @@ public sealed partial class CCVars
     ///     Allows enabling/disabling player-started votes for ultimate authority
     /// </summary>
     public static readonly CVarDef<bool> VoteEnabled =
-        CVarDef.Create("vote.enabled", true, CVar.SERVERONLY);
+        CVarDef.Create("vote.enabled", false, CVar.SERVERONLY);
 
     /// <summary>
     ///     See vote.enabled, but specific to restart votes
@@ -26,13 +26,13 @@ public sealed partial class CCVars
     ///     Config for when the restart vote should be allowed to be called based on percentage of ghosts.
     /// </summary>
     public static readonly CVarDef<int> VoteRestartGhostPercentage =
-        CVarDef.Create("vote.restart_ghost_percentage", 55, CVar.SERVERONLY);
+        CVarDef.Create("vote.restart_ghost_percentage", 75, CVar.SERVERONLY);
 
     /// <summary>
     ///     See vote.enabled, but specific to preset votes
     /// </summary>
     public static readonly CVarDef<bool> VotePresetEnabled =
-        CVarDef.Create("vote.preset_enabled", true, CVar.SERVERONLY);
+        CVarDef.Create("vote.preset_enabled", false, CVar.SERVERONLY);
 
     /// <summary>
     ///     See vote.enabled, but specific to map votes

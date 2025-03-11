@@ -30,6 +30,7 @@
     delay: 0.5
   - type: ExplosionResistance
     damageCoefficient: 0.9
+  - type: AllowsSleepInside # DeltaV - enable sleeping inside bags
 
 - type: entity
   parent: ClothingBackpack
@@ -56,7 +57,17 @@
       collection: IanBark
 
 - type: entity
-  parent: [ClothingBackpack, BaseRestrictedContraband]
+  parent: ClothingBackpackIan
+  id: ClothingBackpackIanFilled
+  name: Ian's backpack
+  description: Sometimes he wears it.
+  components:
+  - type: StorageFill
+    contents:
+      - id: Flash
+
+- type: entity
+  parent: ClothingBackpack
   id: ClothingBackpackSecurity
   name: security backpack
   description: It's a very robust backpack.
@@ -65,13 +76,13 @@
     sprite: Clothing/Back/Backpacks/security.rsi
 
 - type: entity
-  parent: [ClothingBackpack, BaseRestrictedContraband]
+  parent: ClothingBackpack
   id: ClothingBackpackBrigmedic
-  name: brigmedic backpack
+  name: corpsman backpack # DeltaV - rename brig medic to corpsman
   description: It's a very sterile backpack.
   components:
   - type: Sprite
-    sprite: Clothing/Back/Backpacks/brigmedic.rsi
+    sprite: DeltaV/Clothing/Back/Backpacks/brigmedic.rsi # DeltaV - resprite
 
 - type: entity
   parent: ClothingBackpack
@@ -101,10 +112,10 @@
     sprite: Clothing/Back/Backpacks/medical.rsi
 
 - type: entity
-  parent: [ClothingBackpack, BaseCommandContraband]
+  parent: ClothingBackpack
   id: ClothingBackpackCaptain
-  name: overseer's backpack
-  description: It's a special blue backpack, reminicent of those worn by Nanotrasen command.
+  name: captain's backpack
+  description: It's a special backpack made exclusively for Nanotrasen officers.
   components:
   - type: Sprite
     sprite: Clothing/Back/Backpacks/captain.rsi
@@ -139,11 +150,20 @@
 - type: entity
   parent: ClothingBackpack
   id: ClothingBackpackScience
-  name: science backpack
+  name: epistemics backpack # DeltaV - Epistemics Department replacing Science
   description: A backpack specially designed to repel stains and hazardous liquids.
   components:
   - type: Sprite
     sprite: Clothing/Back/Backpacks/science.rsi
+
+- type: entity
+  parent: ClothingBackpack
+  id: ClothingBackpackRobotics
+  name: robotics backpack
+  description: A sturdy backpack to store all the tools and parts.
+  components:
+  - type: Sprite
+    sprite: Clothing/Back/Backpacks/robotics.rsi
 
 - type: entity
   parent: ClothingBackpack
@@ -166,8 +186,8 @@
 - type: entity
   parent: ClothingBackpack
   id: ClothingBackpackCargo
-  name: cargo backpack
-  description: A robust backpack for stealing cargo's loot.
+  name: logistics backpack # DeltaV - Logistics Department replacing Cargo
+  description: A robust backpack for stealing logistics's loot. # DeltaV - Logistics Department replacing Cargo
   components:
     - type: Sprite
       sprite: Clothing/Back/Backpacks/cargo.rsi
@@ -184,7 +204,7 @@
 - type: entity
   parent: ClothingBackpack
   id: ClothingBackpackMerc
-  name: mercenary bag
+  name: merc bag
   description: A backpack that has been in many dangerous places, a reliable combat backpack.
   components:
     - type: Sprite
@@ -192,7 +212,7 @@
 
 #ERT
 - type: entity
-  parent: [ ClothingBackpack, BaseCentcommContraband ]
+  parent: ClothingBackpack
   id: ClothingBackpackERTLeader
   name: ERT leader backpack
   description: A spacious backpack with lots of pockets, worn by the Commander of an Emergency Response Team.
@@ -269,7 +289,7 @@
 
 #Syndicate
 - type: entity
-  parent: [ClothingBackpack, BaseSyndicateContraband]
+  parent: ClothingBackpack
   id: ClothingBackpackSyndicate
   name: syndicate backpack
   description:
@@ -313,29 +333,6 @@
     sprite: Clothing/Back/Backpacks/cluwne.rsi
   - type: Unremoveable
     deleteOnDrop: false
-
-- type: entity
-  parent: ClothingBackpack
-  id: ClothingBackpackElectropack
-  name: electropack
-  suffix: SelfUnremovable
-  description: Shocks on the signal. It is used to keep a particularly dangerous criminal under control.
-  components:
-  - type: Sprite
-    sprite: Clothing/Back/Backpacks/electropack.rsi
-    state: icon
-  - type: Clothing
-    stripDelay: 10
-    equipDelay: 5 # to avoid accidentally falling into the trap associated with SelfUnremovableClothing
-  - type: SelfUnremovableClothing
-  - type: ShockOnTrigger
-    damage: 5
-    duration: 3
-    cooldown: 4
-  - type: TriggerOnSignal
-  - type: DeviceLinkSink
-    ports:
-      - Trigger
 
 # Debug
 - type: entity

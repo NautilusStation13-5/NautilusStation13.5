@@ -17,14 +17,12 @@
     components:
     - ShowAntagIcons
     - InitialInfected
-    - Zombie
   icon:
     sprite: /Textures/Interface/Misc/job_icons.rsi
     state: InitialInfected
 
 - type: factionIcon
   id: RevolutionaryFaction
-  isShaded: true
   priority: 11
   showTo:
     components:
@@ -36,7 +34,6 @@
 
 - type: factionIcon
   id: HeadRevolutionaryFaction
-  isShaded: true
   priority: 11
   showTo:
     components:

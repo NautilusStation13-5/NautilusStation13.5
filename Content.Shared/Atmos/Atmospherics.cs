@@ -77,12 +77,9 @@ namespace Content.Shared.Atmos
 
         public const float OxygenStandard = 0.21f;
         public const float NitrogenStandard = 0.79f;
-        public const float WaterStandard = 7.0f;
-        public const float TrenchStandard = 20.0f;
+
         public const float OxygenMolesStandard = MolesCellStandard * OxygenStandard;
         public const float NitrogenMolesStandard = MolesCellStandard * NitrogenStandard;
-        public const float WaterMolesStandard = MolesCellStandard * WaterStandard;
-        public const float TrenchMolesStandard = MolesCellStandard * TrenchStandard;
 
         #endregion
 
@@ -191,7 +188,7 @@ namespace Content.Shared.Atmos
         /// <summary>
         ///     Total number of gases. Increase this if you want to add more!
         /// </summary>
-        public const int TotalNumberOfGases = 10;
+        public const int TotalNumberOfGases = 9;
 
         /// <summary>
         ///     This is the actual length of the gases arrays in mixtures.
@@ -252,7 +249,7 @@ namespace Content.Shared.Atmos
         /// <summary>
         ///     1 mol of Tritium is required per X mol of oxygen.
         /// </summary>
-        public const float FrezonProductionTritRatio = 8.0f;
+        public const float FrezonProductionTritRatio = 50.0f;
 
         /// <summary>
         ///     1 / X of the tritium is converted into Frezon each tick
@@ -290,7 +287,7 @@ namespace Content.Shared.Atmos
         public const float HazardLowPressure = 20f;
 
         /// <summary>
-        ///    The amount of pressure damage someone takes is equal to ((pressure / HAZARD_HIGH_PRESSURE) - 1)*PRESSURE_DAMAGE_COEFFICIENT,
+        ///    ///    The amount of pressure damage someone takes is equal to ((pressure / HAZARD_HIGH_PRESSURE) - 1)*PRESSURE_DAMAGE_COEFFICIENT
         ///     with the maximum of MaxHighPressureDamage.
         /// </summary>
         public const float PressureDamageCoefficient = 4;
@@ -305,8 +302,7 @@ namespace Content.Shared.Atmos
         ///     (The pressure threshold is so low that it doesn't make sense to do any calculations,
         ///     so it just applies this flat value).
         /// </summary>
-        // Original value is 4, buff back when we have proper ways for players to deal with breaches.
-        public const int LowPressureDamage = 1;
+        public const int LowPressureDamage = 4;
 
         public const float WindowHeatTransferCoefficient = 0.1f;
 
@@ -355,7 +351,6 @@ namespace Content.Shared.Atmos
         WaterVapor = 5,
         Ammonia = 6,
         NitrousOxide = 7,
-        Frezon = 8,
-        Water = 9
+        Frezon = 8
     }
 }

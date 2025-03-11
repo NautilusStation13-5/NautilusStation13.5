@@ -86,12 +86,11 @@ namespace Content.Client.Access.UI
             foreach (var (accessName, button) in _accessButtons)
             {
                 button.Disabled = !interfaceEnabled;
-                if (interfaceEnabled)
-                {
-                    // Explicit cast because Rider gives a false error otherwise.
-                    button.Pressed = state.TargetAccessReaderIdAccessList?.Contains((ProtoId<AccessLevelPrototype>) accessName) ?? false;
-                    button.Disabled = (!state.AllowedModifyAccessList?.Contains((ProtoId<AccessLevelPrototype>) accessName)) ?? true;
-                }
+                if (!interfaceEnabled)
+                    return;
+
+                button.Pressed = state.TargetAccessReaderIdAccessList?.Contains<ProtoId<AccessLevelPrototype>>(accessName) ?? false;
+                button.Disabled = (!state.AllowedModifyAccessList?.Contains<ProtoId<AccessLevelPrototype>>(accessName)) ?? true;
             }
         }
     }

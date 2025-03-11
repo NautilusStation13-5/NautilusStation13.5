@@ -26,15 +26,11 @@ public sealed partial class NpcFactionMemberComponent : Component
     [ViewVariables]
     public readonly HashSet<ProtoId<NpcFactionPrototype>> HostileFactions = new();
 
+    // Nyano - Summary - Begin modified code block: support for specific entities to be friendly.
     /// <summary>
-    /// Used to add friendly factions in prototypes.
+    /// Permanently friendly specific entities. Our summoner, etc.
+    /// Would like to separate. Could I do that by extending this method, maybe?
     /// </summary>
-    [DataField, ViewVariables]
-    public HashSet<ProtoId<NpcFactionPrototype>>? AddFriendlyFactions;
-
-    /// <summary>
-    /// Used to add hostile factions in prototypes.
-    /// </summary>
-    [DataField, ViewVariables]
-    public HashSet<ProtoId<NpcFactionPrototype>>? AddHostileFactions;
+    public HashSet<EntityUid> ExceptionalFriendlies = new();
+    // Nyano - End modified code block.
 }

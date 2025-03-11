@@ -20,7 +20,7 @@ public sealed partial class CCVars
     ///     Should users be able to see their own notes? Admins will be able to see and set notes regardless
     /// </summary>
     public static readonly CVarDef<bool> SeeOwnNotes =
-        CVarDef.Create("admin.see_own_notes", true, CVar.ARCHIVE | CVar.REPLICATED | CVar.SERVER);
+        CVarDef.Create("admin.see_own_notes", false, CVar.ARCHIVE | CVar.REPLICATED | CVar.SERVER);
 
     /// <summary>
     ///     Should the server play a quick sound to the active admins whenever a new player joins?
@@ -96,7 +96,7 @@ public sealed partial class CCVars
     ///     If you set this to 0 or 1 then it will alert on every connection, so probably don't do that.
     /// </remarks>
     public static readonly CVarDef<int> AdminAlertMinPlayersSharingConnection =
-        CVarDef.Create("admin.alert.min_players_sharing_connection", 2, CVar.SERVERONLY);
+        CVarDef.Create("admin.alert.min_players_sharing_connection", -1, CVar.SERVERONLY);
 
     /// <summary>
     ///     Minimum explosion intensity to create an admin alert message. -1 to disable the alert.
@@ -108,7 +108,7 @@ public sealed partial class CCVars
     ///     Minimum particle accelerator strength to create an admin alert message.
     /// </summary>
     public static readonly CVarDef<int> AdminAlertParticleAcceleratorMinPowerState =
-        CVarDef.Create("admin.alert.particle_accelerator_min_power_state", 5, CVar.SERVERONLY); // strength 4
+        CVarDef.Create("admin.alert.particle_accelerator_min_power_state", 3, CVar.SERVERONLY);
 
     /// <summary>
     ///     Should the ban details in admin channel include PII? (IP, HWID, etc)
@@ -150,15 +150,6 @@ public sealed partial class CCVars
         CVarDef.Create("admin.bypass_max_players", true, CVar.SERVERONLY);
 
     /// <summary>
-    ///     Determines whether admins count towards the total playercount when determining whether the server is over <see cref="SoftMaxPlayers"/>
-    ///     Ideally this should be used in conjuction with <see cref="AdminBypassPlayers"/>.
-    ///     This also applies to playercount limits in whitelist conditions
-    ///     If false, then admins will not be considered when checking whether the playercount is already above the soft player cap
-    /// </summary>
-    public static readonly CVarDef<bool> AdminsCountForMaxPlayers =
-        CVarDef.Create("admin.admins_count_for_max_players", false, CVar.SERVERONLY);
-
-    /// <summary>
     ///     Determine if custom rank names are used.
     ///     If it is false, it'd use the actual rank name regardless of the individual's title.
     /// </summary>
@@ -166,6 +157,15 @@ public sealed partial class CCVars
     /// <seealso cref="AhelpAdminPrefixWebhook"/>
     public static readonly CVarDef<bool> AdminUseCustomNamesAdminRank =
         CVarDef.Create("admin.use_custom_names_admin_rank", true, CVar.SERVERONLY);
+
+    /// <summary>
+    ///     Determines whether admins count towards the total playercount when determining whether the server is over <see cref="SoftMaxPlayers"/>
+    ///     Ideally this should be used in conjuction with <see cref="AdminBypassPlayers"/>.
+    ///     This also applies to playercount limits in whitelist conditions
+    ///     If false, then admins will not be considered when checking whether the playercount is already above the soft player cap
+    /// </summary>
+    public static readonly CVarDef<bool> AdminsCountForMaxPlayers =
+        CVarDef.Create("admin.admins_count_for_max_players", false, CVar.SERVERONLY);
 
     public static readonly CVarDef<bool> BanHardwareIds =
         CVarDef.Create("ban.hardware_ids", true, CVar.SERVERONLY);

@@ -70,6 +70,7 @@
 - type: entity
   id: ActionStethoscope
   name: Listen with stethoscope
+  categories: [ HideSpawnMenu ]
   components:
   - type: EntityTargetAction
     icon:
@@ -81,16 +82,25 @@
 
 - type: entity
   parent: ClothingNeckBase
-  id: Dinkystar
-  name: star sticker
-  description: A dinky lil star for only the hardest working security officers! It's not even sticky anymore.
+  id: ClothingNeckBellCollar
+  name: bell collar
+  description: A way to inform others about your presence, or just to annoy everyone around you!
   components:
   - type: Sprite
-    sprite: Clothing/Neck/Misc/dinkystar.rsi
-    state: icon
-  - type: Item
-    size: Tiny
-  - type: Tag
-    tags:
-    - Trash
-    - WhitelistChameleon
+    sprite: Clothing/Neck/Misc/bellcollar.rsi
+  - type: Clothing
+    sprite: Clothing/Neck/Misc/bellcollar.rsi
+  - type: EmitsSoundOnMove
+    soundCollection:
+      collection: FootstepJester
+
+- type: entity
+  parent: ClothingNeckBase
+  id: ClothingNeckDogtags
+  name: dogtags
+  description: A pair of engraved metal identification tags.
+  components:
+  - type: Sprite
+    sprite: Clothing/Neck/Misc/dogtags.rsi
+  - type: Clothing
+    sprite: Clothing/Neck/Misc/dogtags.rsi

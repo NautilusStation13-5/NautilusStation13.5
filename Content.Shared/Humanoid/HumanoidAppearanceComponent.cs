@@ -1,10 +1,12 @@
 using Content.Shared.Humanoid.Markings;
 using Content.Shared.Humanoid.Prototypes;
+using Content.Shared.Preferences; // DeltaV
 using Robust.Shared.Enums;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 using Robust.Shared.Utility;
+using Content.Shared.Preferences; //DeltaV, used for Metempsychosis, Fugitive, and Paradox Anomaly
 
 namespace Content.Shared.Humanoid;
 
@@ -28,7 +30,19 @@ public sealed partial class HumanoidAppearanceComponent : Component
     public Gender Gender;
 
     [DataField, AutoNetworkedField]
+    public string? DisplayPronouns;
+
+    [DataField, AutoNetworkedField]
+    public string? StationAiName;
+
+    [DataField, AutoNetworkedField]
+    public string? CyborgName;
+
+    [DataField, AutoNetworkedField]
     public int Age = 18;
+
+    [DataField, AutoNetworkedField]
+    public string CustomSpecieName = "";
 
     /// <summary>
     ///     Any custom base layers this humanoid might have. See:
@@ -88,6 +102,24 @@ public sealed partial class HumanoidAppearanceComponent : Component
     /// </summary>
     [DataField]
     public HashSet<HumanoidVisualLayers> HideLayersOnEquip = [HumanoidVisualLayers.Hair];
+
+    /// <summary>
+    /// DeltaV - let paradox anomaly be cloned
+    /// </summary>
+    [ViewVariables]
+    public HumanoidCharacterProfile? LastProfileLoaded;
+
+    /// <summary>
+    ///     The height of this humanoid.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public float Height = 1f;
+
+    /// <summary>
+    ///     The width of this humanoid.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public float Width = 1f;
 }
 
 [DataDefinition]

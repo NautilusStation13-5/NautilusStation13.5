@@ -41,9 +41,14 @@
   - type: CameraRecoil
   - type: MindContainer
   - type: MovementSpeedModifier
+  - type: Polymorphable
+  - type: StatusIcon
+  - type: LanguageSpeaker # Einstein Engines. This component is required to support speech, although it does not define known languages.
   - type: RequireProjectileTarget
     active: False
-  - type: FallSystem
+  - type: AnimatedEmotes
+  - type: OwnInteractionVerbs
+    allowedVerbs: [] # TODO: define something here, or don't.
 
 - type: entity
   save: false
@@ -105,8 +110,6 @@
     - Piercing
     - Heat
     - Shock
-    - Cold
-    - Caustic
   - type: DamageOnHighSpeedImpact
     damage:
       types:
@@ -238,3 +241,5 @@
     bloodlossHealDamage:
       types:
         Bloodloss: -1
+    bloodRegenerationHunger: 1
+    bloodRegenerationThirst: 1.5 # 1 unit of normal blood satiates 1t, 0.3t for vampires, 0.75h, and restores 0.25 blood for non-humans...

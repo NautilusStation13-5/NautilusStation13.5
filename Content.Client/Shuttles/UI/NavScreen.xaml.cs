@@ -15,7 +15,6 @@ public sealed partial class NavScreen : BoxContainer
     [Dependency] private readonly IEntityManager _entManager = default!;
     private SharedTransformSystem _xformSystem;
 
-    private EntityUid? _consoleEntity; // Entity of controlling console
     private EntityUid? _shuttleEntity;
 
     public NavScreen()
@@ -29,17 +28,13 @@ public sealed partial class NavScreen : BoxContainer
 
         DockToggle.OnToggled += OnDockTogglePressed;
         DockToggle.Pressed = NavRadar.ShowDocks;
+
+        NfInitialize(); // Frontier Initialization for the NavScreen
     }
 
     public void SetShuttle(EntityUid? shuttle)
     {
         _shuttleEntity = shuttle;
-    }
-
-    public void SetConsole(EntityUid? console)
-    {
-        _consoleEntity = console;
-        NavRadar.SetConsole(console);
     }
 
     private void OnIFFTogglePressed(BaseButton.ButtonEventArgs args)
@@ -57,6 +52,7 @@ public sealed partial class NavScreen : BoxContainer
     public void UpdateState(NavInterfaceState scc)
     {
         NavRadar.UpdateState(scc);
+        NfUpdateState(); // Frontier Update State
     }
 
     public void SetMatrix(EntityCoordinates? coordinates, Angle? angle)

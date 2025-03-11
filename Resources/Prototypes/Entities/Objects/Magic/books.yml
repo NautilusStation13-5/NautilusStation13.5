@@ -18,6 +18,12 @@
     - type: Tag
       tags:
       - Spellbook
+    - type: EmitSoundOnPickup
+      sound: /Audio/SimpleStation14/Items/Handling/book_pickup.ogg
+    - type: EmitSoundOnDrop
+      sound: /Audio/SimpleStation14/Items/Handling/book_drop.ogg
+    - type: EmitSoundOnLand
+      sound: /Audio/SimpleStation14/Items/Handling/book_drop.ogg
 
 # For the Wizard Antag
 # Do not add discounts or price inflation
@@ -25,7 +31,7 @@
   id: WizardsGrimoire
   name: wizards grimoire
   suffix: Wizard
-  parent: [ BaseItem, StorePresetSpellbook ]
+  parent: BaseItem
   components:
     - type: Sprite
       sprite: Objects/Misc/books.rsi
@@ -54,7 +60,7 @@
   id: WizardsGrimoireNoRefund
   name: wizards grimoire
   suffix: Wizard, No Refund
-  parent: [ WizardsGrimoire, StorePresetSpellbook ]
+  parent: WizardsGrimoire
   components:
     - type: Store
       refundAllowed: false

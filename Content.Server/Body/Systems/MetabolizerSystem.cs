@@ -1,5 +1,5 @@
 using Content.Server.Body.Components;
-using Content.Shared.Chemistry.EntitySystems;
+using Content.Server.Chemistry.Containers.EntitySystems;
 using Content.Shared.Administration.Logs;
 using Content.Shared.Body.Organ;
 using Content.Shared.Chemistry.Components;
@@ -24,7 +24,7 @@ namespace Content.Server.Body.Systems
         [Dependency] private readonly IRobustRandom _random = default!;
         [Dependency] private readonly ISharedAdminLogManager _adminLogger = default!;
         [Dependency] private readonly MobStateSystem _mobStateSystem = default!;
-        [Dependency] private readonly SharedSolutionContainerSystem _solutionContainerSystem = default!;
+        [Dependency] private readonly SolutionContainerSystem _solutionContainerSystem = default!;
 
         private EntityQuery<OrganComponent> _organQuery;
         private EntityQuery<SolutionContainerManagerComponent> _solutionQuery;
@@ -56,11 +56,11 @@ namespace Content.Server.Body.Systems
         {
             if (!entity.Comp.SolutionOnBody)
             {
-                _solutionContainerSystem.EnsureSolution(entity.Owner, entity.Comp.SolutionName, out _);
+                _solutionContainerSystem.EnsureSolution(entity.Owner, entity.Comp.SolutionName);
             }
             else if (_organQuery.CompOrNull(entity)?.Body is { } body)
             {
-                _solutionContainerSystem.EnsureSolution(body, entity.Comp.SolutionName, out _);
+                _solutionContainerSystem.EnsureSolution(body, entity.Comp.SolutionName);
             }
         }
 
@@ -194,6 +194,9 @@ namespace Content.Server.Body.Systems
                     }
 
                     var actualEntity = ent.Comp2?.Body ?? solutionEntityUid.Value;
+                    var ev = new TryMetabolizeReagent(reagent, proto, quantity);
+                    RaiseLocalEvent(actualEntity, ref ev);
+
                     var args = new EntityEffectReagentArgs(actualEntity, EntityManager, ent, solution, mostToRemove, proto, null, scale);
 
                     // do all effects, if conditions apply
@@ -257,3 +260,6 @@ namespace Content.Server.Body.Systems
         public readonly bool Apply = Apply;
     }
 }
+
+[ByRefEvent]
+public record struct TryMetabolizeReagent(ReagentId Reagent, ReagentPrototype Prototype, FixedPoint2 Quantity, float Scale = 1f, float QuantityMultiplier = 1f);

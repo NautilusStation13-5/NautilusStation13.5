@@ -1,9 +1,8 @@
 - type: securityIcon
   id: SecurityIcon
   abstract: true
-  priority: 3
   offset: 1
-  locationPreference: Right
+  locationPreference: Left
   isShaded: true
 
 - type: securityIcon

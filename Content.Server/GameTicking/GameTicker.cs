@@ -8,15 +8,21 @@ using Content.Server.Maps;
 using Content.Server.Players.PlayTimeTracking;
 using Content.Server.Preferences.Managers;
 using Content.Server.ServerUpdates;
+using Content.Server.Shuttles.Systems;
 using Content.Server.Station.Systems;
 using Content.Shared.Chat;
+using Content.Shared.Damage;
 using Content.Shared.GameTicking;
 using Content.Shared.Mind;
+using Content.Shared.Mobs.Systems;
 using Content.Shared.Roles;
 using Robust.Server;
 using Robust.Server.GameObjects;
 using Robust.Server.GameStates;
+using Robust.Server.Player;
+using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
+using Robust.Shared.Configuration;
 using Robust.Shared.Console;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
@@ -35,6 +41,7 @@ namespace Content.Server.GameTicking
         [Dependency] private readonly IBanManager _banManager = default!;
         [Dependency] private readonly IBaseServer _baseServer = default!;
         [Dependency] private readonly IChatManager _chatManager = default!;
+        [Dependency] private readonly IConfigurationManager _configurationManager = default!;
         [Dependency] private readonly IConsoleHost _consoleHost = default!;
         [Dependency] private readonly IGameMapManager _gameMapManager = default!;
         [Dependency] private readonly IGameTiming _gameTiming = default!;
@@ -47,10 +54,13 @@ namespace Content.Server.GameTicking
 #endif
         [Dependency] private readonly IServerPreferencesManager _prefsManager = default!;
         [Dependency] private readonly IServerDbManager _db = default!;
+        [Dependency] private readonly ArrivalsSystem _arrivals = default!;
         [Dependency] private readonly ChatSystem _chatSystem = default!;
+        [Dependency] private readonly DamageableSystem _damageable = default!;
         [Dependency] private readonly MapLoaderSystem _map = default!;
         [Dependency] private readonly GhostSystem _ghost = default!;
         [Dependency] private readonly SharedMindSystem _mind = default!;
+        [Dependency] private readonly MobStateSystem _mobState = default!;
         [Dependency] private readonly PlayTimeTrackingSystem _playTimeTrackings = default!;
         [Dependency] private readonly PvsOverrideSystem _pvsOverride = default!;
         [Dependency] private readonly ServerUpdateManager _serverUpdates = default!;
@@ -62,6 +72,7 @@ namespace Content.Server.GameTicking
         [Dependency] private readonly MetaDataSystem _metaData = default!;
         [Dependency] private readonly SharedRoleSystem _roles = default!;
         [Dependency] private readonly ServerDbEntryManager _dbEntryManager = default!;
+        [Dependency] private readonly IPlayerManager _playerManager = default!;
 
         [ViewVariables] private bool _initialized;
         [ViewVariables] private bool _postInitialized;

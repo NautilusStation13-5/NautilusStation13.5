@@ -6,6 +6,7 @@ using Content.Client.Lobby;
 using Content.Client.UserInterface.Controls;
 using Content.Client.Players.PlayTimeTracking;
 using Content.Shared.CCVar;
+using Content.Shared.Customization.Systems;
 using Content.Shared.Preferences;
 using Content.Shared.Roles;
 using Content.Shared.StatusIcon;
@@ -28,13 +29,15 @@ namespace Content.Client.LateJoin
         [Dependency] private readonly IConfigurationManager _configManager = default!;
         [Dependency] private readonly IEntitySystemManager _entitySystem = default!;
         [Dependency] private readonly JobRequirementsManager _jobRequirements = default!;
-        [Dependency] private readonly IClientPreferencesManager _preferencesManager = default!;
+        [Dependency] private readonly IEntityManager _entityManager = default!;
+        [Dependency] private readonly IClientPreferencesManager _prefs = default!;
 
         public event Action<(NetEntity, string)> SelectedId;
 
         private readonly ClientGameTicker _gameTicker;
         private readonly SpriteSystem _sprites;
         private readonly CrewManifestSystem _crewManifest;
+        private readonly CharacterRequirementsSystem _characterRequirements;
 
         private readonly Dictionary<NetEntity, Dictionary<string, List<JobButton>>> _jobButtons = new();
         private readonly Dictionary<NetEntity, Dictionary<string, BoxContainer>> _jobCategories = new();
@@ -49,6 +52,7 @@ namespace Content.Client.LateJoin
             _sprites = _entitySystem.GetEntitySystem<SpriteSystem>();
             _crewManifest = _entitySystem.GetEntitySystem<CrewManifestSystem>();
             _gameTicker = _entitySystem.GetEntitySystem<ClientGameTicker>();
+            _characterRequirements = _entitySystem.GetEntitySystem<CharacterRequirementsSystem>();
 
             Title = Loc.GetString("late-join-gui-title");
 
@@ -257,14 +261,42 @@ namespace Content.Client.LateJoin
 
                         jobButton.OnPressed += _ => SelectedId.Invoke((id, jobButton.JobId));
 
-                        if (!_jobRequirements.IsAllowed(prototype, (HumanoidCharacterProfile?)_preferencesManager.Preferences?.SelectedCharacter, out var reason))
+                        if (!_jobRequirements.CheckJobWhitelist(prototype, out var reason))
                         {
                             jobButton.Disabled = true;
 
-                            if (!reason.IsEmpty)
+                            var tooltip = new Tooltip();
+                            tooltip.SetMessage(reason);
+                            jobButton.TooltipSupplier = _ => tooltip;
+
+                            jobSelector.AddChild(new TextureRect
+                            {
+                                TextureScale = new Vector2(0.4f, 0.4f),
+                                Stretch = TextureRect.StretchMode.KeepCentered,
+                                Texture = _sprites.Frame0(new SpriteSpecifier.Texture(new ("/Textures/Interface/Nano/lock.svg.192dpi.png"))),
+                                HorizontalExpand = true,
+                                HorizontalAlignment = HAlignment.Right,
+                            });
+                        }
+                        else if (!_characterRequirements.CheckRequirementsValid(
+                                prototype.Requirements ?? new(),
+                                prototype,
+                                (HumanoidCharacterProfile) (_prefs.Preferences?.SelectedCharacter
+                                                            ?? HumanoidCharacterProfile.DefaultWithSpecies()),
+                                _jobRequirements.GetRawPlayTimeTrackers(),
+                                _jobRequirements.IsWhitelisted(),
+                                prototype,
+                                _entityManager,
+                                _prototypeManager,
+                                _configManager,
+                                out var reasons))
+                        {
+                            jobButton.Disabled = true;
+
+                            if (reasons.Count > 0)
                             {
                                 var tooltip = new Tooltip();
-                                tooltip.SetMessage(reason);
+                                tooltip.SetMessage(_characterRequirements.GetRequirementsText(reasons));
                                 jobButton.TooltipSupplier = _ => tooltip;
                             }
 
@@ -293,7 +325,7 @@ namespace Content.Client.LateJoin
             }
         }
 
-        private void JobsAvailableUpdated(IReadOnlyDictionary<NetEntity, Dictionary<ProtoId<JobPrototype>, int?>> updatedJobs)
+        private void JobsAvailableUpdated(IReadOnlyDictionary<NetEntity, Dictionary<string, uint?>> updatedJobs)
         {
             foreach (var stationEntries in updatedJobs)
             {
@@ -340,10 +372,10 @@ namespace Content.Client.LateJoin
         public Label JobLabel { get; }
         public string JobId { get; }
         public string JobLocalisedName { get; }
-        public int? Amount { get; private set; }
+        public uint? Amount { get; private set; }
         private bool _initialised = false;
 
-        public JobButton(Label jobLabel, ProtoId<JobPrototype> jobId, string jobLocalisedName, int? amount)
+        public JobButton(Label jobLabel, string jobId, string jobLocalisedName, uint? amount)
         {
             JobLabel = jobLabel;
             JobId = jobId;
@@ -353,7 +385,7 @@ namespace Content.Client.LateJoin
             _initialised = true;
         }
 
-        public void RefreshLabel(int? amount)
+        public void RefreshLabel(uint? amount)
         {
             if (Amount == amount && _initialised)
             {

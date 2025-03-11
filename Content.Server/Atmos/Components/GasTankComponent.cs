@@ -18,7 +18,7 @@ namespace Content.Server.Atmos.Components
         [ViewVariables(VVAccess.ReadWrite), DataField("ruptureSound")]
         public SoundSpecifier RuptureSound = new SoundPathSpecifier("/Audio/Effects/spray.ogg");
 
-        [ViewVariables(VVAccess.ReadWrite), DataField("connectSound")] // GOOD LORD HOW DO I FULLSCREEN
+        [ViewVariables(VVAccess.ReadWrite), DataField("connectSound")]
         public SoundSpecifier? ConnectSound =
             new SoundPathSpecifier("/Audio/Effects/internals.ogg")
             {

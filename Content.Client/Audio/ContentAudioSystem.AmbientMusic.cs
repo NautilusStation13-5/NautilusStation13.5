@@ -4,7 +4,6 @@ using Content.Shared.Audio;
 using Content.Shared.CCVar;
 using Content.Shared.GameTicking;
 using Content.Shared.Random;
-using Content.Shared.Random.Rules;
 using Robust.Client.GameObjects;
 using Robust.Client.Player;
 using Robust.Client.ResourceManagement;
@@ -211,11 +210,11 @@ public sealed partial class ContentAudioSystem
             track.ToString(),
             Filter.Local(),
             false,
-            AudioParams.Default.WithVolume(_musicProto.Sound.Params.Volume + _volumeSlider));
+            AudioParams.Default.WithVolume(_musicProto.Sound.Params.Volume + _volumeSlider))!;
 
-        _ambientMusicStream = strim?.Entity;
+        _ambientMusicStream = strim.Value.Entity;
 
-        if (_musicProto.FadeIn && strim != null)
+        if (_musicProto.FadeIn)
         {
             FadeIn(_ambientMusicStream, strim.Value.Component, AmbientMusicFadeTime);
         }

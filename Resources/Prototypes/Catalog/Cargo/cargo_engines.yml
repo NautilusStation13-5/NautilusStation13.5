@@ -1,4 +1,14 @@
 - type: cargoProduct
+  id: EngineAmeJar
+  icon:
+    sprite: Objects/Power/AME/ame_jar.rsi
+    state: jar
+  product: CrateEngineeringAMEJar
+  cost: 2000
+  category: cargoproduct-category-name-engineering
+  group: market
+
+- type: cargoProduct
   id: EngineSingularityGenerator
   icon:
     sprite: Structures/Power/Generation/Singularity/generator.rsi
@@ -87,5 +97,15 @@
     state: grounding_rod
   product: CrateEngineeringTeslaGroundingRod
   cost: 400
+  category: cargoproduct-category-name-engineering
+  group: market
+
+- type: cargoProduct
+  id: EngineTEGKit
+  icon:
+    sprite: Structures/Power/Generation/teg.rsi
+    state: static
+  product: CrateEngineeringTEGKit
+  cost: 8000
   category: cargoproduct-category-name-engineering
   group: market

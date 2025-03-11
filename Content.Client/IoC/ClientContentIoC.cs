@@ -2,10 +2,12 @@ using Content.Client.Administration.Managers;
 using Content.Client.Changelog;
 using Content.Client.Chat.Managers;
 using Content.Client.Clickable;
+using Content.Client.DeltaV.NanoChat;
+using Content.Client.DiscordAuth;
+using Content.Client.JoinQueue;
 using Content.Client.DebugMon;
 using Content.Client.Eui;
 using Content.Client.Fullscreen;
-using Content.Client.GameTicking.Managers;
 using Content.Client.GhostKick;
 using Content.Client.Guidebook;
 using Content.Client.Launcher;
@@ -24,7 +26,6 @@ using Content.Shared.Administration.Managers;
 using Content.Shared.Chat;
 using Content.Shared.Players.PlayTimeTracking;
 using Content.Shared.Players.RateLimiting;
-
 namespace Content.Client.IoC
 {
     internal static class ClientContentIoC
@@ -54,11 +55,13 @@ namespace Content.Client.IoC
             collection.Register<DocumentParsingManager>();
             collection.Register<ContentReplayPlaybackManager>();
             collection.Register<ISharedPlaytimeManager, JobRequirementsManager>();
-            collection.Register<MappingManager>();
-            collection.Register<DebugMonitorManager>();
+            collection.Register<JoinQueueManager>();
+            collection.Register<DiscordAuthManager>();
             collection.Register<PlayerRateLimitManager>();
             collection.Register<SharedPlayerRateLimitManager, PlayerRateLimitManager>();
-            collection.Register<TitleWindowManager>();
+            collection.Register<NanoChatSystem>();
+            collection.Register<MappingManager>();
+            collection.Register<DebugMonitorManager>();
         }
     }
 }

@@ -10,10 +10,10 @@
     stealGroup: HeadCloak # leaving this here because I suppose it might be interesting?
 
 - type: entity
-  parent: [ClothingNeckBase, BaseCommandContraband]
+  parent: ClothingNeckBase
   id: ClothingNeckCloakCap
-  name: overseer's cloak
-  description: A pompous and comfy blue cloak with a nice gold trim, while not particularly valuable as your other possessions, it sure is badass.
+  name: captain's cloak
+  description: A pompous and comfy blue cloak with a nice gold trim, while not particularly valuable as your other possessions, it sure is fancy.
   components:
   - type: Sprite
     sprite: Clothing/Neck/Cloaks/cap.rsi
@@ -21,9 +21,9 @@
     stealGroup: HeadCloak
 
 - type: entity
-  parent: [ClothingNeckBase, BaseCommandContraband]
+  parent: ClothingNeckBase
   id: ClothingNeckCloakHos
-  name: marshall's cloak
+  name: head of security's cloak
   description: An exquisite dark and red cloak fitting for those who can assert dominance over wrongdoers. Take a stab at being civil in prosecution!
   components:
   - type: Sprite
@@ -32,7 +32,7 @@
     stealGroup: HeadCloak
 
 - type: entity
-  parent: [ClothingNeckBase, BaseCommandContraband]
+  parent: ClothingNeckBase
   id: ClothingNeckCloakCe
   name: chief engineer's cloak
   description: A dark green cloak with light blue ornaments, given to those who proved themselves to master the precise art of engineering.
@@ -43,7 +43,7 @@
     stealGroup: HeadCloak
 
 - type: entity
-  parent: [ClothingNeckBase, BaseCommandContraband]
+  parent: ClothingNeckBase
   id: ClothingCloakCmo
   name: chief medical officer's cloak
   description: A sterile blue cloak with a green cross, radiating with a sense of duty and willingness to help others.
@@ -54,9 +54,9 @@
     stealGroup: HeadCloak
 
 - type: entity
-  parent: [ClothingNeckBase, BaseCommandContraband]
+  parent: ClothingNeckBase
   id: ClothingNeckCloakRd
-  name: research director's cloak
+  name: mystagogue's cloak # DeltaV - Epistemics Department replacing Science
   description: A white cloak with violet stripes, showing your status as the arbiter of cutting-edge technology.
   components:
   - type: Sprite
@@ -65,9 +65,9 @@
     stealGroup: HeadCloak
 
 - type: entity
-  parent: [ClothingNeckBase, BaseCommandContraband]
+  parent: ClothingNeckBase
   id: ClothingNeckCloakQm
-  name: harbormaster's cloak
+  name: logistics officer's cloak # DeltaV - Logistics Department replacing Cargo
   description: A strong brown cloak with a reflective stripe, while not as fancy as others, it does show your managing skills.
   components:
   - type: Sprite
@@ -76,7 +76,7 @@
     stealGroup: HeadCloak
 
 - type: entity
-  parent: [ClothingNeckBase, BaseCommandContraband]
+  parent: ClothingNeckBase
   id: ClothingNeckCloakHop
   name: head of personnel's cloak
   description: A blue cloak with red shoulders and gold buttons, proving you are the gatekeeper to any airlock on the station.
@@ -105,9 +105,9 @@
     sprite: Clothing/Neck/Cloaks/nanotrasen.rsi
 
 - type: entity
-  parent: [ClothingNeckBase, BaseCommandContraband]
+  parent: ClothingNeckBase
   id: ClothingNeckCloakCapFormal
-  name: overseer's formal cloak
+  name: captain's formal cloak
   description: A lavish and decorated cloak for special occasions.
   components:
   - type: Sprite
@@ -118,7 +118,7 @@
 - type: entity
   parent: ClothingNeckBase
   id: ClothingNeckCloakAdmin
-  name: weh cloak
+  name: admin cloak
   description: Weh!
   components:
   - type: Sprite
@@ -159,7 +159,7 @@
     slot: head
   - type: ContainerContainer
     containers:
-      toggleable-clothing: !type:ContainerSlot {}
+      toggleable-clothing: !type:Container {}
 
 - type: entity
   parent: ClothingNeckBase
@@ -185,7 +185,7 @@
     slot: head
   - type: ContainerContainer
     containers:
-      toggleable-clothing: !type:ContainerSlot {}
+      toggleable-clothing: !type:Container {}
   - type: TypingIndicatorClothing
     proto: moth
 
@@ -197,14 +197,6 @@
   components:
   - type: Sprite
     sprite: Clothing/Neck/Cloaks/void.rsi
-  - type: ToggleableClothing
-    clothingPrototype: ClothingHeadHatHoodVoidCloak
-    requiredSlot:
-    - neck
-    slot: head
-  - type: ContainerContainer
-    containers:
-      toggleable-clothing: !type:ContainerSlot {}
   - type: TypingIndicatorClothing
     proto: alien
 
@@ -280,3 +272,19 @@
   - type: Sprite
     sprite: Clothing/Neck/Cloaks/pan.rsi
 
+- type: entity
+  parent: ClothingNeckBase
+  id: ClothingNeckCloakRedHood
+  name: Red Cloak
+  description: A cloak made for travel and comfort. Slightly smells of cherry pie?
+  components:
+  - type: Sprite
+    sprite: Clothing/Neck/Cloaks/redhood.rsi
+  - type: ToggleableClothing
+    clothingPrototype: ClothingHeadHatHoodRedHood
+    requiredSlot:
+    - neck
+    slot: head
+  - type: ContainerContainer
+    containers:
+      toggleable-clothing: !type:Container {}

@@ -16,14 +16,16 @@ using Content.Shared.Tools.Systems;
 using Content.Shared.Verbs;
 using Content.Shared.Wall;
 using Content.Shared.Whitelist;
-using Content.Shared.ActionBlocker;
+using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Containers;
 using Robust.Shared.GameStates;
 using Robust.Shared.Map;
 using Robust.Shared.Network;
 using Robust.Shared.Physics;
+using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Systems;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 
@@ -45,7 +47,6 @@ public abstract class SharedEntityStorageSystem : EntitySystem
     [Dependency] protected readonly SharedTransformSystem TransformSystem = default!;
     [Dependency] private   readonly WeldableSystem _weldable = default!;
     [Dependency] private readonly EntityWhitelistSystem _whitelistSystem = default!;
-    [Dependency] private readonly ActionBlockerSystem _actionBlocker = default!;
 
     public const string ContainerName = "entity_storage";
 
@@ -131,9 +132,6 @@ public abstract class SharedEntityStorageSystem : EntitySystem
         if (!HasComp<HandsComponent>(args.Entity))
             return;
 
-        if (!_actionBlocker.CanMove(args.Entity))
-            return;
-
         if (_timing.CurTime < component.NextInternalOpenAttempt)
             return;
 
@@ -141,7 +139,9 @@ public abstract class SharedEntityStorageSystem : EntitySystem
         Dirty(uid, component);
 
         if (component.OpenOnMove)
+        {
             TryOpenStorage(args.Entity, uid);
+        }
     }
 
     protected void OnFoldAttempt(EntityUid uid, SharedEntityStorageComponent component, ref FoldAttemptEvent args)
@@ -342,14 +342,6 @@ public abstract class SharedEntityStorageSystem : EntitySystem
 
         CloseStorage(target);
         return true;
-    }
-
-    public bool IsOpen(EntityUid target, SharedEntityStorageComponent? component = null)
-    {
-        if (!ResolveStorage(target, ref component))
-            return false;
-
-        return component.Open;
     }
 
     public bool CanOpen(EntityUid user, EntityUid target, bool silent = false, SharedEntityStorageComponent? component = null)

@@ -1,5 +1,6 @@
 using Content.Server.Administration.Logs;
 using Content.Server.Body.Systems;
+using Content.Server.Chemistry.Containers.EntitySystems;
 using Content.Server.Construction;
 using Content.Server.Explosion.EntitySystems;
 using Content.Server.DeviceLinking.Events;
@@ -34,6 +35,7 @@ using Robust.Shared.Audio.Systems;
 using Robust.Shared.Containers;
 using Robust.Shared.Player;
 using System.Linq;
+using Content.Server.Administration.Logs;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 using Content.Shared.Stacks;
@@ -58,7 +60,7 @@ namespace Content.Server.Kitchen.EntitySystems
         [Dependency] private readonly IGameTiming _gameTiming = default!;
         [Dependency] private readonly ExplosionSystem _explosion = default!;
         [Dependency] private readonly SharedContainerSystem _container = default!;
-        [Dependency] private readonly SharedSolutionContainerSystem _solutionContainer = default!;
+        [Dependency] private readonly SolutionContainerSystem _solutionContainer = default!;
         [Dependency] private readonly TagSystem _tag = default!;
         [Dependency] private readonly TemperatureSystem _temperature = default!;
         [Dependency] private readonly UserInterfaceSystem _userInterface = default!;
@@ -82,11 +84,12 @@ namespace Content.Server.Kitchen.EntitySystems
             SubscribeLocalEvent<MicrowaveComponent, EntInsertedIntoContainerMessage>(OnContentUpdate);
             SubscribeLocalEvent<MicrowaveComponent, EntRemovedFromContainerMessage>(OnContentUpdate);
             SubscribeLocalEvent<MicrowaveComponent, InteractUsingEvent>(OnInteractUsing, after: new[] { typeof(AnchorableSystem) });
-            SubscribeLocalEvent<MicrowaveComponent, ContainerIsInsertingAttemptEvent>(OnInsertAttempt);
             SubscribeLocalEvent<MicrowaveComponent, BreakageEventArgs>(OnBreak);
             SubscribeLocalEvent<MicrowaveComponent, PowerChangedEvent>(OnPowerChanged);
             SubscribeLocalEvent<MicrowaveComponent, AnchorStateChangedEvent>(OnAnchorChanged);
             SubscribeLocalEvent<MicrowaveComponent, SuicideByEnvironmentEvent>(OnSuicideByEnvironment);
+            SubscribeLocalEvent<MicrowaveComponent, RefreshPartsEvent>(OnRefreshParts);
+            SubscribeLocalEvent<MicrowaveComponent, UpgradeExamineEvent>(OnUpgradeExamine);
 
             SubscribeLocalEvent<MicrowaveComponent, SignalReceivedEvent>(OnSignalReceived);
 
@@ -111,8 +114,12 @@ namespace Content.Server.Kitchen.EntitySystems
                 return;
             SetAppearance(ent.Owner, MicrowaveVisualState.Cooking, microwaveComponent);
 
-            microwaveComponent.PlayingStream =
-                _audio.PlayPvs(microwaveComponent.LoopingSound, ent, AudioParams.Default.WithLoop(true).WithMaxDistance(5))?.Entity;
+            var audio = _audio.PlayPvs(microwaveComponent.LoopingSound, ent, AudioParams.Default.WithLoop(true).WithMaxDistance(5));
+
+            if (audio == null)
+                return;
+
+            microwaveComponent.PlayingStream = audio!.Value.Entity;
         }
 
         private void OnCookStop(Entity<ActiveMicrowaveComponent> ent, ref ComponentShutdown args)
@@ -212,41 +219,16 @@ namespace Content.Server.Kitchen.EntitySystems
                 {
                     foreach (var item in component.Storage.ContainedEntities)
                     {
-                        string? itemID = null;
-
-                        // If an entity has a stack component, use the stacktype instead of prototype id
-                        if (TryComp<StackComponent>(item, out var stackComp))
-                        {
-                            itemID = _prototype.Index<StackPrototype>(stackComp.StackTypeId).Spawn;
-                        }
-                        else
-                        {
-                            var metaData = MetaData(item);
-                            if (metaData.EntityPrototype == null)
-                            {
-                                continue;
-                            }
-                            itemID = metaData.EntityPrototype.ID;
-                        }
-
-                        if (itemID != recipeSolid.Key)
+                        var metaData = MetaData(item);
+                        if (metaData.EntityPrototype == null)
                         {
                             continue;
                         }
 
-                        if (stackComp is not null)
-                        {
-                            if (stackComp.Count == 1)
-                            {
-                                _container.Remove(item, component.Storage);
-                            }
-                            _stack.Use(item, 1, stackComp);
-                            break;
-                        }
-                        else
+                        if (metaData.EntityPrototype.ID == recipeSolid.Key)
                         {
                             _container.Remove(item, component.Storage);
-                            Del(item);
+                            EntityManager.DeleteEntity(item);
                             break;
                         }
                     }
@@ -257,7 +239,7 @@ namespace Content.Server.Kitchen.EntitySystems
         private void OnInit(Entity<MicrowaveComponent> ent, ref ComponentInit args)
         {
             // this really does have to be in ComponentInit
-            ent.Comp.Storage = _container.EnsureContainer<Container>(ent, ent.Comp.ContainerId);
+            ent.Comp.Storage = _container.EnsureContainer<Container>(ent, "microwave_entity_container");
         }
 
         private void OnMapInit(Entity<MicrowaveComponent> ent, ref MapInitEvent args)
@@ -326,35 +308,6 @@ namespace Content.Server.Kitchen.EntitySystems
             UpdateUserInterfaceState(uid, component);
         }
 
-        private void OnInsertAttempt(Entity<MicrowaveComponent> ent, ref ContainerIsInsertingAttemptEvent args)
-        {
-            if (args.Container.ID != ent.Comp.ContainerId)
-                return;
-
-            if (ent.Comp.Broken)
-            {
-                args.Cancel();
-                return;
-            }
-
-            if (TryComp<ItemComponent>(args.EntityUid, out var item))
-            {
-                if (_item.GetSizePrototype(item.Size) > _item.GetSizePrototype(ent.Comp.MaxItemSize))
-                {
-                    args.Cancel();
-                    return;
-                }
-            }
-            else
-            {
-                args.Cancel();
-                return;
-            }
-
-            if (ent.Comp.Storage.Count >= ent.Comp.Capacity)
-                args.Cancel();
-        }
-
         private void OnInteractUsing(Entity<MicrowaveComponent> ent, ref InteractUsingEvent args)
         {
             if (args.Handled)
@@ -421,6 +374,17 @@ namespace Content.Server.Kitchen.EntitySystems
         {
             if (!args.Anchored)
                 _container.EmptyContainer(component.Storage);
+        }
+
+        private void OnRefreshParts(Entity<MicrowaveComponent> ent, ref RefreshPartsEvent args)
+        {
+            var cookRating = args.PartRatings[ent.Comp.MachinePartCookTimeMultiplier];
+            ent.Comp.CookTimeMultiplier = MathF.Pow(ent.Comp.CookTimeScalingConstant, cookRating - 1);
+        }
+
+        private void OnUpgradeExamine(Entity<MicrowaveComponent> ent, ref UpgradeExamineEvent args)
+        {
+            args.AddPercentageUpgrade("microwave-component-upgrade-cook-time", ent.Comp.CookTimeMultiplier);
         }
 
         private void OnSignalReceived(Entity<MicrowaveComponent> ent, ref SignalReceivedEvent args)
@@ -543,35 +507,17 @@ namespace Content.Server.Kitchen.EntitySystems
 
                 AddComp<ActivelyMicrowavedComponent>(item);
 
-                string? solidID = null;
-                int amountToAdd = 1;
-
-                // If a microwave recipe uses a stacked item, use the default stack prototype id instead of prototype id
-                if (TryComp<StackComponent>(item, out var stackComp))
-                {
-                    solidID = _prototype.Index<StackPrototype>(stackComp.StackTypeId).Spawn;
-                    amountToAdd = stackComp.Count;
-                }
-                else
-                {
-                    var metaData = MetaData(item); //this simply begs for cooking refactor
-                    if (metaData.EntityPrototype is not null)
-                        solidID = metaData.EntityPrototype.ID;
-                }
-
-                if (solidID is null)
-                {
+                var metaData = MetaData(item); //this simply begs for cooking refactor
+                if (metaData.EntityPrototype == null)
                     continue;
-                }
 
-
-                if (solidsDict.ContainsKey(solidID))
+                if (solidsDict.ContainsKey(metaData.EntityPrototype.ID))
                 {
-                    solidsDict[solidID] += amountToAdd;
+                    solidsDict[metaData.EntityPrototype.ID]++;
                 }
                 else
                 {
-                    solidsDict.Add(solidID, amountToAdd);
+                    solidsDict.Add(metaData.EntityPrototype.ID, 1);
                 }
 
                 if (!TryComp<SolutionContainerManagerComponent>(item, out var solMan))

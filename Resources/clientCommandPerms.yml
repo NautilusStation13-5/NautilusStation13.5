@@ -20,12 +20,14 @@
     - net_watchent
     - devwindow
     - fill
+    - dumpentities
     - ">"
     - gcf
     - gc
     - gc_mode
+    - resetent
+    - resetallents
     - cvar
-    - fuckrules
     - midipanic
     - replay_recording_start
     - replay_recording_stop
@@ -51,8 +53,6 @@
     - hidemechanisms
     - showmechanisms
     - menuvis
-    - resetent
-    - resetallents
     - showhealthbars
     - toggledecals
     - nodevis
@@ -72,7 +72,7 @@
     - detachent
     - localdelete
     - fullstatereset
-    - dumpentities
+    - fuckrules
 
 - Flags: MAPPING
   Commands:

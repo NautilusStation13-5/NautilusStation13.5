@@ -43,6 +43,14 @@
     - allcomps
     - entitysystemupdateorder
     - mind
+
+- Flags: HOST
+  Commands:
+    - methods
+    - ioc
+
+- Flags: ADMIN
+  Commands:
     - fuck
     - '=>'
     - '?'

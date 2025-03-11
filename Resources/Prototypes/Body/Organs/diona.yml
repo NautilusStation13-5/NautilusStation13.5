@@ -1,5 +1,5 @@
 - type: entity
-  id: BaseDionaOrgan
+  id: BaseDionaOrganUnGibbable
   parent: BaseItem
   abstract: true
   components:
@@ -26,16 +26,27 @@
       - people
 
 - type: entity
+  id: BaseDionaOrgan
+  parent: BaseDionaOrganUnGibbable
+  abstract: true
+  components:
+  - type: Gibbable
+
+- type: entity
   id: OrganDionaBrain
-  parent: [BaseDionaOrgan, OrganHumanBrain]
+  parent: BaseDionaOrganUnGibbable
   name: brain
   description: "The central hub of a diona's pseudo-neurological activity, its root-like tendrils search for its former body."
   components:
-  - type: Item
-    size: Small
-    heldPrefix: brain
   - type: Sprite
     state: brain
+  - type: Organ # Shitmed
+    slotId: brain
+  - type: Food # Shitmed Change
+    delay: 5
+    forceFeedDelay: 6
+    popupOnEat: true
+  - type: Brain # Shitmed
   - type: SolutionContainerManager
     solutions:
       organ:
@@ -62,6 +73,9 @@
     layers:
       - state: eyeball-l
       - state: eyeball-r
+  - type: Organ # Shitmed
+    slotId: eyes
+  - type: Eyes
 
 - type: entity
   id: OrganDionaStomach
@@ -80,6 +94,8 @@
         reagents:
         - ReagentId: UncookedAnimalProteins
           Quantity: 5
+  - type: Organ # Shitmed
+    slotId: stomach
   - type: Stomach
   - type: Metabolizer
     maxReagents: 6
@@ -93,9 +109,6 @@
       - id: Narcotic
       - id: Alcohol
         rateModifier: 0.1
-  - type: Item
-    size: Small
-    heldPrefix: stomach
 
 - type: entity
   id: OrganDionaLungs
@@ -104,11 +117,13 @@
   description: "A spongy mess of slimy, leaf-like structures. Capable of breathing both carbon dioxide and oxygen."
   components:
   - type: Sprite
-    state: lungs
-  - type: Item
-    size: Small
-    heldPrefix: lungs
-  - type: Lung
+    sprite: Mobs/Species/Human/organs.rsi
+    layers:
+      - state: lung-l
+      - state: lung-r
+  - type: Lung # Shitmed
+  - type: Organ # Shitmed
+    slotId: lungs
   - type: Metabolizer
     removeEmpty: true
     solutionOnBody: false
@@ -173,6 +188,11 @@
   - type: IsDeadIC
   - type: Body
     prototype: AnimalNymphBrain
+  - type: SurgeryTarget
+  - type: UserInterface
+    interfaces:
+      enum.SurgeryUIKey.Key:
+        type: SurgeryBui
 
 - type: entity
   id: OrganDionaNymphStomach
@@ -185,7 +205,11 @@
   - type: IsDeadIC
   - type: Body
     prototype: AnimalNymphStomach
-
+  - type: SurgeryTarget
+  - type: UserInterface
+    interfaces:
+      enum.SurgeryUIKey.Key:
+        type: SurgeryBui
 
 - type: entity
   id: OrganDionaNymphLungs
@@ -198,3 +222,8 @@
   - type: IsDeadIC
   - type: Body
     prototype: AnimalNymphLungs
+  - type: SurgeryTarget
+  - type: UserInterface
+    interfaces:
+      enum.SurgeryUIKey.Key:
+        type: SurgeryBui

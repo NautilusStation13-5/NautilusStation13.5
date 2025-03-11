@@ -11,12 +11,22 @@
 
 - type: startingGear
   id: PassengerGear
+  subGear:
+  - PassengerPlasmamanGear
   equipment:
+    jumpsuit: ClothingUniformJumpsuitColorGrey
+    back: ClothingBackpackFilled
+    shoes: ClothingShoesColorBlack
     id: PassengerPDA
     ears: ClothingHeadsetGrey
-    shoes: ClothingShoesLeather
-    outerClothing: ClothingOuterCoatBomber
-    jumpsuit: ClothingUniformJumpsuitLoungewear
-  #storage:
-    #back:
-    #- Stuff
+  innerClothingSkirt: ClothingUniformJumpskirtColorGrey
+  satchel: ClothingBackpackSatchelFilled
+  duffelbag: ClothingBackpackDuffelFilled
+
+- type: startingGear
+  id: PassengerPlasmamanGear
+  parent: BasePlasmamanGear
+  equipment:
+    jumpsuit: ClothingUniformEnvirosuitColorGrey
+    head: ClothingHeadEnvirohelmColorGrey
+    gloves: ClothingHandsGlovesEnviroglovesColorDarkGrey

@@ -7,6 +7,7 @@ using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
 using Robust.Shared;
 using Robust.Shared.Configuration;
+using Robust.Shared.Console;
 using Robust.Shared.Network;
 using Robust.Shared.Utility;
 using UsernameHelpers = Robust.Shared.AuthLib.UsernameHelpers;
@@ -25,12 +26,11 @@ namespace Content.Client.MainMenu
         [Dependency] private readonly IGameController _controllerProxy = default!;
         [Dependency] private readonly IResourceCache _resourceCache = default!;
         [Dependency] private readonly IUserInterfaceManager _userInterfaceManager = default!;
-        [Dependency] private readonly ILogManager _logManager = default!;
-
-        private ISawmill _sawmill = default!;
+        [Dependency] private readonly IConsoleHost _console = default!;
 
         private MainMenuControl _mainMenuControl = default!;
         private bool _isConnecting;
+        private bool _shouldGoLobby;
 
         // ReSharper disable once InconsistentNaming
         private static readonly Regex IPv6Regex = new(@"\[(.*:.*:.*)](?::(\d+))?");
@@ -38,18 +38,28 @@ namespace Content.Client.MainMenu
         /// <inheritdoc />
         protected override void Startup()
         {
-            _sawmill = _logManager.GetSawmill("mainmenu");
-
             _mainMenuControl = new MainMenuControl(_resourceCache, _configurationManager);
             _userInterfaceManager.StateRoot.AddChild(_mainMenuControl);
+
+            _client.PlayerJoinedGame += OnPlayerJoinedGame;
 
             _mainMenuControl.QuitButton.OnPressed += QuitButtonPressed;
             _mainMenuControl.OptionsButton.OnPressed += OptionsButtonPressed;
             _mainMenuControl.DirectConnectButton.OnPressed += DirectConnectButtonPressed;
+            _mainMenuControl.GoToLobbyButton.OnPressed += GoToLobbyButtonPressed;
             _mainMenuControl.AddressBox.OnTextEntered += AddressBoxEntered;
             _mainMenuControl.ChangelogButton.OnPressed += ChangelogButtonPressed;
 
             _client.RunLevelChanged += RunLevelChanged;
+        }
+
+        private void OnPlayerJoinedGame(object? sender, PlayerEventArgs e)
+        {
+            if (_shouldGoLobby)
+            {
+                _console.ExecuteCommand("golobby");
+                _shouldGoLobby = false;
+            }
         }
 
         /// <inheritdoc />
@@ -82,12 +92,18 @@ namespace Content.Client.MainMenu
             TryConnect(input.Text);
         }
 
+        private void GoToLobbyButtonPressed(BaseButton.ButtonEventArgs obj)
+        {
+            var input = _mainMenuControl.AddressBox;
+            TryConnect(input.Text);
+
+            _shouldGoLobby = true;
+        }
+
         private void AddressBoxEntered(LineEdit.LineEditEventArgs args)
         {
             if (_isConnecting)
-            {
                 return;
-            }
 
             TryConnect(args.Text);
         }
@@ -121,7 +137,7 @@ namespace Content.Client.MainMenu
             catch (ArgumentException e)
             {
                 _userInterfaceManager.Popup($"Unable to connect: {e.Message}", "Connection error.");
-                _sawmill.Warning(e.ToString());
+                Logger.Warning(e.ToString());
                 _netManager.ConnectFailed -= _onConnectFailed;
                 _setConnectingState(false);
             }
@@ -190,6 +206,7 @@ namespace Content.Client.MainMenu
         {
             _isConnecting = state;
             _mainMenuControl.DirectConnectButton.Disabled = state;
+            _mainMenuControl.GoToLobbyButton.Disabled = state;
         }
     }
 }

@@ -1,4 +1,4 @@
--create-3rd-person =
+﻿-create-3rd-person =
     { $chance ->
         [1] Creates
         *[other] create
@@ -36,12 +36,6 @@ reagent-effect-guidebook-emp-reaction-effect =
         [1] Causes
         *[other] cause
     } an electromagnetic pulse
-
-reagent-effect-guidebook-flash-reaction-effect =
-    { $chance ->
-        [1] Causes
-        *[other] cause
-    } a blinding flash
 
 reagent-effect-guidebook-foam-area-reaction-effect =
     { $chance ->
@@ -345,42 +339,44 @@ reagent-effect-guidebook-innoculate-zombie-infection =
         *[other] cure
     } an ongoing zombie infection, and provides immunity to future infections
 
-reagent-effect-guidebook-reduce-rotting =
+reagent-effect-guidebook-reduce-rotting = 
     { $chance ->
         [1] Regenerates
         *[other] regenerate
     } {NATURALFIXED($time, 3)} {MANY("second", $time)} of rotting
 
-reagent-effect-guidebook-area-reaction =
+reagent-effect-guidebook-missing =
     { $chance ->
         [1] Causes
         *[other] cause
-    } a smoke or foam reaction for {NATURALFIXED($duration, 3)} {MANY("second", $duration)}
+    } an unknown effect as nobody has written this effect yet
 
-reagent-effect-guidebook-add-to-solution-reaction =
+reagent-effect-guidebook-change-glimmer-reaction-effect =
     { $chance ->
-        [1] Causes
-        *[other] cause
-    } chemicals applied to an object to be added to its internal solution container
+        [1] Modifies
+        *[other] modify
+    } the glimmer count by {$count} points
 
-reagent-effect-guidebook-plant-attribute =
+reagent-effect-guidebook-chem-remove-psionic =
     { $chance ->
-        [1] Adjusts
-        *[other] adjust
-    } {$attribute} by [color={$colorName}]{$amount}[/color]
+        [1] Removes
+        *[other] remove
+    } psionic powers
 
-reagent-effect-guidebook-plant-cryoxadone =
+reagent-effect-guidebook-chem-reroll-psionic =
     { $chance ->
-        [1] Ages back
-        *[other] age back
-    } the plant, depending on the plant's age and time to grow
+        [1] Allows
+        *[other] allow
+    } a chance to get a different psionic power
 
-reagent-effect-guidebook-plant-phalanximine =
-    { $chance ->
-        [1] Restores
-        *[other] restore
-    } viability to a plant rendered nonviable by a mutation
+reagent-effect-guidebook-add-moodlet =
+    modifies mood by {$amount}
+    { $timeout ->
+        [0] indefinitely
+        *[other] for {$timeout} seconds
+    }
 
+reagent-effect-guidebook-purify-evil = Purifies evil powers
 reagent-effect-guidebook-plant-diethylamine =
     { $chance ->
         [1] Increases

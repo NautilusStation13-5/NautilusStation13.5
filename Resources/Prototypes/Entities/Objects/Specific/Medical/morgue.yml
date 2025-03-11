@@ -1,6 +1,6 @@
 - type: entity
   id: BodyBag
-  parent: BaseDeployFoldable
+  parent: BaseFoldable
   name: body bag
   description: A plastic bag designed for the storage and transportation of cadavers to stop body decomposition.
   components:
@@ -40,7 +40,7 @@
           bounds: "-0.25,-0.4,0.25,0.1"
         density: 20
         mask:
-        - ItemMask
+        - Impassable
   - type: EntityStorage
     capacity: 1
     isCollidableWhenOpen: true
@@ -56,9 +56,6 @@
       whitelist:
         components:
         - Paper
-      blacklist:
-        tags:
-        - Book
   - type: Appearance
   - type: EntityStorageVisuals
     stateDoorOpen: open_overlay
@@ -119,6 +116,7 @@
   - type: Tag
     tags:
     - Trash
+    - Ash # Frontier
   - type: SolutionContainerManager
     solutions:
       food:
@@ -133,6 +131,7 @@
     solution: food
   - type: Extractable
     grindableSolutionName: food
+  - type: SupermatterImmune
 
 - type: entity
   parent: Ash
@@ -141,7 +140,7 @@
   description: Much less deadly in this form.
   components:
     - type: Sprite
-      sprite: Mobs/Ghosts/revenant.rsi
+      sprite: DeltaV/Mobs/Ghosts/revenant.rsi # DeltaV - Custom revenant sprite
       state: ectoplasm
     - type: Tag
       tags:
@@ -153,9 +152,11 @@
           maxVol: 50
           reagents:
             - ReagentId: Ash
-              Quantity: 25
+              Quantity: 5
             - ReagentId: Necrosol
-              Quantity: 25
+              Quantity: 5
+            - ReagentId: Ectoplasm  # DeltaV - for normality crystals
+              Quantity: 30          # DeltaV
     - type: GuideHelp
       guides:
       - MinorAntagonists

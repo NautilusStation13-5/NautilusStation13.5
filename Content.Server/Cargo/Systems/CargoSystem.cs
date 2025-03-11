@@ -1,5 +1,6 @@
 using Content.Server.Cargo.Components;
 using Content.Server.DeviceLinking.Systems;
+using Content.Server.Paper;
 using Content.Server.Popups;
 using Content.Server.Shuttles.Systems;
 using Content.Server.Stack;
@@ -11,10 +12,11 @@ using Content.Shared.Cargo;
 using Content.Shared.Cargo.Components;
 using Content.Shared.Containers.ItemSlots;
 using Content.Shared.Mobs.Components;
-using Content.Shared.Paper;
 using JetBrains.Annotations;
 using Robust.Server.GameObjects;
 using Robust.Shared.Audio.Systems;
+using Robust.Shared.Configuration;
+using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 using Robust.Shared.Random;
@@ -42,6 +44,14 @@ public sealed partial class CargoSystem : SharedCargoSystem
     [Dependency] private readonly UserInterfaceSystem _uiSystem = default!;
     [Dependency] private readonly MetaDataSystem _metaSystem = default!;
     [Dependency] private readonly RadioSystem _radio = default!;
+    [Dependency] private readonly IConfigurationManager _cfgManager = default!;
+    [Dependency] private readonly SharedMapSystem _sharedMapSystem = default!;
+    [Dependency] private readonly MapSystem _mapSystem = default!;
+    [Dependency] private readonly IMapManager _mapManager = default!;
+    [Dependency] private readonly IEntityManager _entityManager = default!;
+    [Dependency] private readonly IComponentFactory _factory = default!;
+    [Dependency] private readonly MapLoaderSystem _mapLoader = default!;
+    [Dependency] private readonly SharedIdCardSystem _idCardSystem = default!;
 
     private EntityQuery<TransformComponent> _xformQuery;
     private EntityQuery<CargoSellBlacklistComponent> _blacklistQuery;

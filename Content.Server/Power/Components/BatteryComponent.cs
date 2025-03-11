@@ -1,6 +1,4 @@
 using Content.Server.Power.EntitySystems;
-﻿using Content.Shared.Alert;
-using Robust.Shared.Prototypes;
 
 namespace Content.Server.Power.Components
 {
@@ -20,14 +18,17 @@ namespace Content.Server.Power.Components
         [DataField]
         public float MaxCharge;
 
-         [DataField]
-         public ProtoId<AlertPrototype> NoBatteryAlert = "JellidBatteryNone";
-
         /// <summary>
         /// Current charge of the battery in joules (ie. watt seconds)
         /// </summary>
         [DataField("startingCharge")]
         public float CurrentCharge;
+
+        /// <summary>
+        /// True if the battery is fully charged.
+        /// </summary>
+        [ViewVariables]
+        public bool IsFullyCharged => MathHelper.CloseToPercent(CurrentCharge, MaxCharge);
 
         /// <summary>
         /// The price per one joule. Default is 1 credit for 10kJ.

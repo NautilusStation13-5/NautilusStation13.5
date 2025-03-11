@@ -1,4 +1,4 @@
-- type: gas
+﻿- type: gas
   id: 0
   name: gases-oxygen
   specificHeat: 20
@@ -6,7 +6,6 @@
   molarMass: 32
   color: 2887E8
   reagent: Oxygen
-  pricePerMole: 0
 
 - type: gas
   id: 1
@@ -16,7 +15,6 @@
   molarMass: 28
   color: DA1010
   reagent: Nitrogen
-  pricePerMole: 0
 
 - type: gas
   id: 2
@@ -26,7 +24,6 @@
   molarMass: 44
   color: 4e4e4e
   reagent: CarbonDioxide
-  pricePerMole: 0
 
 - type: gas
   id: 3
@@ -38,7 +35,6 @@
   gasOverlayState: plasma
   color: FF3300
   reagent: Plasma
-  pricePerMole: 0
 
 - type: gas
   id: 4
@@ -62,7 +58,6 @@
   gasOverlayState: water_vapor
   color: bffffd
   reagent: Water
-  pricePerMole: 0
 
 - type: gas
   id: 6
@@ -84,9 +79,9 @@
   specificHeat: 40
   heatCapacityRatio: 1.3
   molarMass: 44
-  color: 8F00FF
+  color: 2887E8
   reagent: NitrousOxide
-  pricePerMole: 0.1
+  pricePerMole: 1
 
 - type: gas
   id: 8
@@ -100,15 +95,3 @@
   color: 3a758c
   reagent: Frezon
   pricePerMole: 3
-
-- type: gas
-  id: 9
-  name: gases-water
-  specificHeat: 1000 # Or change it to low values
-  heatCapacityRatio: 1.33
-  molarMass: 18
-  gasOverlaySprite: /Textures/Effects/atmospherics.rsi
-  gasOverlayState: water
-  color: 135c4f # You can change it if you want, its here for gas analyser afaik
-  reagent: SeaWater
-  pricePerMole: 0.04

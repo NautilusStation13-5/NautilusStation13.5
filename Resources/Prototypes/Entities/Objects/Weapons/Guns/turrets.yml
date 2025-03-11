@@ -120,7 +120,7 @@
       context: "human"
 
 - type: entity
-  parent: [BaseWeaponTurret, BaseSyndicateContraband]
+  parent: BaseWeaponTurret
   id: WeaponTurretSyndicate
   suffix: Syndicate
   components:
@@ -128,6 +128,47 @@
       factions:
         - Syndicate
 
+- type: entity
+  parent: BaseWeaponTurret
+  id: WeaponTurretSAN
+  suffix: Sol Alliance Navy
+  description: A turret designed to provide protection for Sol Marines during combat drops. It menaces targets with a twin-linked C-20r, although its cheap fire controller lends to poor accuracy.
+  components:
+    - type: NpcFactionMember
+      factions:
+        - SAN
+    - type: Gun
+      fireRate: 10  # Guaranteed to spook the shit out of people.
+      minAngle: 40
+      maxAngle: 45  # Not guaranteed to do a whole lot of damage unless they stand there and let it hit them.
+      soundGunshot:
+        path: /Audio/Weapons/Guns/Gunshots/c-20r.ogg
+    - type: BallisticAmmoProvider
+      proto: CartridgePistol
+      capacity: 200
+    - type: Destructible
+      thresholds:
+        - trigger:
+            !type:DamageTrigger
+            damage: 200
+          behaviors:
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+        - trigger:
+            !type:DamageTrigger
+            damage: 100
+          # TODO: Construction graph
+          behaviors:
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+            - !type:PlaySoundBehavior
+              sound:
+                collection: MetalGlassBreak
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                SheetSteel1:
+                  min: 3
+                  max: 5
 - type: entity
   parent: BaseWeaponTurret
   name: disposable ballistic turret
@@ -196,17 +237,8 @@
     - SimpleHostile
 
 - type: entity
-  parent: BaseWeaponTurret
-  id: WeaponTurretAllHostile
-  suffix: All hostile
-  components:
-  - type: NpcFactionMember
-    factions:
-    - AllHostile
-
-- type: entity
   name: xeno turret
-  description: Shoots 9mm acid projectiles.
+  description: Shoots 9mm acid projectiles
   parent: BaseWeaponTurret
   id: WeaponTurretXeno
   suffix: Xeno

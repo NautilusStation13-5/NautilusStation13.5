@@ -1,5 +1,6 @@
-- type: entity
+﻿- type: entity
   id: OrganMothStomach
+  name: moth stomach
   parent: [OrganAnimalStomach, OrganHumanStomach]
   categories: [ HideSpawnMenu ]
   components:
@@ -7,6 +8,7 @@
     specialDigestible:
       tags:
       - ClothMade
+      - Fruit # DeltaV - Moth can eat fruits.
       - Paper
   - type: SolutionContainerManager
     solutions:

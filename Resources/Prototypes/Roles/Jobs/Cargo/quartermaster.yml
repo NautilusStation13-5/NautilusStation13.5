@@ -4,14 +4,11 @@
   description: job-description-qm
   playTimeTracker: JobQuartermaster
   requirements:
-    - !type:RoleTimeRequirement
-      role: JobCargoTechnician
-      time: 3600 #1 hr
-    - !type:DepartmentTimeRequirement
-      department: Cargo
-      time: 3600 #1 hr
-    - !type:OverallPlaytimeRequirement
-      time: 7200 #2 ish hours
+    - !type:CharacterTraitRequirement
+      inverted: true
+      traits:
+        - Foreigner
+        - ForeignerLight
   weight: 10
   startingGear: QuartermasterGear
   icon: "JobIconQuarterMaster"
@@ -20,11 +17,12 @@
   access:
   - Cargo
   - Salvage
+  - Mail # Nyanotrasen - MailCarrier, see Resources/Prototypes/Nyanotrasen/Roles/Jobs/Cargo/mail-carrier.yml
   - Quartermaster
   - Maintenance
-  - External
   - Command
-  - Brig
+  - Orders # DeltaV - Orders, see Resources/Prototypes/DeltaV/Access/cargo.yml
+  - External # DeltaV - for promoting salvage specialists
   - Cryogenics
   special:
   - !type:AddImplantSpecial
@@ -32,14 +30,31 @@
   - !type:AddComponentSpecial
     components:
       - type: CommandStaff
+  afterLoadoutSpecial:
+  - !type:ModifyEnvirosuitSpecial
+    charges: 8
 
 - type: startingGear
   id: QuartermasterGear
+  subGear:
+  - QuartermasterPlasmamanGear
   equipment:
+    head: ClothingHeadHatBeretLogi
+    jumpsuit: ClothingUniformJumpsuitQM
+    back: ClothingBackpackQuartermasterFilled
+    shoes: ClothingShoesColorBrown
     id: QuartermasterPDA
     ears: ClothingHeadsetQM
     belt: BoxFolderClipboard
     pocket1: AppraisalTool
-  storage:
-    back:
-    - Flash
+  innerClothingSkirt: ClothingUniformJumpskirtQM
+  satchel: ClothingBackpackSatchelQuartermasterFilled
+  duffelbag: ClothingBackpackDuffelQuartermasterFilled
+
+- type: startingGear
+  id: QuartermasterPlasmamanGear
+  parent: BasePlasmamanGear
+  equipment:
+    jumpsuit: ClothingUniformEnvirosuitQM
+    head: ClothingHeadEnvirohelmQM
+    gloves: ClothingHandsGlovesEnviroglovesCargo

@@ -24,6 +24,7 @@
         - Impassable
         layer:
         - MidImpassable
+        - BulletImpassable
   - type: Damageable
     damageContainer: StructuralInorganic
     damageModifierSet: Metallic
@@ -31,7 +32,7 @@
     thresholds:
     - trigger:
         !type:DamageTrigger
-        damage: 100
+        damage: 50
       behaviors:
       - !type:DoActsBehavior
         acts: ["Destruction"]
@@ -39,7 +40,11 @@
     key: walls
     mode: NoSprite
   - type: StaticPrice
-    price: 100
+    price: 83
+  - type: RequireProjectileTarget
+  - type: SpeedModifierContacts
+    walkSpeedModifier: 0.4
+    sprintSpeedModifier: 0.4
 
 - type: entity
   id: PlasticFlapsClear
@@ -71,6 +76,7 @@
         layer:
         - Opaque
         - MidImpassable
+        - BulletImpassable
   - type: Occluder
   - type: Construction
     graph: PlasticFlapsGraph
@@ -87,13 +93,16 @@
     thresholds:
     - trigger:
         !type:DamageTrigger
-        damage: 150
+        damage: 75
       behaviors:
       - !type:DoActsBehavior
         acts: ["Destruction"]
   - type: Airtight
   - type: StaticPrice
     price: 100
+  - type: SpeedModifierContacts
+    walkSpeedModifier: 0.3
+    sprintSpeedModifier: 0.3
 
 - type: entity
   id: PlasticFlapsAirtightOpaque
@@ -106,10 +115,13 @@
     thresholds:
     - trigger:
         !type:DamageTrigger
-        damage: 150
+        damage: 75
       behaviors:
       - !type:DoActsBehavior
         acts: ["Destruction"]
   - type: Airtight
   - type: StaticPrice
     price: 100
+  - type: SpeedModifierContacts
+    walkSpeedModifier: 0.25
+    sprintSpeedModifier: 0.25

@@ -17,14 +17,19 @@
       shader: unshaded
     - state: full
       shader: unshaded
+  - type: UpgradeBattery
+    maxChargeMultiplier: 2
+    baseMaxCharge: 2500000
+  - type: UpgradePowerSupplyRamping
+    scaling: Linear
+    supplyRampingMultiplier: 1
   - type: Battery
-    maxCharge: 2500000
     startingCharge: 0
   - type: ExaminableBattery
   - type: PointLight
     radius: 1.5
-    energy: 1
-    color: "#ff6900"
+    energy: 1.6
+    color: "#3db83b"
     castShadows: false
   - type: NodeContainer
     examinable: true
@@ -52,8 +57,8 @@
     supplyRampTolerance: 5000
     supplyRampRate: 1000
   - type: Damageable
-    damageContainer: StructuralInorganic
-    damageModifierSet: StructuralMetallicStrong
+    damageContainer: Inorganic
+    damageModifierSet: StrongMetallic
   - type: PacifismDangerousAttack
   - type: Destructible
     thresholds:
@@ -126,11 +131,10 @@
       path: /Audio/Ambience/Objects/buzzing.ogg
   - type: PointLight
     radius: 1.5
-    energy: 1
-    color: "#ff6900"
+    energy: 1.6
+    color: "#3db83b"
     netsync: false
     castShadows: false
-    offset: 0, -0.2
   - type: Clickable
   - type: AccessReader
     access: [["Engineering"]]
@@ -152,7 +156,7 @@
     sprite: Structures/Power/substation.rsi
     layers:
     - state: substation_wall
-    - state: screen_wall
+    - state: screen
       shader: unshaded
   - type: Battery
     maxCharge: 2000000
@@ -183,8 +187,8 @@
     supplyRampTolerance: 5000
     supplyRampRate: 1000
   - type: Damageable
-    damageContainer: StructuralInorganic
-    damageModifierSet: StructuralMetallicStrong
+    damageContainer: Inorganic
+    damageModifierSet: Metallic
   - type: PacifismDangerousAttack
   - type: Destructible
     thresholds:
@@ -258,7 +262,7 @@
   id: BaseSubstationWallFrame
   categories: [ HideSpawnMenu ]
   name: wallmount substation frame
-  description: A substation frame for construction.
+  description: A substation frame for construction
   placement:
     mode: SnapgridCenter
   components:

@@ -14,7 +14,6 @@ public abstract class EquipmentHudSystem<T> : EntitySystem where T : IComponent
 {
     [Dependency] private readonly IPlayerManager _player = default!;
 
-    [ViewVariables]
     protected bool IsActive;
     protected virtual SlotFlags TargetSlots => ~SlotFlags.POCKET;
 
@@ -94,7 +93,8 @@ public abstract class EquipmentHudSystem<T> : EntitySystem where T : IComponent
 
     protected virtual void OnRefreshEquipmentHud(EntityUid uid, T component, InventoryRelayedEvent<RefreshEquipmentHudEvent<T>> args)
     {
-        OnRefreshComponentHud(uid, component, args.Args);
+        args.Args.Active = true;
+        args.Args.Components.Add(component);
     }
 
     protected virtual void OnRefreshComponentHud(EntityUid uid, T component, RefreshEquipmentHudEvent<T> args)

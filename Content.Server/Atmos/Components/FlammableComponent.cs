@@ -68,6 +68,13 @@ namespace Content.Server.Atmos.Components
         public bool CanExtinguish = true;
 
         /// <summary>
+        ///     Should the component ignore fire protection when on fire?
+        /// </summary>
+        [ViewVariables(VVAccess.ReadWrite)]
+        [DataField]
+        public bool IgnoreFireProtection = false;
+
+        /// <summary>
         ///     How many firestacks should be applied to component when being set on fire?
         /// </summary>
         [ViewVariables(VVAccess.ReadWrite)]
@@ -80,6 +87,11 @@ namespace Content.Server.Atmos.Components
         [DataField, ViewVariables(VVAccess.ReadWrite)]
         public float FirestackFade = -0.1f;
 
+        /// <summary>
+        ///     How stronger will firestack increases be?
+        /// </summary>
+        [DataField]
+        public float FireStackIncreaseMultiplier = 1f;
         [DataField]
         public ProtoId<AlertPrototype> FireAlert = "Fire";
     }

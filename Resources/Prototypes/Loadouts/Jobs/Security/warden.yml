@@ -1,32 +1,120 @@
+# Warden
+# Backpacks
+
+# Belt
+
+# Ears
+
+# Equipment
+
+# Eyes
+
+# Gloves
+
 # Head
 - type: loadout
-  id: WardenHead
-  equipment:
-    head: ClothingHeadHatWarden
+  id: LoadoutClothingHeadHatBeretWarden
+  category: JobsSecurityWarden
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: LoadoutWardenHead
+    - !type:CharacterJobRequirement
+      jobs:
+        - Warden
+  items:
+    - ClothingHeadHatBeretWarden
+
+# Id
+
+# Neck
+
+# Mask
+
+# Outer
+- type: loadout
+  id: LoadoutClothingOuterWinterCoatWarden
+  category: JobsSecurityWarden
+  cost: 0
+  requirements:
+  - !type:CharacterItemGroupRequirement
+    group: LoadoutWardenOuter
+  - !type:CharacterJobRequirement
+    jobs:
+      - Warden
+  items:
+  - ClothingOuterWinterWardenUnarmored
 
 - type: loadout
-  id: WardenBeret
-  equipment:
-    head: ClothingHeadHatBeretWarden
+  id: LoadoutClothingOuterCoatWarden
+  category: JobsSecurityWarden
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: LoadoutWardenOuter
+    - !type:CharacterJobRequirement
+      jobs:
+        - Warden
+  items:
+    - ClothingOuterCoatWarden
 
-# Jumpsuit
+# Shoes
+
+# Uniforms
 - type: loadout
-  id: WardenJumpsuit
-  equipment:
-    jumpsuit: ClothingUniformJumpsuitWarden
+  id: LoadoutUniformJumpsuitWardenBlue
+  category: JobsSecurityWarden
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: LoadoutWardenUniforms
+    - !type:CharacterJobRequirement
+      jobs:
+        - Warden
+  items:
+    - ClothingUniformJumpsuitWardenBlue
 
 - type: loadout
-  id: WardenJumpskirt
-  equipment:
-    jumpsuit: ClothingUniformJumpskirtWarden
+  id: LoadoutUniformJumpsuitWardenGrey
+  category: JobsSecurityWarden
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: LoadoutWardenUniforms
+    - !type:CharacterJobRequirement
+      jobs:
+        - Warden
+  items:
+    - ClothingUniformJumpsuitWardenGrey
 
-# OuterClothing
 - type: loadout
-  id: WardenCoat
-  equipment:
-    outerClothing: ClothingOuterCoatWarden
+  id: LoadoutUniformJumpskirtWardenBlue
+  category: JobsSecurityWarden
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: LoadoutWardenUniforms
+    - !type:CharacterJobRequirement
+      jobs:
+        - Warden
+  items:
+    - ClothingUniformJumpskirtWardenBlue
 
 - type: loadout
-  id: WardenArmoredWinterCoat
-  equipment:
-    outerClothing: ClothingOuterWinterWarden
+  id: LoadoutUniformJumpskirtWardenGrey
+  category: JobsSecurityWarden
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: LoadoutWardenUniforms
+    - !type:CharacterJobRequirement
+      jobs:
+        - Warden
+  items:
+    - ClothingUniformJumpskirtWardenGrey

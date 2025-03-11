@@ -14,6 +14,13 @@ namespace Content.Shared.Mech.Components;
 public sealed partial class MechComponent : Component
 {
     /// <summary>
+    /// Goobstation: Whether or not an emag disables it.
+    /// </summary>
+    [DataField("breakOnEmag")]
+    [AutoNetworkedField]
+    public bool BreakOnEmag = true;
+
+    /// <summary>
     /// How much "health" the mech has left.
     /// </summary>
     [ViewVariables(VVAccess.ReadWrite), AutoNetworkedField]
@@ -31,9 +38,6 @@ public sealed partial class MechComponent : Component
     /// </summary>
     [ViewVariables(VVAccess.ReadWrite), AutoNetworkedField]
     public FixedPoint2 Energy = 0;
-
-    [ViewVariables(VVAccess.ReadWrite), AutoNetworkedField]
-    public bool IsPilotControlling { get; set; } = false;
 
     /// <summary>
     /// The maximum amount of energy the mech can have.
@@ -144,6 +148,8 @@ public sealed partial class MechComponent : Component
     [DataField]
     public EntProtoId MechCycleAction = "ActionMechCycleEquipment";
     [DataField]
+    public EntProtoId ToggleAction = "ActionToggleLight"; //Goobstation Mech Lights toggle action 
+    [DataField]
     public EntProtoId MechUiAction = "ActionMechOpenUI";
     [DataField]
     public EntProtoId MechEjectAction = "ActionMechEject";
@@ -161,4 +167,5 @@ public sealed partial class MechComponent : Component
     [DataField] public EntityUid? MechCycleActionEntity;
     [DataField] public EntityUid? MechUiActionEntity;
     [DataField] public EntityUid? MechEjectActionEntity;
+    [DataField, AutoNetworkedField] public EntityUid? ToggleActionEntity; //Goobstation Mech Lights toggle action 
 }

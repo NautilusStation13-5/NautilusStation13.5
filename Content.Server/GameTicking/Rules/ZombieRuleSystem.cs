@@ -1,4 +1,5 @@
 using Content.Server.Antag;
+using Content.Server.Announcements.Systems;
 using Content.Server.Chat.Systems;
 using Content.Server.GameTicking.Rules.Components;
 using Content.Server.Popups;
@@ -32,6 +33,8 @@ public sealed class ZombieRuleSystem : GameRuleSystem<ZombieRuleComponent>
     [Dependency] private readonly RoundEndSystem _roundEnd = default!;
     [Dependency] private readonly StationSystem _station = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private readonly AnnouncerSystem _announcer = default!;
+    [Dependency] private readonly GameTicker _gameTicker = default!;
     [Dependency] private readonly ZombieSystem _zombie = default!;
 
     public override void Initialize()
@@ -119,7 +122,9 @@ public sealed class ZombieRuleSystem : GameRuleSystem<ZombieRuleComponent>
         {
             foreach (var station in _station.GetStations())
             {
-                _chat.DispatchStationAnnouncement(station, Loc.GetString("zombie-shuttle-call"), colorOverride: Color.Crimson);
+                _announcer.SendAnnouncement(_announcer.GetAnnouncementId("ShuttleCalled"),
+                    _station.GetInOwningStation(station), "zombie-shuttle-call",
+                    colorOverride: Color.Crimson);
             }
             _roundEnd.RequestRoundEnd(null, false);
         }
@@ -159,7 +164,7 @@ public sealed class ZombieRuleSystem : GameRuleSystem<ZombieRuleComponent>
     /// <param name="includeOffStation">Include healthy players that are not on the station grid</param>
     /// <param name="includeDead">Should dead zombies be included in the count</param>
     /// <returns></returns>
-    private float GetInfectedFraction(bool includeOffStation = true, bool includeDead = false)
+    private float GetInfectedFraction(bool includeOffStation = false, bool includeDead = true)
     {
         var players = GetHealthyHumans(includeOffStation);
         var zombieCount = 0;
@@ -179,14 +184,14 @@ public sealed class ZombieRuleSystem : GameRuleSystem<ZombieRuleComponent>
     /// Flying off via a shuttle disqualifies you.
     /// </summary>
     /// <returns></returns>
-    private List<EntityUid> GetHealthyHumans(bool includeOffStation = true)
+    private List<EntityUid> GetHealthyHumans(bool includeOffStation = false)
     {
         var healthy = new List<EntityUid>();
 
         var stationGrids = new HashSet<EntityUid>();
         if (!includeOffStation)
         {
-            foreach (var station in _station.GetStationsSet())
+            foreach (var station in _gameTicker.GetSpawnableStations())
             {
                 if (TryComp<StationDataComponent>(station, out var data) && _station.GetLargestGrid(data) is { } grid)
                     stationGrids.Add(grid);
@@ -197,13 +202,11 @@ public sealed class ZombieRuleSystem : GameRuleSystem<ZombieRuleComponent>
         var zombers = GetEntityQuery<ZombieComponent>();
         while (players.MoveNext(out var uid, out _, out _, out var mob, out var xform))
         {
-            if (!_mobState.IsAlive(uid, mob))
-                continue;
-
-            if (zombers.HasComponent(uid))
-                continue;
-
-            if (!includeOffStation && !stationGrids.Contains(xform.GridUid ?? EntityUid.Invalid))
+            if (!_mobState.IsAlive(uid, mob)
+                || HasComp<PendingZombieComponent>(uid) //Do not include infected players in the "Healthy players" list.
+                || HasComp<ZombifyOnDeathComponent>(uid)
+                || zombers.HasComponent(uid)
+                || !includeOffStation && !stationGrids.Contains(xform.GridUid ?? EntityUid.Invalid))
                 continue;
 
             healthy.Add(uid);

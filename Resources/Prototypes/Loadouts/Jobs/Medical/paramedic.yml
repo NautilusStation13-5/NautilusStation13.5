@@ -1,34 +1,53 @@
+# Paramedic
+# Backpacks
+
+# Belt
+
+# Ears
+
+# Equipment
+
+# Eyes
+
+# Gloves
+
 # Head
-- type: loadout
-  id: ParamedicHead
-  equipment:
-    head: ClothingHeadHatParamedicsoft
 
-# Jumpsuit
-- type: loadout
-  id: ParamedicJumpsuit
-  equipment:
-    jumpsuit: ClothingUniformJumpsuitParamedic
+# Id
 
-- type: loadout
-  id: ParamedicJumpskirt
-  equipment:
-    jumpsuit: ClothingUniformJumpskirtParamedic
+# Neck
 
-# Outer clothing
-- type: loadout
-  id: ParamedicWindbreaker
-  equipment:
-    outerClothing: ClothingOuterCoatParamedicWB
+# Mask
 
-- type: loadout
-  id: ParamedicWintercoat
-  equipment:
-    outerClothing: ClothingOuterWinterPara
+# Outer
 
 # Shoes
-- type: loadout
-  id: BlueShoes
-  equipment:
-    shoes: ClothingShoesColorBlue
 
+# Uniforms
+- type: loadout
+  id: LoadoutMedicalUniformParamedicJumpsuit
+  category: JobsMedicalParamedic
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: LoadoutParamedicUniforms
+    - !type:CharacterJobRequirement
+      jobs:
+        - Paramedic
+  items:
+    - ClothingUniformJumpsuitParamedic
+
+- type: loadout
+  id: LoadoutMedicalUniformParamedicJumpskirt
+  category: JobsMedicalParamedic
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: LoadoutParamedicUniforms
+    - !type:CharacterJobRequirement
+      jobs:
+        - Paramedic
+  items:
+    - ClothingUniformJumpskirtParamedic

@@ -16,7 +16,6 @@
     - Ammonia
     - NitrousOxide
     - Frezon
-    - Water
     #- Helium3 TODO: fusion
     # remove everything except oxygen to maintain oxygen ratio
     overflowGases:
@@ -28,10 +27,8 @@
     - Ammonia
     - NitrousOxide
     - Frezon
-    - Water
-    TransferRate: 0.9
+    #- Helium3 TODO: fusion
   - type: AirIntake
-    PumpPower: 2
   # for intake and filter to work
   - type: AtmosDevice
     requireAnchored: false
@@ -45,8 +42,9 @@
       enum.MechUiKey.Key:
         type: MechBoundUserInterface
   - type: MeleeWeapon
+    canWideSwing: false
     hidden: true
-    attackRate: 0.75
+    attackRate: 1.3333
     damage:
       types:
         Blunt: 25 #thwack
@@ -75,7 +73,7 @@
         shape:
           !type:PhysShapeCircle
           radius: 0.45
-        density: 1000
+        density: 21390 # 15 Tonnes
         mask:
         - MobMask
         layer:
@@ -86,9 +84,10 @@
       mech-pilot-slot: !type:ContainerSlot
       mech-equipment-container: !type:Container
       mech-battery-slot: !type:ContainerSlot
+      paper_label: !type:ContainerSlot # Goobstation
   - type: Damageable
     damageContainer: Inorganic
-    damageModifierSet: Metallic
+    damageModifierSet: LightArmor # Goobstation
   - type: FootstepModifier
     footstepSoundCollection:
       path: /Audio/Mecha/mechmove03.ogg
@@ -99,7 +98,7 @@
     thresholds:
     - trigger:
         !type:DamageTrigger
-        damage: 400
+        damage: 1000 # Goobstation
       behaviors:
       - !type:PlaySoundBehavior
         sound:
@@ -108,11 +107,45 @@
         node: start
       - !type:DoActsBehavior
         acts: ["Destruction"]
-  - type: FallSystem
+  # Goobstation Change Start
+  - type: UnpoweredFlashlight # Goobstation mech lights for all mechs its unpowered to match hardsuits
+  - type: PointLight
+    enabled: false
+    softness: 5
+    autoRot: true
+    mask: /Textures/Effects/LightMasks/cone.png
+    radius: 7
+    energy: 3
+    netsync: false
+  - type: GenericVisualizer
+    visuals:
+      enum.PaperLabelVisuals.HasLabel:
+        enum.PaperLabelVisuals.Layer:
+          True: { visible: true }
+          False: { visible: false }
+      enum.PaperLabelVisuals.LabelType:
+        enum.PaperLabelVisuals.Layer:
+          Paper: { state: paper }
+          Bounty: { state: bounty }
+          CaptainsPaper: { state: captains_paper }
+          Invoice: { state: invoice }
+  - type: PaperLabel
+    labelSlot:
+      insertVerbText: Attach Label
+      ejectVerbText: Remove Label
+      whitelist:
+        components:
+        - Paper
+      blacklist:
+        tags:
+        - Book
+  - type: StaticPrice
+    price: 450
+  # Goobstation Change End
 
 - type: entity
   id: MechRipley
-  parent: BaseMech
+  parent: [ BaseMech, IndustrialMech ] # Goobstation
   name: Ripley APLU
   description: Versatile and lightly armored, the Ripley is useful for almost any heavy work scenario. The "APLU" stands for Autonomous Power Loading Unit.
   components:
@@ -154,9 +187,8 @@
       mech-battery-slot:
       - PowerCellHigh
 
-# TODO: have a whitelist for honker equipment
 - type: entity
-  parent: BaseMech
+  parent: [ BaseMech, SpecialMech ] # Goobstation
   id: MechHonker
   name: H.O.N.K.
   description: "Produced by \"Tyranny of Honk, INC\", this exosuit is designed as heavy clown-support. Used to spread the fun and joy of life. HONK!"
@@ -171,13 +203,12 @@
   - type: FootstepModifier
     footstepSoundCollection:
       collection: FootstepClown
-      params:
-        variation: 0.17
   - type: Mech
     baseState: honker
     openState: honker-open
     brokenState: honker-broken
     mechToPilotDamageMultiplier: 0.5
+    airtight: true # Goobstation - Space Honk is real.
     pilotWhitelist:
       components:
       - HumanoidAppearance
@@ -193,7 +224,7 @@
       - PowerCellHigh
 
 - type: entity
-  parent: BaseMech
+  parent: [ BaseMech, SmallMech ] # Goobstation
   id: MechHamtr
   name: HAMTR
   description: "An experimental mech which uses a brain–computer interface to connect directly to a hamsters brain."
@@ -215,15 +246,12 @@
     mechToPilotDamageMultiplier: 0.2
     maxEquipmentAmount: 2
     airtight: true
-    equipmentWhitelist:
-      tags:
-      - SmallMech
     pilotWhitelist:
       tags:
       - Hamster
   - type: MeleeWeapon
     hidden: true
-    attackRate: 0.8
+    attackRate: 1.25
     damage:
       types:
         Blunt: 10 #thwack
@@ -286,7 +314,7 @@
       - VimPilot
   - type: MeleeWeapon
     hidden: true
-    attackRate: 0.8
+    attackRate: 1.25
     damage:
       types:
         Blunt: 10 #thwack
@@ -294,9 +322,6 @@
   - type: MovementSpeedModifier
     baseWalkSpeed: 2.25
     baseSprintSpeed: 3.6
-  - type: Access
-    tags:
-    - Maintenance
   # TOOD: buzz / chime actions
   # TODO: builtin flashlight
 
@@ -309,150 +334,3 @@
     containers:
       mech-battery-slot:
       - PowerCellHigh
-
-- type: entity
-  id: TP14MechStepfather
-  parent: [BaseMech, StripableInventoryBase]
-  name: Rotund Stepfather
-  description: A rugged deep-sea mining unit, designed to work in tandem with a Pilot. The onboard AI operates the primary clamp while the pilot operates the modules.
-  components:
-  - type: Sprite
-    drawdepth: Mobs
-    noRot: true
-    sprite: Objects/Specific/Mech/mecha.rsi
-    layers:
-    - map: [ "enum.MechVisualLayers.Base" ]
-      state: ripley
-  - type: FootstepModifier
-    footstepSoundCollection:
-      path: /Audio/Mecha/sound_mecha_powerloader_step.ogg
-      params:
-        volume: -15
-  - type: Mech
-    baseState: stepfather
-    openState: stepfather
-    brokenState: stepfather-open
-    mechToPilotDamageMultiplier: 0.30
-    airtight: true
-    pilotWhitelist:
-      components:
-        - ExpedPilot # Only the Pilot can enter. TODO: Make the stepfather emaggable to be subverted by antags.
-  - type: MeleeWeapon
-    hidden: true
-    attackRate: 1
-    damage:
-      types:
-        Blunt: 10
-  - type: HandheldLight
-    addPrefix: false
-    blinkingBehaviourId: blinking
-    radiatingBehaviourId: radiating
-  - type: LightBehaviour
-    behaviours:
-      - !type:FadeBehaviour
-        id: radiating
-        maxDuration: 2.0
-        startValue: 3.0
-        endValue: 2.0
-        isLooped: true
-        reverseWhenFinished: true
-      - !type:PulseBehaviour
-        id: blinking
-        interpolate: Nearest
-        maxDuration: 1.0
-        minValue: 0.1
-        maxValue: 2.0
-        isLooped: true
-  - type: PowerCellSlot
-    cellSlotId: cell_slot
-  - type: ContainerContainer
-    containers:
-      cell_slot: !type:ContainerSlot
-  - type: ItemSlots
-    slots:
-      cell_slot:
-        name: power-cell-slot-component-slot-name-default
-        startingItem: PowerCellMedium
-  - type: PointLight
-    enabled: false
-  - type: MovementSpeedModifier
-    baseWalkSpeed: 2.25
-    baseSprintSpeed: 3.6
-  - type: GhostRole
-    makeSentient: true
-    allowSpeech: true
-    allowMovement: true
-    name: mech-role-name
-    description: mech-role-description
-    rules: ghost-role-information-mech-rules
-  - type: GhostTakeoverAvailable
-  - type: ComplexInteraction
-  - type: MindContainer
-    showExamineInfo: true
-  - type: Strippable
-  - type: Input
-    context: "aghost"
-  - type: CombatMode
-  - type: Inventory
-    templateId: Mech
-  - type: Hands
-    showInHands: false
-    baseThrowspeed: 15 # throws harder (obviously)
-    throwRange: 13
-  - type: Repairable
-    doAfterDelay: 15
-    allowSelfRepair: false # Needs pilot maintenence
-  - type: TypingIndicator
-    proto: robot
-  - type: Speech
-    speechVerb: Robotic
-    speechSounds: SyndieBorg
-  - type: Vocal
-    sounds:
-      Unsexed: UnisexSilicon
-  - type: Puller
-    needsHands: true
-  - type: HealthExaminable
-    examinableTypes:
-      - Blunt
-      - Slash
-      - Piercing
-      - Heat
-      - Shock
-    locPrefix: silicon
-  - type: Body
-    prototype: Mech
-  - type: UserInterface
-    interfaces:
-      enum.SiliconLawsUiKey.Key:
-        type: SiliconLawBoundUserInterface
-  - type: SiliconLawProvider
-    laws: MechLaws # Protocol 3: Protect the Pilot
-  - type: SiliconLawBound
-  - type: NpcFactionMember
-    factions:
-    - NanoTrasen
-  - type: Destructible
-    thresholds:
-    - trigger:
-        !type:DamageTrigger
-        damage: 170
-      behaviors:
-      - !type:PlaySoundBehavior
-        sound:
-          collection: MetalBreak
-      - !type:DoActsBehavior
-        acts: ["Destruction"]
-  - type: MobThresholds
-    thresholds:
-      0: Alive
-      170: Dead
-    stateAlertDict:
-      Alive: BorgHealth
-      Dead: BorgDead
-    showOverlays: false
-    allowRevives: true
-  - type: Examiner
- # - type: Loadout
-   #   prototypes: [Stepfather] #gives the stepfather the Pilot Pinpointer to find their pilot
-

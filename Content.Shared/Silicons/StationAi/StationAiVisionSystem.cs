@@ -56,7 +56,6 @@ public sealed class StationAiVisionSystem : EntitySystem
             EntManager = EntityManager,
             Maps = _maps,
             System = this,
-            VisibleTiles = _singleTiles,
         };
     }
 
@@ -301,7 +300,7 @@ public sealed class StationAiVisionSystem : EntitySystem
         public Entity<MapGridComponent> Grid;
         public List<Entity<StationAiVisionComponent>> Data = new();
 
-        public required HashSet<Vector2i> VisibleTiles;
+        public HashSet<Vector2i> VisibleTiles = new();
 
         public readonly List<Dictionary<Vector2i, int>> Vis1 = new();
         public readonly List<Dictionary<Vector2i, int>> Vis2 = new();

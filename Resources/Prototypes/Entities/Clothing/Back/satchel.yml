@@ -99,14 +99,23 @@
 - type: entity
   parent: ClothingBackpackSatchel
   id: ClothingBackpackSatchelScience
-  name: science satchel
+  name: epistemics satchel # DeltaV - Epistemics Department replacing Science
   description: Useful for holding research materials.
   components:
   - type: Sprite
     sprite: Clothing/Back/Satchels/science.rsi
 
 - type: entity
-  parent: [ClothingBackpackSatchel, BaseRestrictedContraband]
+  parent: ClothingBackpackSatchel
+  id: ClothingBackpackSatchelRobotics
+  name: robotics satchel
+  description: A sturdy satchel to store the various tools and duct tape.
+  components:
+  - type: Sprite
+    sprite: Clothing/Back/Satchels/robotics.rsi
+
+- type: entity
+  parent: ClothingBackpackSatchel
   id: ClothingBackpackSatchelSecurity
   name: security satchel
   description: A robust satchel for security related needs.
@@ -115,18 +124,18 @@
     sprite: Clothing/Back/Satchels/security.rsi
 
 - type: entity
-  parent: [ClothingBackpackSatchel, BaseRestrictedContraband]
+  parent: ClothingBackpackSatchel
   id: ClothingBackpackSatchelBrigmedic
-  name: brigmedic satchel
+  name: corpsman satchel # DeltaV - rename brigmedic to corpsman
   description: A sterile satchel for medical related needs.
   components:
   - type: Sprite
-    sprite: Clothing/Back/Satchels/brigmedic.rsi
+    sprite: DeltaV/Clothing/Back/Satchels/brigmedic.rsi # DeltaV - resprite
 
 - type: entity
-  parent: [ClothingBackpackSatchel, BaseCommandContraband]
+  parent: ClothingBackpackSatchel
   id: ClothingBackpackSatchelCaptain
-  name: overseer's satchel
+  name: captain's satchel
   description: An exclusive satchel for Nanotrasen officers.
   components:
   - type: Sprite
@@ -144,8 +153,8 @@
 - type: entity
   parent: ClothingBackpackSatchel
   id: ClothingBackpackSatchelCargo
-  name: cargo satchel
-  description: A robust satchel for stealing cargo's loot.
+  name: logistics satchel # DeltaV - Logistics Department replacing Cargo
+  description: A robust satchel for stealing logistics's loot. # DeltaV - Logistics Department replacing Cargo
   components:
     - type: Sprite
       sprite: Clothing/Back/Satchels/cargo.rsi
@@ -178,3 +187,28 @@
     maxItemSize: Huge
     grid:
     - 0,0,19,9
+
+- type: entity
+  parent: [ClothingBackpackSatchel, BaseFoldable]
+  id: ClothingBackpackSatchelPurse
+  name: purse
+  description: A small, fashionable bag typically worn over the shoulder.
+  components:
+  - type: Sprite
+    sprite: Clothing/Back/Satchels/purse.rsi
+  - type: Foldable
+    canFoldInsideContainer: true
+    unfoldVerbText: fold-flip-verb
+    foldVerbText: fold-flip-verb
+  - type: FoldableClothing
+    foldedEquippedPrefix: flipped
+
+- type: entity
+  parent: ClothingBackpackSatchelPurse
+  id: ClothingBackpackSatchelPurseFlipped
+  suffix: flipped
+  components:
+  - type: Foldable
+    folded: true
+  - type: Clothing
+    equippedPrefix: flipped

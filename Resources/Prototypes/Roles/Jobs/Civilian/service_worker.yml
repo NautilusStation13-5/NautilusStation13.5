@@ -6,20 +6,33 @@
   startingGear: ServiceWorkerGear
   icon: "JobIconServiceWorker"
   supervisors: job-supervisors-service
+  canBeAntag: true # DeltaV - Can be antagonist
   access:
   - Service
   - Maintenance
-  - Bar
-  - Kitchen
   extendedAccess:
   - Hydroponics
+  - Bar # DeltaV - moved to extended access
+  - Kitchen # DeltaV - moved to extended access
 
 - type: startingGear
   id: ServiceWorkerGear
+  subGear:
+  - ServiceWorkerPlasmamanGear
   equipment:
+    jumpsuit: ClothingUniformJumpsuitColorDarkGreen # DeltaV
+    back: ClothingBackpackFilled
     shoes: ClothingShoesColorBlack
     id: ServiceWorkerPDA
     ears: ClothingHeadsetService
-  #storage:
-    #back:
-    #- Stuff
+  innerClothingSkirt: ClothingUniformJumpskirtColorDarkGreen # DeltaV
+  satchel: ClothingBackpackSatchelFilled
+  duffelbag: ClothingBackpackDuffelFilled
+
+- type: startingGear
+  id: ServiceWorkerPlasmamanGear
+  parent: BasePlasmamanGear
+  equipment:
+    jumpsuit: ClothingUniformEnvirosuitColorDarkGreen
+    head: ClothingHeadEnvirohelmColorDarkGreen
+    gloves: ClothingHandsGlovesEnviroglovesColorDarkGreen

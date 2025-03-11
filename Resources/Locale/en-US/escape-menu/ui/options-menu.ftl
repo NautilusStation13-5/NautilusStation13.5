@@ -1,18 +1,15 @@
 ## General stuff
 
 ui-options-title = Game Options
-ui-options-tab-accessibility = Accessibility
 ui-options-tab-graphics = Graphics
 ui-options-tab-controls = Controls
 ui-options-tab-audio = Audio
 ui-options-tab-network = Network
 ui-options-tab-misc = General
 
-ui-options-apply = Save & apply
-ui-options-reset-all = Reset changed
-ui-options-default = Reset to defaults
-
-ui-options-value-percent = { TOSTRING($value, "P0") }
+ui-options-apply = Apply
+ui-options-reset-all = Reset All
+ui-options-default = Default
 
 # Misc/General menu
 
@@ -22,7 +19,13 @@ ui-options-general-discord = Discord
 ui-options-general-cursor = Cursor
 ui-options-general-speech = Speech
 ui-options-general-storage = Storage
+ui-options-general-other = Other
 ui-options-general-accessibility = Accessibility
+ui-options-chatstack = Automatically merge identical chat messages
+ui-options-chatstack-off = Off
+ui-options-chatstack-single = Only last message
+ui-options-chatstack-double = Last two messages
+ui-options-chatstack-triple = Last three messages
 
 ## Audio menu
 
@@ -33,27 +36,34 @@ ui-options-ambience-volume = Ambience volume:
 ui-options-lobby-volume = Lobby & Round-end volume:
 ui-options-interface-volume = Interface volume:
 ui-options-ambience-max-sounds = Ambience simultaneous sounds:
+ui-options-announcer-volume = Announcer volume:
 ui-options-lobby-music = Lobby & Round-end Music
 ui-options-restart-sounds = Round Restart Sounds
 ui-options-event-music = Event Music
+ui-options-announcer-disable-multiple-sounds = Disable Overlapping Announcer Sounds
+ui-options-announcer-disable-multiple-sounds-tooltip = Some announcements will not sound right, this setting isn't recommended
 ui-options-admin-sounds = Play Admin Sounds
 ui-options-volume-label = Volume
+ui-options-volume-percent = { TOSTRING($volume, "P0") }
 
 ## Graphics menu
 
-ui-options-display-label = Display
-ui-options-quality-label = Quality
-ui-options-misc-label = Misc
-ui-options-interface-label = Interface
-
-
 ui-options-show-held-item = Show held item next to cursor
 ui-options-show-combat-mode-indicators = Show combat mode indicators with cursor
+ui-options-show-offer-mode-indicators = Show offer mode indicators with cursor
 ui-options-opaque-storage-window = Opaque storage window
 ui-options-show-ooc-patron-color = Show OOC Patreon color
 ui-options-show-looc-on-head = Show LOOC chat above characters head
 ui-options-fancy-speech = Show names in speech bubbles
 ui-options-fancy-name-background = Add background to speech bubble names
+ui-options-enable-color-name = Add colors to character names
+ui-options-colorblind-friendly = Colorblind friendly mode
+ui-options-no-filters = Disable species vision filters
+ui-options-reduced-motion = Reduce motion of visual effects
+ui-options-chat-window-opacity = Chat window opacity
+ui-options-chat-window-opacity-percent = { TOSTRING($opacity, "P0") }
+ui-options-screen-shake-intensity = Screen shake intensity
+ui-options-screen-shake-percent = { TOSTRING($intensity, "P0") }
 ui-options-vsync = VSync
 ui-options-fullscreen = Fullscreen
 ui-options-lighting-label = Lighting Quality:
@@ -77,11 +87,8 @@ ui-options-hud-theme-clockwork = Clockwork
 ui-options-hud-theme-retro = Retro
 ui-options-hud-theme-minimalist = Minimalist
 ui-options-hud-theme-ashen = Ashen
-ui-options-hud-layout-default = Default
-ui-options-hud-layout-separated = Separated
 ui-options-vp-stretch = Stretch viewport to fit game window
-ui-options-vp-scale = Fixed viewport scale:
-ui-options-vp-scale-value = x{ $scale }
+ui-options-vp-scale = Fixed viewport scale: x{ $scale }
 ui-options-vp-integer-scaling = Prefer integer scaling (might cause black bars/clipping)
 ui-options-vp-integer-scaling-tooltip = If this option is enabled, the viewport will be scaled using an integer value
                                         at specific resolutions. While this results in crisp textures, it also often
@@ -94,7 +101,8 @@ ui-options-vp-vertical-fit-tooltip = When enabled, the main viewport will ignore
 ui-options-vp-low-res = Low-resolution viewport
 ui-options-parallax-low-quality = Low-quality Parallax (background)
 ui-options-fps-counter = Show FPS counter
-ui-options-vp-width = Viewport width:
+ui-options-mood-visual-effects = Enable the mood system's visual effects
+ui-options-vp-width = Viewport width: { $width }
 ui-options-hud-layout = HUD layout:
 
 ## Controls menu
@@ -110,6 +118,7 @@ ui-options-header-camera = Camera
 ui-options-header-interaction-basic = Basic Interaction
 ui-options-header-interaction-adv = Advanced Interaction
 ui-options-header-ui = User Interface
+ui-options-header-targeting = Targeting
 ui-options-header-misc = Miscellaneous
 ui-options-header-hotbar = Hotbar
 ui-options-header-shuttle = Shuttle
@@ -118,13 +127,14 @@ ui-options-header-dev = Development
 ui-options-header-general = General
 
 ui-options-hotkey-keymap = Use US QWERTY Keys
-ui-options-hotkey-toggle-walk = Toggle Walk
+ui-options-hotkey-toggle-walk = Toggle Speed
+ui-options-hotkey-default-walk = Walk by default
 
 ui-options-function-move-up = Move Up
 ui-options-function-move-left = Move Left
 ui-options-function-move-down = Move Down
 ui-options-function-move-right = Move Right
-ui-options-function-walk = Walk
+ui-options-function-walk = Change Speed
 
 ui-options-function-camera-rotate-left = Rotate left
 ui-options-function-camera-rotate-right = Rotate right
@@ -146,8 +156,12 @@ ui-options-function-examine-entity = Examine
 ui-options-function-swap-hands = Swap hands
 ui-options-function-move-stored-item = Move stored item
 ui-options-function-rotate-stored-item = Rotate stored item
+ui-options-function-offer-item = Offer something
 ui-options-function-save-item-location = Save item location
+ui-options-function-toggle-standing = Toggle standing
+ui-options-function-toggle-crawling-under = Toggle crawling under furniture
 ui-options-static-storage-ui = Lock storage window to hotbar
+ui-options-modern-progress-bar = Modern progress bar
 
 ui-options-function-smart-equip-backpack = Smart-equip to backpack
 ui-options-function-smart-equip-belt = Smart-equip to belt
@@ -158,9 +172,13 @@ ui-options-function-try-pull-object = Pull object
 ui-options-function-move-pulled-object = Move pulled object
 ui-options-function-release-pulled-object = Release pulled object
 ui-options-function-point = Point at location
-ui-options-function-rotate-object-clockwise = Rotate clockwise
-ui-options-function-rotate-object-counterclockwise = Rotate counterclockwise
-ui-options-function-flip-object = Flip
+
+ui-options-function-target-head = Target head
+ui-options-function-target-torso = Target torso
+ui-options-function-target-left-arm = Target left arm
+ui-options-function-target-right-arm = Target right arm
+ui-options-function-target-left-leg = Target left leg
+ui-options-function-target-right-leg = Target right leg
 
 ui-options-function-focus-chat-input-window = Focus chat
 ui-options-function-focus-local-chat-window = Focus chat (IC)
@@ -180,7 +198,6 @@ ui-options-function-open-crafting-menu = Open crafting menu
 ui-options-function-open-inventory-menu = Open inventory
 ui-options-function-open-a-help = Open admin help
 ui-options-function-open-abilities-menu = Open action menu
-ui-options-function-open-emotes-menu = Open emotes menu
 ui-options-function-toggle-round-end-summary-window = Toggle round end summary window
 ui-options-function-open-entity-spawn-window = Open entity spawn menu
 ui-options-function-open-sandbox-window = Open sandbox menu
@@ -204,6 +221,9 @@ ui-options-function-editor-line-place = Place line
 ui-options-function-editor-rotate-object = Rotate
 ui-options-function-editor-flip-object = Flip
 ui-options-function-editor-copy-object = Copy
+ui-options-function-mapping-enable-pick = Pick object/tile
+ui-options-function-mapping-enable-decal-pick = Pick decal
+ui-options-function-mapping-enable-delete = Delete object
 
 ui-options-function-show-debug-console = Open Console
 ui-options-function-show-debug-monitors = Show Debug Monitors
@@ -275,10 +295,7 @@ ui-options-net-pvs-leave-tooltip = This limits the rate at which the client will
 cmd-options-desc = Opens options menu, optionally with a specific tab selected.
 cmd-options-help = Usage: options [tab]
 
-## Accessibility menu
-
-ui-options-enable-color-name = Add colors to character names
-ui-options-colorblind-friendly = Colorblind friendly mode
-ui-options-reduced-motion = Reduce motion of visual effects
-ui-options-chat-window-opacity = Chat window opacity
-ui-options-screen-shake-intensity = Screen shake intensity
+## Combat Options
+ui-options-function-look-up = Look up/Take aim
+ui-options-function-auto-get-up = Automatically get up after falling
+ui-options-function-hold-look-up = Hold down the key to aim

@@ -4,6 +4,7 @@ using System.Numerics;
 using Content.Server.Shuttles.Components;
 using Content.Server.Shuttles.Events;
 using Content.Server.Station.Events;
+using Content.Shared._Lavaland.Shuttles;
 using Content.Shared.Body.Components;
 using Content.Shared.Buckle.Components;
 using Content.Shared.CCVar;
@@ -11,6 +12,7 @@ using Content.Shared.Database;
 using Content.Shared.Ghost;
 using Content.Shared.Maps;
 using Content.Shared.Parallax;
+using Content.Shared.SegmentedEntity;
 using Content.Shared.Shuttles.Components;
 using Content.Shared.Shuttles.Systems;
 using Content.Shared.StatusEffect;
@@ -41,17 +43,7 @@ public sealed partial class ShuttleSystem
         Params = AudioParams.Default.WithVolume(-5f),
     };
 
-     private readonly SoundSpecifier _startupSoundShuttle = new SoundPathSpecifier("/Audio/Effects/Shuttle/hyperspace_begin_shuttle.ogg")
-    {
-        Params = AudioParams.Default.WithVolume(-5f),
-    };
-
     private readonly SoundSpecifier _arrivalSound = new SoundPathSpecifier("/Audio/Effects/Shuttle/hyperspace_end.ogg")
-    {
-        Params = AudioParams.Default.WithVolume(-5f),
-    };
-
-     private readonly SoundSpecifier _arrivalSoundShuttle = new SoundPathSpecifier("/Audio/Effects/Shuttle/hyperspace_end_shuttle.ogg")
     {
         Params = AudioParams.Default.WithVolume(-5f),
     };
@@ -371,18 +363,9 @@ public sealed partial class ShuttleSystem
 
         component = AddComp<FTLComponent>(uid);
         component.State = FTLState.Starting;
-    if (HasComp<DivingBellComponent>(uid))
-        {
-            var audio = _audio.PlayPvs(_startupSound, uid);
-            _audio.SetGridAudio(audio);
-             component.StartupStream = audio?.Entity;
-        }
-        else
-        {
-             var audio = _audio.PlayPvs(_startupSoundShuttle, uid);
-             _audio.SetGridAudio(audio);
-             component.StartupStream = audio?.Entity;
-        }
+        var audio = _audio.PlayPvs(_startupSound, uid);
+        _audio.SetGridAudio(audio);
+        component.StartupStream = audio?.Entity;
 
         // TODO: Play previs here for docking arrival.
 
@@ -399,7 +382,9 @@ public sealed partial class ShuttleSystem
         var uid = entity.Owner;
         var comp = entity.Comp1;
         var xform = _xformQuery.GetComponent(entity);
-        DoTheDinosaur(xform);
+
+        if (entity.Comp2.DoTheDinosaur)
+            DoTheDinosaur(xform);
 
         comp.State = FTLState.Travelling;
         var fromMapUid = xform.MapUid;
@@ -564,16 +549,8 @@ public sealed partial class ShuttleSystem
         _thruster.DisableLinearThrusters(entity.Comp2);
 
         comp.TravelStream = _audio.Stop(comp.TravelStream);
-     if (HasComp<DivingBellComponent>(uid))
-        {
-            var audio = _audio.PlayPvs(_arrivalSound, uid);
-             _audio.SetGridAudio(audio);
-        }
-        else
-        {
-             var audio = _audio.PlayPvs(_arrivalSoundShuttle, uid);
-              _audio.SetGridAudio(audio);
-        }
+        var audio = _audio.PlayPvs(_arrivalSound, uid);
+        _audio.SetGridAudio(audio);
 
         if (TryComp<FTLDestinationComponent>(uid, out var dest))
         {
@@ -584,7 +561,7 @@ public sealed partial class ShuttleSystem
         comp.StateTime = StartEndTime.FromCurTime(_gameTiming, FTLCooldown);
         _console.RefreshShuttleConsoles(uid);
         _mapManager.SetMapPaused(mapId, false);
-        Smimsh(uid, xform: xform);
+        Smimsh(uid, xform: xform, smimshDistance: entity.Comp2.SmimshDistance);
 
         var ftlEvent = new FTLCompletedEvent(uid, _mapSystem.GetMap(mapId));
         RaiseLocalEvent(uid, ref ftlEvent, true);
@@ -658,7 +635,8 @@ public sealed partial class ShuttleSystem
                 if (!_statusQuery.TryGetComponent(child, out var status))
                     continue;
 
-                _stuns.TryParalyze(child, _hyperspaceKnockdownTime, true, status);
+                // Stunmeta
+                _stuns.TryKnockdown(child, _hyperspaceKnockdownTime, true, status);
 
                 // If the guy we knocked down is on a spaced tile, throw them too
                 if (grid != null)
@@ -698,7 +676,9 @@ public sealed partial class ShuttleSystem
         var childEnumerator = xform.ChildEnumerator;
         while (childEnumerator.MoveNext(out var child))
         {
-            if (!_buckleQuery.TryGetComponent(child, out var buckle) || buckle.Buckled)
+            if (!_buckleQuery.TryGetComponent(child, out var buckle) || buckle.Buckled
+            || HasComp<SegmentedEntityComponent>(child)
+            || HasComp<SegmentedEntitySegmentComponent>(child))
                 continue;
 
             toKnock.Add(child);
@@ -983,7 +963,7 @@ public sealed partial class ShuttleSystem
     /// <summary>
     /// Flattens / deletes everything under the grid upon FTL.
     /// </summary>
-    private void Smimsh(EntityUid uid, FixturesComponent? manager = null, MapGridComponent? grid = null, TransformComponent? xform = null)
+    private void Smimsh(EntityUid uid, FixturesComponent? manager = null, MapGridComponent? grid = null, TransformComponent? xform = null, float smimshDistance = 0.2f)
     {
         if (!Resolve(uid, ref manager, ref grid, ref xform) || xform.MapUid == null)
             return;
@@ -1005,7 +985,7 @@ public sealed partial class ShuttleSystem
 
             // Shift it slightly
             // Create a small border around it.
-            aabb = aabb.Enlarged(0.2f);
+            aabb = aabb.Enlarged(smimshDistance);
             aabbs.Add(aabb);
 
             // Handle clearing biome stuff as relevant.

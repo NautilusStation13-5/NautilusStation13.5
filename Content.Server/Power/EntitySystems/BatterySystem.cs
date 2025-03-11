@@ -1,5 +1,6 @@
 using Content.Server.Cargo.Systems;
 using Content.Server.Emp;
+using Content.Shared.Emp;
 using Content.Server.Power.Components;
 using Content.Shared.Examine;
 using Content.Shared.Rejuvenate;
@@ -87,11 +88,8 @@ namespace Content.Server.Power.EntitySystems
             var query = EntityQueryEnumerator<BatterySelfRechargerComponent, BatteryComponent>();
             while (query.MoveNext(out var uid, out var comp, out var batt))
             {
-                if (!comp.IgnoreFull)
-                {
-                    if (!comp.AutoRecharge || IsFull(uid, batt))
-                        continue;
-                }
+                if (!comp.AutoRecharge) continue;
+                if (batt.IsFullyCharged) continue;
 
                 if (comp.AutoRechargePause)
                 {
@@ -114,6 +112,7 @@ namespace Content.Server.Power.EntitySystems
         private void OnEmpPulse(EntityUid uid, BatteryComponent component, ref EmpPulseEvent args)
         {
             args.Affected = true;
+            args.Disabled = true;
             UseCharge(uid, args.EnergyConsumption, component);
             // Apply a cooldown to the entity's self recharge if needed to avoid it immediately self recharging after an EMP.
             TrySetChargeCooldown(uid);
@@ -158,11 +157,8 @@ namespace Content.Server.Power.EntitySystems
 
             var old = battery.CurrentCharge;
             battery.CurrentCharge = MathHelper.Clamp(value, 0, battery.MaxCharge);
-            if (MathHelper.CloseTo(battery.CurrentCharge, old) &&
-                !(old != battery.CurrentCharge && battery.CurrentCharge == battery.MaxCharge))
-            {
+            if (MathHelper.CloseTo(battery.CurrentCharge, old))
                 return;
-            }
 
             var ev = new ChargeChangedEvent(battery.CurrentCharge, battery.MaxCharge);
             RaiseLocalEvent(uid, ref ev);
@@ -215,14 +211,26 @@ namespace Content.Server.Power.EntitySystems
         }
 
         /// <summary>
-        /// Returns whether the battery is full.
+        ///     Like SetCharge, but checks for conditions like EmpDisabled before executing
+        /// </summary>
+        public bool TrySetCharge(EntityUid uid, float value, BatteryComponent? battery = null)
+        {
+            if (!Resolve(uid, ref battery, false) || TryComp<EmpDisabledComponent>(uid, out var emp))
+                return false;
+
+            SetCharge(uid, value, battery);
+            return true;
+        }
+
+        /// <summary>
+        /// Returns whether the battery is at least 99% charged, basically full.
         /// </summary>
         public bool IsFull(EntityUid uid, BatteryComponent? battery = null)
         {
             if (!Resolve(uid, ref battery))
                 return false;
 
-            return battery.CurrentCharge >= battery.MaxCharge;
+            return battery.CurrentCharge / battery.MaxCharge >= 0.99f;
         }
     }
 }

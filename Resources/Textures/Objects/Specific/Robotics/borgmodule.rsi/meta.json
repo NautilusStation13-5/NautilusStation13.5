@@ -62,6 +62,9 @@
       "name": "icon-harvesting"
     },
     {
+      "name": "icon-jetpack"
+    },
+    {
       "name": "icon-light-replacer"
     },
     {
@@ -80,10 +83,16 @@
       "name": "icon-pen"
     },
     {
+      "name": "icon-pka"
+    },
+    {
       "name": "icon-radiation"
     },
     {
       "name": "icon-rcd"
+    },
+    {
+        "name": "icon-rpd"
     },
     {
       "name": "icon-template"
@@ -99,6 +108,12 @@
     },
     {
       "name": "icon-treatment"
+    },
+    {
+      "name": "icon-surgery"
+    },
+    {
+      "name": "icon-advanced-surgery"
     },
     {
       "name": "icon-syndicate"

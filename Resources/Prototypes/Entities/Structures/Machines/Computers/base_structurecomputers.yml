@@ -72,6 +72,15 @@
   - type: LightningTarget
     priority: 1
   - type: RequireProjectileTarget
+  - type: LanguageSpeaker
+    currentLanguage: TauCetiBasic
+  - type: LanguageKnowledge
+    speaks:
+    - TauCetiBasic
+    - RobotTalk
+    understands:
+    - TauCetiBasic
+    - RobotTalk
   - type: Electrified
     enabled: false
     usesApcPower: true

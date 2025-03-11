@@ -22,10 +22,6 @@ namespace Content.Shared.Damage
             SubscribeLocalEvent<ClothingSlowOnDamageModifierComponent, ExaminedEvent>(OnExamined);
             SubscribeLocalEvent<ClothingSlowOnDamageModifierComponent, ClothingGotEquippedEvent>(OnGotEquipped);
             SubscribeLocalEvent<ClothingSlowOnDamageModifierComponent, ClothingGotUnequippedEvent>(OnGotUnequipped);
-
-            SubscribeLocalEvent<IgnoreSlowOnDamageComponent, ComponentStartup>(OnIgnoreStartup);
-            SubscribeLocalEvent<IgnoreSlowOnDamageComponent, ComponentShutdown>(OnIgnoreShutdown);
-            SubscribeLocalEvent<IgnoreSlowOnDamageComponent, ModifySlowOnDamageSpeedEvent>(OnIgnoreModifySpeed);
         }
 
         private void OnRefreshMovespeed(EntityUid uid, SlowOnDamageComponent component, RefreshMovementSpeedModifiersEvent args)
@@ -65,17 +61,13 @@ namespace Content.Shared.Damage
 
         private void OnModifySpeed(Entity<ClothingSlowOnDamageModifierComponent> ent, ref InventoryRelayedEvent<ModifySlowOnDamageSpeedEvent> args)
         {
-            var dif = 1 - args.Args.Speed;
-            if (dif <= 0)
-                return;
-
             // reduces the slowness modifier by the given coefficient
-            args.Args.Speed += dif * ent.Comp.Modifier;
+            args.Args.Speed = 1 - (1 - args.Args.Speed) * ent.Comp.Modifier;
         }
 
         private void OnExamined(Entity<ClothingSlowOnDamageModifierComponent> ent, ref ExaminedEvent args)
         {
-            var msg = Loc.GetString("slow-on-damage-modifier-examine", ("mod", (1 - ent.Comp.Modifier) * 100));
+            var msg = Loc.GetString("slow-on-damage-modifier-examine", ("mod", Math.Round((1 - ent.Comp.Modifier) * 100)));
             args.PushMarkup(msg);
         }
 
@@ -87,21 +79,6 @@ namespace Content.Shared.Damage
         private void OnGotUnequipped(Entity<ClothingSlowOnDamageModifierComponent> ent, ref ClothingGotUnequippedEvent args)
         {
             _movementSpeedModifierSystem.RefreshMovementSpeedModifiers(args.Wearer);
-        }
-
-        private void OnIgnoreStartup(Entity<IgnoreSlowOnDamageComponent> ent, ref ComponentStartup args)
-        {
-            _movementSpeedModifierSystem.RefreshMovementSpeedModifiers(ent);
-        }
-
-        private void OnIgnoreShutdown(Entity<IgnoreSlowOnDamageComponent> ent, ref ComponentShutdown args)
-        {
-            _movementSpeedModifierSystem.RefreshMovementSpeedModifiers(ent);
-        }
-
-        private void OnIgnoreModifySpeed(Entity<IgnoreSlowOnDamageComponent> ent, ref ModifySlowOnDamageSpeedEvent args)
-        {
-            args.Speed = 1f;
         }
     }
 

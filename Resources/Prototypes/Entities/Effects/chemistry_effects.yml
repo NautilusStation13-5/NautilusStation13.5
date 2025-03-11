@@ -70,12 +70,16 @@
       state: foam-west
   - type: SmoothEdge
   - type: IconSmooth
+    key: walls
     mode: NoSprite
   - type: FoamVisuals
     animationTime: 0.6
     animationState: foam-dissolve
   - type: Slippery
   - type: StepTrigger
+    triggerGroups:
+      types:
+      - SlipTile
   # disabled until foam reagent duplication is fixed
   #- type: ScoopableSolution
   #  solution: solutionArea
@@ -100,8 +104,6 @@
       state: m_foam-north
     - map: [ "enum.EdgeLayer.West" ]
       state: m_foam-west
-  - type: EdgeSpreader
-    id: MetalFoam
   - type: FoamVisuals
     animationTime: 0.6
     animationState: m_foam-dissolve
@@ -160,15 +162,8 @@
   - type: Transform
     anchored: true
   - type: Airtight
-  - type: ReplaceFloorOnSpawn
-    replaceableTiles:
-    - Plating
-    - Lattice
-    - TrainLattice
-    replacementTiles:
-    - FloorMetalFoam
   - type: Damageable
-    damageContainer: StructuralInorganic
+    damageContainer: Inorganic
     damageModifierSet: Metallic
   - type: Destructible
     thresholds:
@@ -222,16 +217,3 @@
       state: metal_foam-north
     - map: [ "enum.EdgeLayer.West" ]
       state: metal_foam-west
-
-- type: entity
-  id: ReactionFlash
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: PointLight
-    enabled: true
-    radius: 2
-    energy: 8
-  - type: LightFade
-    duration: 0.5
-  - type: TimedDespawn
-    lifetime: 0.5

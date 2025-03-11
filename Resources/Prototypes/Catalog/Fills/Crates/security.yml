@@ -2,11 +2,11 @@
   id: CrateSecurityArmor
   parent: CrateSecgear
   name: armor crate
-  description: Contains three bulletproof vests. Requires Security access to open.
+  description: Three vests of well-rounded, decently-protective armor. Requires Security access to open.
   components:
   - type: StorageFill
     contents:
-      - id: ClothingOuterArmorBulletproof
+      - id: ClothingOuterArmorPlateCarrier # DeltaV - ClothingOuterArmorBulletproof replaced in favour of plate carrier
         amount: 3
 
 - type: entity
@@ -24,7 +24,7 @@
   id: CrateSecurityNonlethal
   parent: CrateSecgear
   name: nonlethals crate
-  description: Contains a mix of disablers, stun batons, and flashes. Requires Security access to open.
+  description: Disabler weapons. Requires Security access to open.
   components:
   - type: StorageFill
     contents:
@@ -39,6 +39,46 @@
 #      - GrenadeTeargas
 
 - type: entity
+  id: CrateSecurityRiot
+  parent: CrateSecgear
+  name: riot crate
+  description: Contains two sets of riot armor, helmets, shields, and enforcers loaded with beanbags. Extra ammo is included. Requires Security access to open.
+  components:
+  - type: StorageFill
+    contents:
+      - id: ClothingOuterArmorARC # DeltaV - ClothingOuterArmorRiot replaced in favour of ARC suit
+        amount: 2
+      - id: ClothingHeadHelmetRiot
+        amount: 2
+      - id: WeaponShotgunEnforcerRubber
+        amount: 2
+      - id: BoxBeanbag
+        amount: 2
+      - id: RiotShield
+        amount: 2
+      - id: ClothingMaskGasSecurity
+        amount: 2
+
+- type: entity
+  id: CrateSecuritySwat
+  parent: CrateSecgear
+  name: swat crate
+  description: Contains two sets of all encompassing swat suits. Requires Security access to open.
+  components:
+  - type: StorageFill
+    contents:
+      - id: ClothingOuterArmorSwat
+        amount: 2
+      - id: ClothingHeadHelmetSwat
+        amount: 2
+      - id: ClothingMaskGasSwat
+        amount: 2
+      - id: ClothingHandsGlovesCombat
+        amount: 2
+      - id: ClothingShoesSwat
+        amount: 2
+
+- type: entity
   id: CrateSecuritySupplies
   parent: CrateSecgear
   name: security supplies crate
@@ -48,9 +88,9 @@
     contents:
       - id: BoxHandcuff
       - id: BoxSechud
-#      - SecBelt
-#      - SecGasmask
-#      - SpacelawBook
+      - id: ClothingBeltSecurityFilled
+      - id: ClothingMaskGasSecurity
+      - id: BookSecurity # replace with lawbook at some point
 
 - type: entity
   id: CrateRestraints

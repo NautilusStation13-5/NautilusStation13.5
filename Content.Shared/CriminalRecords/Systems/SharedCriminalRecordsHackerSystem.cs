@@ -31,7 +31,8 @@ public abstract class SharedCriminalRecordsHackerSystem : EntitySystem
         {
             BreakOnDamage = true,
             BreakOnMove = true,
-            MovementThreshold = 0.5f
+            BreakOnWeightlessMove = true,
+            MovementThreshold = 0.5f,
         };
 
         _doAfter.TryStartDoAfter(doAfterArgs);

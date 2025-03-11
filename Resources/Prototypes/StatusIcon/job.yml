@@ -137,16 +137,16 @@
   parent: JobIcon
   id: JobIconChaplain
   icon:
-    sprite: /Textures/Interface/Misc/job_icons.rsi
-    state: Chaplain
+    sprite: /Textures/DeltaV/Interface/Misc/job_icons.rsi # DeltaV - Move Chaplain into Epistemics
+    state: Chaplain # DeltaV - Move Chaplain into Epistemics
   jobName: job-name-chaplain
 
 - type: jobIcon
   parent: JobIcon
   id: JobIconLawyer
   icon:
-    sprite: /Textures/Interface/Misc/job_icons.rsi
-    state: Lawyer
+    sprite: /Textures/DeltaV/Interface/Misc/job_icons.rsi # DeltaV - Move Lawyer into Justice
+    state: Lawyer # DeltaV - Move Lawyer into Justice
   jobName: job-name-lawyer
 
 - type: jobIcon
@@ -444,11 +444,3 @@
     sprite: /Textures/Interface/Misc/job_icons.rsi
     state: Visitor
   jobName: job-name-visitor
-
-- type: jobIcon
-  parent: JobIcon
-  id: JobIconAdmin
-  icon:
-    sprite: /Textures/Interface/Misc/job_icons.rsi
-    state: Admin
-  allowSelection: false

@@ -32,6 +32,9 @@
         - !type:OrganType
           type: Vox
           shouldHave: false
+        - !type:OrganType
+          type: Plasmaman
+          shouldHave: false
         ratios:
           CarbonDioxide: 1.0
           Oxygen: -1.0
@@ -46,12 +49,31 @@
             Poison:
               7
       - !type:AdjustAlert
-        alertType: Toxins
+        alertType: HighOxygen
         conditions:
           - !type:ReagentThreshold
             min: 0.5
           - !type:OrganType
             type: Vox
+        clear: true
+        time: 5
+      - !type:HealthChange
+        conditions:
+        - !type:OrganType
+          type: Plasmaman
+        scaleByQuantity: true
+        ignoreResistances: true
+        damage:
+          types:
+            Poison:
+              7
+      - !type:AdjustAlert
+        alertType: HighOxygen
+        conditions:
+          - !type:ReagentThreshold
+            min: 0.5
+          - !type:OrganType
+            type: Plasmaman
         clear: true
         time: 5
 
@@ -72,15 +94,27 @@
     Poison:
       effects:
       - !type:HealthChange
+        conditions:
+        - !type:OrganType
+          type: Plasmaman
+          shouldHave: false
         damage:
           types:
             Poison: 3
       - !type:AdjustReagent
+        conditions:
+        - !type:OrganType
+          type: Plasmaman
+          shouldHave: false
         reagent: Inaprovaline
         amount: -2.0
     Gas:
       effects:
       - !type:HealthChange
+        conditions:
+        - !type:OrganType
+          type: Plasmaman
+          shouldHave: false
         scaleByQuantity: true
         ignoreResistances: true
         damage:
@@ -91,10 +125,48 @@
       - !type:AdjustAlert
         alertType: Toxins
         conditions:
+          - !type:OrganType
+            type: Plasmaman
+            shouldHave: false
           - !type:ReagentThreshold
             min: 1.5
         clear: True
         time: 5
+      - !type:Oxygenate
+        factor: 4
+        conditions:
+        - !type:OrganType
+          type: Plasmaman
+      - !type:ModifyLungGas
+        conditions:
+        - !type:OrganType
+          type: Plasmaman
+        ratios:
+          Nitrogen: 1.0 # Interesting exhale for plasmamen
+          Plasma: -1.0
+    Medicine:
+      effects:
+      - !type:HealthChange
+        conditions:
+        - !type:OrganType
+          type: Plasmaman
+        damage:
+          groups:
+            Brute: -2
+          types:
+            Heat: -0.66
+            Shock: -0.66
+            Caustic: -0.66
+            Asphyxiation: -0.66
+            Poison: -0.66
+      - !type:ChemAddMoodlet
+        conditions:
+        - !type:OrganType
+          type: Plasmaman
+        - !type:ReagentThreshold
+          reagent: Plasma
+          min: 4
+        moodPrototype: PlasmamanIngestPlasma
   reactiveEffects:
     Flammable:
       methods: [ Touch ]
@@ -243,23 +315,13 @@
         - !type:ReagentThreshold
           reagent: NitrousOxide
           min: 0.2
+          max: 0.5
         - !type:OrganType
           type: Slime
           shouldHave: false
         emote: Laugh
         showInChat: true
         probability: 0.1
-      - !type:Emote
-        conditions:
-        - !type:ReagentThreshold
-          reagent: NitrousOxide
-          min: 0.2
-        - !type:OrganType
-          type: Slime
-          shouldHave: false
-        emote: Scream
-        showInChat: true
-        probability: 0.01
       - !type:PopupMessage
         conditions:
         - !type:ReagentThreshold
@@ -286,13 +348,13 @@
         conditions:
         - !type:ReagentThreshold
           reagent: NitrousOxide
-          min: 1.8
+          min: 1
         - !type:OrganType
           type: Slime
           shouldHave: false
         key: ForcedSleep
         component: ForcedSleeping
-        time: 3
+        time: 200 # This reeks, but I guess it works LMAO
         type: Add
       - !type:HealthChange
         conditions:
@@ -362,63 +424,3 @@
         - !type:ReagentThreshold
           reagent: Frezon
           min: 1
-
-- type: reagent
-  id: SeaWater
-  name: reagent-name-seawater
-  desc: reagent-desc-seawater
-  physicalDesc: reagent-physical-desc-odorless
-  flavor: water and salt
-  color: "#135c4f"
-  recognizable: true
-  boilingPoint: 100.0
-  meltingPoint: 0.0
-  metabolisms:
-    Gas:
-      effects:
-      - !type:HealthChange
-        conditions:
-        - !type:OrganType
-          type: Jellid
-          shouldHave: false
-        - !type:ReagentThreshold
-          min: 0.5
-        scaleByQuantity: false
-        ignoreResistances: true
-        damage:
-          types:
-            Cold:
-              15
-      - !type:PopupMessage
-        type: Local
-        messages: [ "water-in-lungs" ]
-        probability: 0.7
-        conditions:
-        - !type:OrganType
-          type: Jellid
-          shouldHave: false
-        - !type:ReagentThreshold
-          reagent: SeaWater
-          min: 0.5
-      - !type:AdjustAlert
-        alertType: Drowning
-        conditions:
-        - !type:OrganType
-          type: Jellid
-          shouldHave: false
-        - !type:ReagentThreshold
-          reagent: SeaWater
-          min: 0.5
-        clear: True
-        time: 5
-      - !type:Oxygenate
-        conditions:
-        - !type:OrganType
-          type: Jellid
-      - !type:ModifyLungGas
-        conditions:
-        - !type:OrganType
-          type: Jellid
-        ratios:
-          WaterVapor: 1.0
-          Water: -1.0

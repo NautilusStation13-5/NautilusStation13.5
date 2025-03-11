@@ -22,6 +22,7 @@ using Robust.Shared.Map.Components;
 using Robust.Shared.Player;
 using Robust.Shared.Random;
 using Robust.Shared.Utility;
+using Content.Server.Announcements.Systems;
 
 namespace Content.Server.Nuke;
 
@@ -40,10 +41,10 @@ public sealed class NukeSystem : EntitySystem
     [Dependency] private readonly SharedAudioSystem _audio = default!;
     [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
-    [Dependency] private readonly SharedMapSystem _map = default!;
     [Dependency] private readonly StationSystem _station = default!;
     [Dependency] private readonly UserInterfaceSystem _ui = default!;
     [Dependency] private readonly AppearanceSystem _appearance = default!;
+    [Dependency] private readonly AnnouncerSystem _announcer = default!;
 
     /// <summary>
     ///     Used to calculate when the nuke song should start playing for maximum kino with the nuke sfx
@@ -85,7 +86,6 @@ public sealed class NukeSystem : EntitySystem
     {
         component.RemainingTime = component.Timer;
         _itemSlots.AddItemSlot(uid, SharedNukeComponent.NukeDiskSlotId, component.DiskSlot);
-        _itemSlots.AddItemSlot(uid, SharedNukeComponent.NukeResonanceSlotId, component.ResonanceSlot);
 
         UpdateStatus(uid, component);
         UpdateUserInterface(uid, component);
@@ -169,21 +169,12 @@ public sealed class NukeSystem : EntitySystem
         if (component.Status == NukeStatus.ARMED)
             return;
 
-        // Nuke has to have the disk in it to be moved
-        if (!component.DiskSlot.HasItem)
-        {
-            var msg = Loc.GetString("nuke-component-cant-anchor-toggle");
-            _popups.PopupEntity(msg, uid, args.Actor, PopupType.MediumCaution);
-            return;
-        }
-
         // manually set transform anchor (bypassing anchorable)
         // todo: it will break pullable system
         var xform = Transform(uid);
         if (xform.Anchored)
         {
             _transform.Unanchor(uid, xform);
-            _itemSlots.SetLock(uid, component.DiskSlot, true);
         }
         else
         {
@@ -192,7 +183,7 @@ public sealed class NukeSystem : EntitySystem
 
             var worldPos = _transform.GetWorldPosition(xform);
 
-            foreach (var tile in _map.GetTilesIntersecting(xform.GridUid.Value, grid, new Circle(worldPos, component.RequiredFloorRadius), false))
+            foreach (var tile in grid.GetTilesIntersecting(new Circle(worldPos, component.RequiredFloorRadius), false))
             {
                 if (!tile.IsSpace(_tileDefManager))
                     continue;
@@ -205,7 +196,6 @@ public sealed class NukeSystem : EntitySystem
 
             _transform.SetCoordinates(uid, xform, xform.Coordinates.SnapToGrid());
             _transform.AnchorEntity(uid, xform);
-            _itemSlots.SetLock(uid, component.DiskSlot, false);
         }
 
         UpdateUserInterface(uid, component);
@@ -236,7 +226,7 @@ public sealed class NukeSystem : EntitySystem
 
     private void OnClearButtonPressed(EntityUid uid, NukeComponent component, NukeKeypadClearMessage args)
     {
-        _audio.PlayPvs(component.KeypadPressSound, uid);
+        _audio.PlayEntity(component.KeypadPressSound, Filter.Pvs(uid), uid, true);
 
         if (component.Status != NukeStatus.AWAIT_CODE)
             return;
@@ -336,13 +326,11 @@ public sealed class NukeSystem : EntitySystem
         switch (component.Status)
         {
             case NukeStatus.AWAIT_DISK:
-                if (component.DiskSlot.HasItem && component.ResonanceSlot.HasItem)
-                    {
-                        ArmBomb(uid, component); //Make it so it needs the transmission disk and the Resonance Delaminator to "arm" the artifact.
-                    }
+                if (component.DiskSlot.HasItem)
+                    component.Status = NukeStatus.AWAIT_CODE;
                 break;
             case NukeStatus.AWAIT_CODE:
-                if (!component.DiskSlot.HasItem || !component.ResonanceSlot.HasItem)
+                if (!component.DiskSlot.HasItem)
                 {
                     component.Status = NukeStatus.AWAIT_DISK;
                     component.EnteredCode = "";
@@ -354,12 +342,12 @@ public sealed class NukeSystem : EntitySystem
                 {
                     component.Status = NukeStatus.AWAIT_ARM;
                     component.RemainingTime = component.Timer;
-                    _audio.PlayPvs(component.AccessGrantedSound, uid);
+                    _audio.PlayEntity(component.AccessGrantedSound, Filter.Pvs(uid), uid, true);
                 }
                 else
                 {
                     component.EnteredCode = "";
-                    _audio.PlayPvs(component.AccessDeniedSound, uid);
+                    _audio.PlayEntity(component.AccessDeniedSound, Filter.Pvs(uid), uid, true);
                 }
 
                 break;
@@ -428,9 +416,7 @@ public sealed class NukeSystem : EntitySystem
         // Don't double-dip on the octave shifting
         component.LastPlayedKeypadSemitones = number == 0 ? component.LastPlayedKeypadSemitones : semitoneShift;
 
-        var opts = component.KeypadPressSound.Params;
-        opts = AudioHelpers.ShiftSemitone(opts, semitoneShift).AddVolume(-5f);
-        _audio.PlayPvs(component.KeypadPressSound, uid, opts);
+        _audio.PlayEntity(component.KeypadPressSound, Filter.Pvs(uid), uid, true, AudioHelpers.ShiftSemitone(semitoneShift).WithVolume(-5f));
     }
 
     public string GenerateRandomNumberString(int length)
@@ -466,20 +452,18 @@ public sealed class NukeSystem : EntitySystem
         if (stationUid != null)
             _alertLevel.SetLevel(stationUid.Value, component.AlertLevelOnActivate, true, true, true, true);
 
-        var pos = _transform.GetMapCoordinates(uid, xform: nukeXform);
-        var x = (int) pos.X;
-        var y = (int) pos.Y;
-        var posText = $"({x}, {y})";
-
         // We are collapsing the randomness here, otherwise we would get separate random song picks for checking duration and when actually playing the song afterwards
         _selectedNukeSong = _audio.GetSound(component.ArmMusic);
 
-        // warn a crew
-        var announcement = Loc.GetString("nuke-component-announcement-armed",
-            ("time", (int) component.RemainingTime),
-            ("location", FormattedMessage.RemoveMarkupOrThrow(_navMap.GetNearestBeaconString((uid, nukeXform)))));
-        var sender = Loc.GetString("nuke-component-announcement-sender");
-        _chatSystem.DispatchStationAnnouncement(stationUid ?? uid, announcement, sender, false, null, Color.Red);
+        _announcer.SendAnnouncementMessage(
+            _announcer.GetAnnouncementId("NukeArm"),
+            "nuke-component-announcement-armed",
+            Loc.GetString("nuke-component-announcement-sender"),
+            Color.Red,
+            stationUid ?? uid,
+            null,
+            ("time", (int) component.RemainingTime), ("location", FormattedMessage.RemoveMarkupPermissive(_navMap.GetNearestBeaconString((uid, nukeXform))))
+        );
 
         _sound.PlayGlobalOnStation(uid, _audio.GetSound(component.ArmSound));
         _nukeSongLength = (float) _audio.GetAudioLength(_selectedNukeSong).TotalSeconds;
@@ -516,10 +500,12 @@ public sealed class NukeSystem : EntitySystem
         if (stationUid != null)
             _alertLevel.SetLevel(stationUid.Value, component.AlertLevelOnDeactivate, true, true, true);
 
-        // warn a crew
-        var announcement = Loc.GetString("nuke-component-announcement-unarmed");
-        var sender = Loc.GetString("nuke-component-announcement-sender");
-        _chatSystem.DispatchStationAnnouncement(uid, announcement, sender, false);
+        _announcer.SendAnnouncementMessage(
+            _announcer.GetAnnouncementId("NukeDisarm"),
+            "nuke-component-announcement-unarmed",
+            Loc.GetString("nuke-component-announcement-sender"),
+            station: stationUid ?? uid
+        );
 
         component.PlayedNukeSong = false;
         _sound.PlayGlobalOnStation(uid, _audio.GetSound(component.DisarmSound));
@@ -606,7 +592,7 @@ public sealed class NukeSystem : EntitySystem
         {
             BreakOnDamage = true,
             BreakOnMove = true,
-            NeedHand = true,
+            NeedHand = true
         };
 
         if (!_doAfter.TryStartDoAfter(doAfter))
@@ -660,4 +646,3 @@ public sealed class NukeDisarmSuccessEvent : EntityEventArgs
 {
 
 }
-

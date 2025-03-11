@@ -94,15 +94,17 @@
     mustBeEquippedToUse: true
 
 - type: entity
-  parent: [ClothingHandsBase, BaseCommandContraband]
+  parent: ClothingHandsBase
   id: ClothingHandsGlovesCaptain
-  name: overseer's gloves
+  name: captain gloves
   description: Regal blue gloves, with a nice gold trim. Swanky.
   components:
   - type: Sprite
     sprite: Clothing/Hands/Gloves/captain.rsi
   - type: Clothing
     sprite: Clothing/Hands/Gloves/captain.rsi
+  - type: GloveHeatResistance
+    heatResistance: 1400
   - type: Insulated
   - type: Fiber
     fiberMaterial: fibers-durathread
@@ -167,6 +169,8 @@
     sprite: Clothing/Hands/Gloves/leather.rsi
   - type: Clothing
     sprite: Clothing/Hands/Gloves/leather.rsi
+  - type: GloveHeatResistance
+    heatResistance: 1400
   - type: Fiber
     fiberMaterial: fibers-leather
     fiberColor: fibers-brown
@@ -202,7 +206,7 @@
   - type: FingerprintMask
 
 - type: entity
-  parent: [ClothingHandsBase, BaseToggleClothing, BaseMajorContraband]
+  parent: [ClothingHandsBase, BaseToggleClothing]
   id: ClothingHandsGlovesSpaceNinja
   name: space ninja gloves
   description: These black nano-enhanced gloves insulate from electricity and provide fire resistance.
@@ -221,16 +225,16 @@
         enum.ToggleVisuals.Layer:
           True: {state: icon-green}
           False: {state: icon}
+  - type: GloveHeatResistance
+    heatResistance: 1400
   - type: Insulated
   - type: Fiber
     fiberMaterial: fibers-nanomachines
   - type: FingerprintMask
   - type: Thieving
     stripTimeReduction: 1
-    stealthy: true
   - type: ToggleClothing
     action: ActionToggleNinjaGloves
-    disableOnUnequip: true
   - type: NinjaGloves
     abilities:
     - components:
@@ -256,7 +260,7 @@
       - type: CriminalRecordsHacker
 
 - type: entity
-  parent: [ ClothingHandsGlovesColorBlack, BaseSecurityEngineeringContraband ]
+  parent: ClothingHandsGlovesColorBlack
   id: ClothingHandsGlovesCombat
   name: combat gloves
   description: These tactical gloves are fireproof and shock resistant.
@@ -265,6 +269,8 @@
     sprite: Clothing/Hands/Gloves/combat.rsi
   - type: Clothing
     sprite: Clothing/Hands/Gloves/combat.rsi
+  - type: GloveHeatResistance
+    heatResistance: 1400
   - type: Insulated
   - type: Fiber
     fiberMaterial: fibers-insulative
@@ -280,12 +286,14 @@
     sprite: Clothing/Hands/Gloves/tacticalmaidgloves.rsi
   - type: Clothing
     sprite: Clothing/Hands/Gloves/tacticalmaidgloves.rsi
+  - type: GloveHeatResistance
+    heatResistance: 1400
   - type: Insulated
   - type: Fiber
     fiberColor: fibers-black
 
 - type: entity
-  parent: [ BaseSecurityCargoContraband, ClothingHandsGlovesCombat ]
+  parent: ClothingHandsGlovesCombat
   id: ClothingHandsMercGlovesCombat
   name: mercenary combat gloves
   description: High-quality combat gloves to protect hands from mechanical damage during combat.
@@ -315,10 +323,20 @@
   - type: Fiber
     fiberMaterial: fibers-synthetic
     fiberColor: fibers-black
-  - type: DamageOnInteractProtection
-    damageProtection:
-      flatReductions:
-        Heat: 0 # no protection
+
+- type: entity
+  parent: ClothingHandsButcherable
+  id: ClothingHandsGlovesFingerlessWhite
+  name: fingerless gloves
+  description: Plain gloves without fingertips.
+  components:
+  - type: Sprite
+    sprite: Clothing/Hands/Gloves/fingerlesswhite.rsi
+  - type: Clothing
+    sprite: Clothing/Hands/Gloves/fingerlesswhite.rsi
+  - type: Fiber
+    fiberMaterial: fibers-synthetic
+    fiberColor: fibers-dyed
 
 - type: entity
   parent: ClothingHandsBase
@@ -333,10 +351,6 @@
   - type: Fiber
     fiberMaterial: fibers-insulative
     fiberColor: fibers-yellow
-  - type: DamageOnInteractProtection
-    damageProtection:
-      flatReductions:
-        Heat: 0 # no protection
 
 - type: entity
   parent: ClothingHandsButcherable
@@ -351,10 +365,6 @@
   - type: Fiber
     fiberMaterial: fibers-insulative
     fiberColor: fibers-olive
-  - type: DamageOnInteractProtection
-    damageProtection:
-      flatReductions:
-        Heat: 0 # no protection
 
 - type: entity
   # Intentionally named after regular gloves, they're meant to be sneaky.
@@ -367,7 +377,6 @@
     tags: [] # ignore "WhitelistChameleon" tag
   - type: Thieving
     stripTimeReduction: 1.5
-    stealthy: true
 
 - type: entity
   parent: ClothingHandsGlovesColorWhite
@@ -379,7 +388,7 @@
   - type: Unremoveable
 
 - type: entity
-  parent: [ClothingHandsButcherable, BaseSyndicateContraband]
+  parent: ClothingHandsButcherable
   id: ClothingHandsGlovesNorthStar
   name: gloves of the north star
   description: These gloves allow you to punch incredibly fast.
@@ -390,7 +399,10 @@
     sprite: Clothing/Hands/Gloves/northstar.rsi
   - type: MeleeWeapon
     autoAttack: true
-    attackRate: 4
+    attackRate: 0.25
+    heavyStaminaCost: 2
+    heavyDamageBaseModifier: 1.05
+    maxTargets: 1
     damage:
       types:
        Blunt: 8
@@ -415,7 +427,7 @@
     price: 0
 
 - type: entity
-  parent: [ClothingHandsBase, BaseRestrictedContraband]
+  parent: ClothingHandsBase
   id: ClothingHandsGlovesForensic
   name: forensic gloves
   description: Do not leave fibers or fingerprints. If you work without them, you're A TERRIBLE DETECTIVE.
@@ -444,3 +456,14 @@
     fiberMaterial: fibers-rubber
     fiberColor: fibers-yellow
   - type: FingerprintMask
+
+- type: entity
+  parent: ClothingHandsGlovesSyntheticBase
+  id: ClothingHandsGlovesEvening
+  name: evening gloves
+  description: Gloves that reach past the elbow. Serving elegance and serving looks!
+  components:
+  - type: Sprite
+    sprite: Clothing/Hands/Gloves/evening_gloves.rsi
+  - type: Clothing
+    sprite: Clothing/Hands/Gloves/evening_gloves.rsi

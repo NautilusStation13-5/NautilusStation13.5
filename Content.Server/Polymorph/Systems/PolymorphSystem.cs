@@ -2,6 +2,7 @@ using Content.Server.Actions;
 using Content.Server.Humanoid;
 using Content.Server.Inventory;
 using Content.Server.Mind.Commands;
+using Content.Server.Nutrition;
 using Content.Server.Polymorph.Components;
 using Content.Shared.Actions;
 using Content.Shared.Buckle;
@@ -12,7 +13,6 @@ using Content.Shared.IdentityManagement;
 using Content.Shared.Mind;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
-using Content.Shared.Nutrition;
 using Content.Shared.Polymorph;
 using Content.Shared.Popups;
 using Robust.Server.Audio;
@@ -20,6 +20,7 @@ using Robust.Server.Containers;
 using Robust.Server.GameObjects;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Serialization.Manager;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 
@@ -31,6 +32,7 @@ public sealed partial class PolymorphSystem : EntitySystem
     [Dependency] private readonly IMapManager _mapManager = default!;
     [Dependency] private readonly IPrototypeManager _proto = default!;
     [Dependency] private readonly IGameTiming _gameTiming = default!;
+    [Dependency] private readonly ISerializationManager _serialization = default!;
     [Dependency] private readonly ActionsSystem _actions = default!;
     [Dependency] private readonly AudioSystem _audio = default!;
     [Dependency] private readonly SharedBuckleSystem _buckle = default!;
@@ -199,11 +201,21 @@ public sealed partial class PolymorphSystem : EntitySystem
 
         var targetTransformComp = Transform(uid);
 
-        if (configuration.PolymorphSound != null)
-            _audio.PlayPvs(configuration.PolymorphSound, targetTransformComp.Coordinates);
-
         var child = Spawn(configuration.Entity, _transform.GetMapCoordinates(uid, targetTransformComp), rotation: _transform.GetWorldRotation(uid));
 
+        // Copy specified components over
+        foreach (var compName in configuration.CopiedComponents)
+        {
+            if (!_compFact.TryGetRegistration(compName, out var reg)
+                || !EntityManager.TryGetComponent(uid, reg.Idx, out var comp))
+                continue;
+
+            var copy = _serialization.CreateCopy(comp, notNullableOverride: true);
+            copy.Owner = child;
+            AddComp(child, copy, true);
+        }
+
+        // Ensure the resulting entity is sentient (why? this sucks)
         MakeSentientCommand.MakeSentient(child, EntityManager);
 
         var polymorphedComp = _compFact.GetComponent<PolymorphedEntityComponent>();
@@ -251,7 +263,7 @@ public sealed partial class PolymorphSystem : EntitySystem
             }
         }
 
-        if (configuration.TransferName && TryComp(uid, out MetaDataComponent? targetMeta))
+        if (configuration.TransferName && TryComp<MetaDataComponent>(uid, out var targetMeta))
             _metaData.SetEntityName(child, targetMeta.EntityName);
 
         if (configuration.TransferHumanoidAppearance)
@@ -290,9 +302,6 @@ public sealed partial class PolymorphSystem : EntitySystem
 
         var uidXform = Transform(uid);
         var parentXform = Transform(parent);
-
-        if (component.Configuration.ExitPolymorphSound != null)
-            _audio.PlayPvs(component.Configuration.ExitPolymorphSound, uidXform.Coordinates);
 
         _transform.SetParent(parent, parentXform, uidXform.ParentUid);
         _transform.SetCoordinates(parent, parentXform, uidXform.Coordinates, uidXform.LocalRotation);

@@ -1,9 +1,11 @@
 using Content.Shared.Atmos;
+using Content.Shared.Light.Components;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Tools;
 using Robust.Shared.Audio;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Serialization;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype.Array;
 using Robust.Shared.Utility;
@@ -44,6 +46,10 @@ namespace Content.Shared.Maps
 
         [DataField]
         public PrototypeFlags<ToolQualityPrototype> DeconstructTools { get; set; } = new();
+
+        // Delta V
+        [DataField("canShovel")] public bool CanShovel { get; private set; }
+        //Delta V
 
         /// <remarks>
         /// Legacy AF but nice to have.
@@ -106,7 +112,7 @@ namespace Content.Shared.Maps
         /// <summary>
         /// Can weather affect this tile.
         /// </summary>
-        [DataField("weather")] public bool Weather = true;
+        [DataField("weather")] public bool Weather = false;
 
         /// <summary>
         /// Is this tile immune to RCD deconstruct.
@@ -117,5 +123,18 @@ namespace Content.Shared.Maps
         {
             TileId = id;
         }
+
+        [DataField]
+        public bool Reinforced = false;
+
+        [DataField]
+        public float TileRipResistance = 125f;
+    }
+
+    [Flags]
+    public enum TileFlag : byte
+    {
+        None = 0,
+        Roof = 1 << 0,
     }
 }

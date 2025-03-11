@@ -21,6 +21,7 @@ using Robust.Shared.Network;
 using Robust.Shared.Player;
 using Robust.Shared.Random;
 using Robust.Shared.Utility;
+using Content.Server.Announcements.Systems;
 
 namespace Content.Server.GameTicking
 {
@@ -29,6 +30,7 @@ namespace Content.Server.GameTicking
         [Dependency] private readonly DiscordWebhook _discord = default!;
         [Dependency] private readonly RoleSystem _role = default!;
         [Dependency] private readonly ITaskManager _taskManager = default!;
+        [Dependency] private readonly AnnouncerSystem _announcer = default!;
 
         private static readonly Counter RoundNumberMetric = Metrics.CreateCounter(
             "ss14_round_number",
@@ -162,18 +164,12 @@ namespace Content.Server.GameTicking
             // whereas the command can also be used on an existing map.
             var loadOpts = loadOptions ?? new MapLoadOptions();
 
-            if (map.MaxRandomOffset != 0f)
-                loadOpts.Offset = _robustRandom.NextVector2(map.MaxRandomOffset);
-
-            if (map.RandomRotation)
-                loadOpts.Rotation = _robustRandom.NextAngle();
-
             var ev = new PreGameMapLoad(targetMapId, map, loadOpts);
             RaiseLocalEvent(ev);
 
             var gridIds = _map.LoadMap(targetMapId, ev.GameMap.MapPath.ToString(), ev.Options);
 
-            _metaData.SetEntityName(_mapManager.GetMapEntityId(targetMapId), map.MapName);
+            _metaData.SetEntityName(_mapManager.GetMapEntityId(targetMapId), $"station map - {map.MapName}");
 
             var gridUids = gridIds.ToList();
             RaiseLocalEvent(new PostGameMapLoad(map, targetMapId, gridUids, stationName));
@@ -190,6 +186,9 @@ namespace Content.Server.GameTicking
                     continue;
 
                 if (!_playerManager.TryGetSessionById(userId, out _))
+                    continue;
+
+                if (_banManager.GetRoleBans(userId) == null)
                     continue;
 
                 total++;
@@ -240,7 +239,7 @@ namespace Content.Server.GameTicking
                 HumanoidCharacterProfile profile;
                 if (_prefsManager.TryGetCachedPreferences(userId, out var preferences))
                 {
-                    profile = (HumanoidCharacterProfile) preferences.SelectedCharacter;
+                    profile = (HumanoidCharacterProfile) preferences.GetProfile(preferences.SelectedCharacterIndex);
                 }
                 else
                 {
@@ -288,6 +287,7 @@ namespace Content.Server.GameTicking
             AnnounceRound();
             UpdateInfoText();
             SendRoundStartedDiscordMessage();
+            RaiseLocalEvent(new RoundStartedEvent(RoundId));
 
 #if EXCEPTION_TOLERANCE
             }
@@ -374,7 +374,7 @@ namespace Content.Server.GameTicking
             var listOfPlayerInfo = new List<RoundEndMessageEvent.RoundEndPlayerInfo>();
             // Grab the great big book of all the Minds, we'll need them for this.
             var allMinds = EntityQueryEnumerator<MindComponent>();
-            var pvsOverride = _cfg.GetCVar(CCVars.RoundEndPVSOverrides);
+            var pvsOverride = _configurationManager.GetCVar(CCVars.RoundEndPVSOverrides);
             while (allMinds.MoveNext(out var mindId, out var mind))
             {
                 // TODO don't list redundant observer roles?
@@ -451,6 +451,7 @@ namespace Content.Server.GameTicking
 
             _replayRoundPlayerInfo = listOfPlayerInfoFinal;
             _replayRoundText = roundEndText;
+            RaiseLocalEvent(new RoundEndedEvent(RoundId, roundDuration));
         }
 
         private async void SendRoundEndDiscordMessage()
@@ -583,19 +584,15 @@ namespace Content.Server.GameTicking
 
             DisallowLateJoin = false;
             _playerGameStatuses.Clear();
+            
             foreach (var session in _playerManager.Sessions)
-            {
                 _playerGameStatuses[session.UserId] = LobbyEnabled ? PlayerGameStatus.NotReadyToPlay : PlayerGameStatus.ReadyToPlay;
-            }
         }
 
         public bool DelayStart(TimeSpan time)
         {
             if (_runLevel != GameRunLevel.PreRoundLobby)
-            {
                 return false;
-            }
-
             _roundStartTime += time;
 
             RaiseNetworkEvent(new TickerLobbyCountdownEvent(_roundStartTime, Paused));
@@ -632,6 +629,11 @@ namespace Content.Server.GameTicking
             }
         }
 
+        public TimeSpan RoundDuration()
+        {
+            return _gameTiming.CurTime.Subtract(RoundStartTimeSpan);
+        }
+
         private void AnnounceRound()
         {
             if (CurrentPreset == null) return;
@@ -643,11 +645,8 @@ namespace Content.Server.GameTicking
 
             var proto = _robustRandom.Pick(options);
 
-            if (proto.Message != null)
-                _chatSystem.DispatchGlobalAnnouncement(Loc.GetString(proto.Message), playSound: true);
-
-            if (proto.Sound != null)
-                _audio.PlayGlobal(proto.Sound, Filter.Broadcast(), true);
+            _announcer.SendAnnouncement(_announcer.GetAnnouncementId(proto.ID), Filter.Broadcast(),
+                proto.Message ?? "game-ticker-welcome-to-the-station");
         }
 
         private async void SendRoundStartedDiscordMessage()

@@ -11,7 +11,18 @@
   - type: Matchbox
 
 - type: entity
-  parent: [ClothingShoesMilitaryBase, BaseRestrictedContraband]
+  parent: ClothingShoesBaseButcherable
+  id: ClothingShoesBootsWorkColor
+  name: workboots
+  description: Lace-up work boots for the especially blue-collar. In a variety of colors!
+  components:
+  - type: Sprite
+    sprite: Clothing/Shoes/Boots/workboots_color.rsi
+  - type: Clothing
+    sprite: Clothing/Shoes/Boots/workboots_color.rsi
+
+- type: entity
+  parent: ClothingShoesMilitaryBase
   id: ClothingShoesBootsJack
   name: jackboots
   description: Nanotrasen-issue Security combat boots for combat scenarios or combat situations. All combat, all the time.
@@ -21,7 +32,29 @@
   - type: Clothing
     sprite: Clothing/Shoes/Boots/jackboots.rsi
   - type: ClothingSlowOnDamageModifier
-    modifier: 0.5
+    modifier: 0.8
+
+- type: entity
+  parent: ClothingShoesMilitaryBase
+  id: ClothingShoesBootsJackFake
+  name: jackboots
+  description: Civilian-grade replica of Nanotrasen Security combat boots. Looks the part but lacks the performance—ideal for the heated situations.
+  components:
+  - type: Sprite
+    sprite: Clothing/Shoes/Boots/jackboots.rsi
+  - type: Clothing
+    sprite: Clothing/Shoes/Boots/jackboots.rsi
+
+- type: entity
+  parent: ClothingShoesMilitaryBase
+  id: ClothingShoesBootsJackColor
+  name: fashion jackboots
+  description: Civilian-grade replica of Nanotrasen Security combat boots, impractical but fashionable.
+  components:
+  - type: Sprite
+    sprite: Clothing/Shoes/Boots/jackboots_color.rsi
+  - type: Clothing
+    sprite: Clothing/Shoes/Boots/jackboots_color.rsi
 
 - type: entity
   parent: ClothingShoesBaseButcherable
@@ -47,7 +80,7 @@
     sprite: Clothing/Shoes/Boots/performer.rsi
 
 - type: entity
-  parent: [ClothingShoesMilitaryBase, BaseRestrictedContraband]
+  parent: ClothingShoesMilitaryBase
   id: ClothingShoesBootsCombat
   name: combat boots
   description: Robust combat boots for combat scenarios or combat situations. All combat, all the time.
@@ -56,6 +89,8 @@
     sprite: Clothing/Shoes/Boots/combatboots.rsi
   - type: Clothing
     sprite: Clothing/Shoes/Boots/combatboots.rsi
+  - type: ClothingSlowOnDamageModifier
+    modifier: 0.8
 
 - type: entity
   parent: ClothingShoesMilitaryBase
@@ -71,9 +106,17 @@
     sprite: Clothing/Shoes/Boots/highheelboots.rsi
   - type: Clothing
     sprite: Clothing/Shoes/Boots/highheelboots.rsi
+  - type: HideLayerClothing
+    force: true
+    slots:
+    - LFoot
+    - RFoot
+  - type: FootstepModifier
+    footstepSoundCollection:
+      collection: FootstepHighHeels
 
 - type: entity
-  parent: [ ClothingShoesMilitaryBase ]
+  parent: ClothingShoesMilitaryBase
   id: ClothingShoesBootsMerc
   name: mercenary boots
   description: Boots that have gone through many conflicts and that have proven their combat reliability.
@@ -82,6 +125,8 @@
     sprite: Clothing/Shoes/Boots/mercboots.rsi
   - type: Clothing
     sprite: Clothing/Shoes/Boots/mercboots.rsi
+  - type: ClothingSlowOnDamageModifier
+    modifier: 0.6
 
 - type: entity
   parent: ClothingShoesBaseButcherable
@@ -107,7 +152,7 @@
 - type: entity
   parent: ClothingShoesBaseWinterBoots
   id: ClothingShoesBootsWinterCargo
-  name: cargo winter boots
+  name: logistics winter boots #Delta V: Rename Logistics
   components:
   - type: Sprite
     sprite: Clothing/Shoes/Boots/winterbootscargo.rsi
@@ -145,7 +190,7 @@
     sprite: Clothing/Shoes/Boots/winterbootssci.rsi
 
 - type: entity
-  parent: [ClothingShoesBaseWinterBoots, ClothingShoesMilitaryBase, BaseRestrictedContraband]
+  parent: ClothingShoesBaseWinterBoots
   id: ClothingShoesBootsWinterSec
   name: security winter boots
   components:
@@ -155,10 +200,10 @@
     sprite: Clothing/Shoes/Boots/winterbootssec.rsi
 
 - type: entity
-  parent: [ClothingShoesBaseWinterBoots, BaseSyndicateContraband]
+  parent: ClothingShoesBaseWinterBoots
   id: ClothingShoesBootsWinterSyndicate
   name: syndicate's winter boots
-  description: Durable heavy boots, looks like merch from "Syndieland".
+  description: Durable heavy boots, looks like merch from "Syndieland"
   components:
   - type: Sprite
     sprite: Clothing/Shoes/Boots/winterbootssyndicate.rsi
@@ -187,10 +232,6 @@
         reagents:
         - ReagentId: Fiber
           Quantity: 10
-  - type: Butcherable
-    spawned:
-    - id: MaterialWebSilk1
-      amount: 2
   - type: Construction
     graph: WebObjects
     node: boots
@@ -208,8 +249,6 @@
   - type: FootstepModifier
     footstepSoundCollection:
       collection: FootstepSpurs
-      params:
-        variation: 0.09
 
 - type: entity
   parent: ClothingShoesBootsCowboyBrown
@@ -240,3 +279,58 @@
     sprite: Clothing/Shoes/Boots/cowboybootsfancy.rsi
   - type: Clothing
     sprite: Clothing/Shoes/Boots/cowboybootsfancy.rsi
+
+- type: entity
+  parent: ClothingShoesBaseButcherable
+  id: ClothingShoesBootsAnkle
+  name: ankle boots
+  description: A pair of low-heeled boots, if you need inclosed shoes.
+  components:
+  - type: Sprite
+    sprite: Clothing/Shoes/Boots/ankleboots.rsi
+  - type: Clothing
+    sprite: Clothing/Shoes/Boots/ankleboots.rsi
+
+- type: entity
+  parent: ClothingShoesBaseButcherable
+  id: ClothingShoesBootsFull
+  name: full-length boots
+  description: A pair of boots that cover the entire leg.
+  components:
+  - type: Sprite
+    sprite: Clothing/Shoes/Boots/fullboots.rsi
+  - type: Clothing
+    sprite: Clothing/Shoes/Boots/fullboots.rsi
+
+- type: entity
+  parent: ClothingShoesBaseButcherable
+  id: ClothingShoesBootsMud
+  name: mudboots
+  description: A nice pair of weatherproof mudboots to keep your feet dry.
+  components:
+  - type: Sprite
+    sprite: Clothing/Shoes/Boots/mudboots.rsi
+  - type: Clothing
+    sprite: Clothing/Shoes/Boots/mudboots.rsi
+
+- type: entity
+  parent: ClothingShoesBaseButcherable
+  id: ClothingShoesBootsMudThigh
+  name: thigh-high mudboots
+  description: A nice pair of weatherproof mudboots to keep your legs dry.
+  components:
+  - type: Sprite
+    sprite: Clothing/Shoes/Boots/thighmudboots.rsi
+  - type: Clothing
+    sprite: Clothing/Shoes/Boots/thighmudboots.rsi
+
+- type: entity
+  parent: ClothingShoesBaseButcherable
+  id: ClothingShoesBootsThigh
+  name: thigh-high boots
+  description: A pair of casual boots that reach up to the thighs.
+  components:
+  - type: Sprite
+    sprite: Clothing/Shoes/Boots/thighboots.rsi
+  - type: Clothing
+    sprite: Clothing/Shoes/Boots/thighboots.rsi

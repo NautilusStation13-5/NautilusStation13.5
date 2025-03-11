@@ -30,7 +30,7 @@
   - type: Body
     prototype: Animal
   - type: Damageable
-    damageContainer: BiologicalMetaphysical
+    damageContainer: Biological
     damageModifierSet: HellSpawn
   - type: MovementSpeedModifier
     baseWalkSpeed: 2
@@ -58,6 +58,7 @@
   - type: Perishable
   - type: Reflect
     reflectProb: 0.7
+    innate: true
     reflects:
       - Energy
   - type: Fixtures

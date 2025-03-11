@@ -2,7 +2,7 @@
   name: handcuffs
   description: Used to detain criminals and other assholes.
   id: Handcuffs
-  parent: [BaseItem, BaseSecurityCommandContraband]
+  parent: BaseItem
   components:
   - type: Item
     size: Small
@@ -26,9 +26,8 @@
   - type: GuideHelp
     guides:
     - Security
-    - Antagonists
   - type: UseDelay
-    delay: 3
+    delay: 6
 
 - type: entity
   name: makeshift handcuffs
@@ -53,6 +52,7 @@
       path: /Audio/Items/Handcuffs/rope_breakout.ogg
     startBreakoutSound:
       path: /Audio/Items/Handcuffs/rope_takeoff.ogg
+    uncuffEasierWhenLarge: true
   - type: Construction
     graph: makeshifthandcuffs
     node: cuffscable
@@ -94,6 +94,7 @@
       path: /Audio/Items/Handcuffs/rope_breakout.ogg
     startBreakoutSound:
       path: /Audio/Items/Handcuffs/rope_takeoff.ogg
+    uncuffEasierWhenLarge: true
   - type: Sprite
     sprite: Objects/Misc/zipties.rsi
     state: cuff

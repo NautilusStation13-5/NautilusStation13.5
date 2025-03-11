@@ -1,4 +1,4 @@
-﻿- type: speechVerb
+- type: speechVerb
   id: Default
   name: chat-speech-verb-name-default
   speechVerbStrings:
@@ -77,6 +77,8 @@
   - chat-speech-verb-skeleton-1
   - chat-speech-verb-skeleton-2
   - chat-speech-verb-skeleton-3
+  - chat-speech-verb-skeleton-4
+  - chat-speech-verb-skeleton-5
 
 - type: speechVerb
   id: Slime
@@ -95,6 +97,15 @@
   - chat-speech-verb-vox-3
 
 - type: speechVerb
+  id: Oni
+  name: chat-speech-verb-name-oni
+  speechVerbStrings:
+  - chat-speech-verb-oni-1
+  - chat-speech-verb-oni-2
+  - chat-speech-verb-oni-3
+  - chat-speech-verb-oni-4
+
+- type: speechVerb
   id: Plant
   name: chat-speech-verb-name-plant
   speechVerbStrings:
@@ -109,14 +120,6 @@
   - chat-speech-verb-canine-1
   - chat-speech-verb-canine-2
   - chat-speech-verb-canine-3
-
-- type: speechVerb
-  id: Goat
-  name: chat-speech-verb-name-goat
-  speechVerbStrings:
-  - chat-speech-verb-goat-1
-  - chat-speech-verb-goat-2
-  - chat-speech-verb-goat-3
 
 - type: speechVerb
   id: LargeMob

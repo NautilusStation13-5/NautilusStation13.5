@@ -34,7 +34,12 @@
   - type: PhysicalComposition
     materialComposition:
       Steel: 50
-  - type: DnaSubstanceTrace
+  - type: EmitSoundOnPickup
+    sound: /Audio/SimpleStation14/Items/Handling/drinkglass_pickup.ogg
+  - type: EmitSoundOnDrop
+    sound: /Audio/SimpleStation14/Items/Handling/drinkglass_drop.ogg
+  - type: EmitSoundOnLand
+    sound: /Audio/SimpleStation14/Items/Handling/drinkglass_drop.ogg
   - type: ReactionMixer
     mixOnInteract: false
     reactionTypes:
@@ -73,7 +78,7 @@
   parent: DrinkGlassBase
   id: DrinkJar
   name: jar
-  description: The hipster's cup.
+  description: The hipster's cup
   components:
   - type: Drink
   - type: Sprite

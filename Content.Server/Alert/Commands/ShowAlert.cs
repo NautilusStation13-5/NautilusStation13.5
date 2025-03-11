@@ -10,7 +10,6 @@ namespace Content.Server.Alert.Commands
     public sealed class ShowAlert : IConsoleCommand
     {
         [Dependency] private readonly IEntityManager _e = default!;
-
         public string Command => "showalert";
         public string Description => "Shows an alert for a player, defaulting to current player";
         public string Help => "showalert <alertType> <severity, -1 if no severity> <name or userID, omit for current player>";
@@ -32,7 +31,7 @@ namespace Content.Server.Alert.Commands
                 if (!CommandUtils.TryGetAttachedEntityByUsernameOrId(shell, target, player, out attachedEntity)) return;
             }
 
-            if (!_e.TryGetComponent(attachedEntity, out AlertsComponent? alertsComponent))
+            if (!IoCManager.Resolve<IEntityManager>().TryGetComponent(attachedEntity, out AlertsComponent? alertsComponent))
             {
                 shell.WriteLine("user has no alerts component");
                 return;

@@ -18,6 +18,7 @@
     tags:
       - ForceFixRotations
       - Window
+      - WeldbotFixableStructure
   - type: Sprite
     drawdepth: WallTops
     sprite: Structures/Windows/window.rsi
@@ -72,45 +73,24 @@
         acts: [ "Destruction" ]
   - type: Airtight
   - type: IconSmooth
-    key: windows
+    key: walls
     base: window
-  - type: InteractionPopup
-    interactSuccessString: comp-window-knock
-    messagePerceivedByOthers: comp-window-knock
-    interactSuccessSound:
-      path: /Audio/Effects/glass_knock.ogg
   - type: Construction
     graph: Window
     node: window
   - type: Appearance
   - type: DamageVisuals
-    thresholds: [5, 10, 20]
-    damageDivisor: 2
+    thresholds: [4, 8, 12]
+    damageDivisor: 3.333
     trackAllDamage: true
     damageOverlay:
       sprite: Structures/Windows/cracks.rsi
   - type: StaticPrice
     price: 100
   - type: BlockWeather
-
-- type: entity
-  parent: Window
-  id: TintedWindow
-  name: tinted window
-  components:
-  - type: Sprite
-    drawdepth: WallTops
-    sprite: Structures/Windows/tinted_window.rsi
-  - type: Icon
-    sprite: Structures/Windows/tinted_window.rsi
-  - type: IconSmooth
-    base: twindow
-  - type: Construction
-    graph: Window
-    node: tintedWindow
-  - type: Occluder
-  - type: StaticPrice
-    price: 70
+  - type: InteractionVerbs
+    allowedVerbs:
+    - KnockOn
 
 - type: entity
   id: WindowRCDResistant
@@ -135,6 +115,8 @@
   - type: Tag
     tags:
       - Window
+      - Directional #Delta V - Summary: Allows the tilewindow mapping command to work.
+      - WeldbotFixableStructure
   - type: MeleeSound
     soundGroups:
       Brute:
@@ -146,11 +128,6 @@
   - type: Icon
     sprite: Structures/Windows/directional.rsi
     state: window
-  - type: InteractionPopup
-    interactSuccessString: comp-window-knock
-    messagePerceivedByOthers: comp-window-knock
-    interactSuccessSound:
-      path: /Audio/Effects/glass_knock.ogg
   - type: Physics
   - type: Fixtures
     fixtures:
@@ -165,7 +142,7 @@
         - GlassLayer
   - type: Repairable
   - type: Damageable
-    damageContainer: StructuralInorganic
+    damageContainer: Inorganic
     damageModifierSet: Glass
   - type: ExaminableDamage
     messages: WindowMessages
@@ -177,7 +154,7 @@
     thresholds:
     - trigger:
         !type:DamageTrigger
-        damage: 50 #excess damage (nuke?). avoid computational cost of spawning entities.
+        damage: 150 #excess damage (nuke?). avoid computational cost of spawning entities.
       behaviors:
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
@@ -207,12 +184,16 @@
     node: windowDirectional
   - type: Appearance
   - type: DamageVisuals
-    thresholds: [5, 10, 20]
+    thresholds: [4, 8, 12]
+    damageDivisor: 3.333
     trackAllDamage: true
     damageOverlay:
       sprite: Structures/Windows/cracks_directional.rsi
   - type: StaticPrice
-    price: 15
+    price: 10
+  - type: InteractionVerbs
+    allowedVerbs:
+    - KnockOn
 
 - type: entity
   id: WindowDirectionalRCDResistant
@@ -238,8 +219,6 @@
   - type: Icon
     sprite: Structures/Windows/directional.rsi
     state: frosted_window
-  - type: StaticPrice
-    price: 35
 
 - type: entity
   parent: Window
@@ -256,7 +235,7 @@
     state: state0
   - type: IconSmooth
     mode: Diagonal
-    key: windows
+    key: walls
     base: state
   - type: Icon
     sprite: Structures/Windows/window_diagonal.rsi

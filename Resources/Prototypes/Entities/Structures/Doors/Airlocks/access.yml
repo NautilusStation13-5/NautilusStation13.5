@@ -11,7 +11,7 @@
     layoutId: AirlockService
 
 - type: entity
-  parent: AirlockServiceLocked
+  parent: AirlockJustice # DeltaV - Lawyer is in Justice Dept
   id: AirlockLawyerLocked
   suffix: Lawyer, Locked
   components:
@@ -29,7 +29,7 @@
       board: [ DoorElectronicsTheatre ]
 
 - type: entity
-  parent: AirlockServiceLocked
+  parent: AirlockScience # DeltaV - Chapel is in Epistemics
   id: AirlockChapelLocked
   suffix: Chapel, Locked
   components:
@@ -65,13 +65,22 @@
       board: [ DoorElectronicsBar ]
 
 - type: entity
-  parent: AirlockHydroponics
+  parent: AirlockServiceLocked
   id: AirlockHydroponicsLocked
   suffix: Hydroponics, Locked
   components:
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsHydroponics ]
+
+- type: entity
+  parent: AirlockCommandLocked
+  id: AirlockServiceCaptainLocked
+  suffix: Captain, Locked
+  components:
+  - type: ContainerFill
+    containers:
+      board: [ DoorElectronicsCaptain ]
 
 - type: entity
   parent: AirlockExternal
@@ -85,13 +94,11 @@
 - type: entity
   parent: AirlockExternal
   id: AirlockExternalCargoLocked
-  suffix: External, Cargo, Locked
+  suffix: External, Logistics, Locked # DeltaV - Logistics Department replacing Cargo
   components:
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsCargo ]
-  - type: Wires
-    layoutId: AirlockCargo
 
 - type: entity
   parent: AirlockExternal
@@ -101,30 +108,6 @@
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsEngineering ]
-  - type: Wires
-    layoutId: AirlockEngineering
-
-- type: entity
-  parent: AirlockExternal
-  id: AirlockExternalCommandLocked
-  suffix: External, Command, Locked
-  components:
-  - type: ContainerFill
-    containers:
-      board: [ DoorElectronicsCommand ]
-  - type: Wires
-    layoutId: AirlockCommand
-
-- type: entity
-  parent: AirlockExternalGlass
-  id: AirlockExternalGlassCommandLocked
-  suffix: External, Glass, Command, Locked
-  components:
-  - type: ContainerFill
-    containers:
-      board: [ DoorElectronicsCommand ]
-  - type: Wires
-    layoutId: AirlockCommand
 
 - type: entity
   parent: AirlockExternal
@@ -134,8 +117,6 @@
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsAtmospherics ]
-  - type: Wires
-    layoutId: AirlockEngineering
 
 - type: entity
   parent: AirlockExternal
@@ -145,8 +126,6 @@
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsSyndicateAgent ]
-  - type: Wires
-    layoutId: AirlockSecurity
 
 - type: entity
   parent: AirlockExternal
@@ -156,8 +135,6 @@
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsNukeop ]
-  - type: Wires
-    layoutId: AirlockSecurity
 
 - type: entity
   parent: AirlockFreezer
@@ -207,7 +184,7 @@
 - type: entity
   parent: AirlockCargo
   id: AirlockCargoLocked
-  suffix: Cargo, Locked
+  suffix: Logistics, Locked # DeltaV - Logistics Department replacing Cargo
   components:
   - type: ContainerFill
     containers:
@@ -241,6 +218,14 @@
       board: [ DoorElectronicsMedical ]
 
 - type: entity
+  parent: AirlockMedical
+  id: AirlockParamedicLocked
+  suffix: Paramedic, Locked
+  components:
+  - type: AccessReader
+    access: [["Paramedic"]]
+
+- type: entity
   parent: AirlockVirology
   id: AirlockVirologyLocked
   suffix: Virology, Locked
@@ -267,10 +252,11 @@
     containers:
       board: [ DoorElectronicsMorgue ]
 
+
 - type: entity
   parent: AirlockScience
   id: AirlockScienceLocked
-  suffix: Science, Locked
+  suffix: Epistemics, Locked # DeltaV - Epistemics Department replacing Science
   components:
   - type: ContainerFill
     containers:
@@ -279,7 +265,7 @@
 - type: entity
   parent: AirlockScience
   id: AirlockMedicalScienceLocked
-  suffix: Medical/Science, Locked
+  suffix: Medical/Epistemics, Locked # DeltaV - Epistemics Department replacing Science
   components:
   - type: ContainerFill
     containers:
@@ -360,7 +346,7 @@
 - type: entity
   parent: AirlockCommand
   id: AirlockQuartermasterLocked
-  suffix: Quartermaster, Locked
+  suffix: Logistics Officer, Locked # DeltaV - Logistics Department replacing Cargo
   components:
   - type: ContainerFill
     containers:
@@ -374,6 +360,7 @@
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsSecurity ]
+  - type: AirlockVirusTarget
 
 - type: entity
   parent: AirlockSecurity
@@ -383,15 +370,17 @@
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsDetective ]
+  - type: AirlockVirusTarget
 
-- type: entity
-  parent: AirlockSecurity
-  id: AirlockBrigLocked
-  suffix: Brig, Locked
-  components:
-  - type: ContainerFill
-    containers:
-      board: [ DoorElectronicsBrig ]
+#Delta V: Removed Brig Access
+#- type: entity
+#  parent: AirlockSecurity
+#  id: AirlockBrigLocked
+#  suffix: Brig, Locked
+#  components:
+#  - type: ContainerFill
+#    containers:
+#      board: [ DoorElectronicsBrig ]
 
 - type: entity
   parent: AirlockSecurity
@@ -401,6 +390,7 @@
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsSecurityLawyer ]
+  - type: AirlockVirusTarget
 
 - type: entity
   parent: AirlockSecurity
@@ -444,8 +434,8 @@
     layoutId: AirlockService
 
 - type: entity
-  parent: AirlockServiceGlassLocked
-  id: AirlockLawyerGlassLocked
+  parent: AirlockJusticeGlass
+  id: AirlockLawyerGlassLocked # DeltaV - Lawyer is in Justice Dept
   suffix: Lawyer, Locked
   components:
   - type: ContainerFill
@@ -462,7 +452,7 @@
       board: [ DoorElectronicsTheatre ]
 
 - type: entity
-  parent: AirlockServiceGlassLocked
+  parent: AirlockGlass
   id: AirlockBarGlassLocked
   suffix: Bar, Locked
   components:
@@ -482,13 +472,11 @@
 - type: entity
   parent: AirlockExternalGlass
   id: AirlockExternalGlassCargoLocked
-  suffix: External, Glass, Cargo, Locked
+  suffix: External, Glass, Logistics, Locked # DeltaV - Logistics Department replacing Cargo
   components:
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsCargo ]
-  - type: Wires
-    layoutId: AirlockCargo
 
 - type: entity
   parent: AirlockExternalGlass
@@ -498,8 +486,6 @@
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsSyndicateAgent ]
-  - type: Wires
-    layoutId: AirlockSecurity
 
 - type: entity
   parent: AirlockExternalGlass
@@ -509,8 +495,6 @@
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsNukeop ]
-  - type: Wires
-    layoutId: AirlockSecurity
 
 - type: entity
   parent: AirlockExternalGlass
@@ -520,8 +504,6 @@
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsEngineering ]
-  - type: Wires
-    layoutId: AirlockEngineering
 
 - type: entity
   parent: AirlockExternalGlass
@@ -531,8 +513,6 @@
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsAtmospherics ]
-  - type: Wires
-    layoutId: AirlockEngineering
 
 - type: entity
   parent: AirlockServiceGlassLocked
@@ -553,7 +533,7 @@
       board: [ DoorElectronicsJanitor ]
 
 - type: entity
-  parent: AirlockHydroponicsGlass
+  parent: AirlockServiceGlassLocked
   id: AirlockHydroGlassLocked
   suffix: Hydroponics, Locked
   components:
@@ -562,7 +542,7 @@
       board: [ DoorElectronicsHydroponics ]
 
 - type: entity
-  parent: AirlockServiceGlassLocked
+  parent: AirlockScienceGlass  # DeltaV - Chapel is in Epistemics
   id: AirlockChapelGlassLocked
   suffix: Chapel, Locked
   components:
@@ -591,7 +571,7 @@
 - type: entity
   parent: AirlockCargoGlass
   id: AirlockCargoGlassLocked
-  suffix: Cargo, Locked
+  suffix: Logistics, Locked # DeltaV - Logistics Department replacing Cargo
   components:
   - type: ContainerFill
     containers:
@@ -626,21 +606,20 @@
 
 - type: entity
   parent: AirlockMedicalGlass
-  id: AirlockMedicalMorgueGlassLocked
-  suffix: Morgue, Locked
-  components:
-  - type: ContainerFill
-    containers:
-      board: [ DoorElectronicsMorgue ]
-
-- type: entity
-  parent: AirlockMedicalGlass
   id: AirlockMedicalGlassLocked
   suffix: Medical, Locked
   components:
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsMedical ]
+
+- type: entity
+  parent: AirlockMedicalGlass
+  id: AirlockParamedicGlassLocked
+  suffix: Paramedic, Locked
+  components:
+  - type: AccessReader
+    access: [["Paramedic"]]
 
 - type: entity
   parent: AirlockVirologyGlass
@@ -654,7 +633,7 @@
 - type: entity
   parent: AirlockScienceGlass
   id: AirlockScienceGlassLocked
-  suffix: Science, Locked
+  suffix: Epistemics, Locked # DeltaV - Epistemics Department replacing Science
   components:
   - type: ContainerFill
     containers:
@@ -663,7 +642,7 @@
 - type: entity
   parent: AirlockScienceGlass
   id: AirlockMedicalScienceGlassLocked
-  suffix: Medical/Science, Locked
+  suffix: Medical/Epistemics, Locked # DeltaV - Epistemics Department replacing Science
   components:
   - type: ContainerFill
     containers:
@@ -744,7 +723,7 @@
 - type: entity
   parent: AirlockCommandGlass
   id: AirlockQuartermasterGlassLocked
-  suffix: Quartermaster, Locked
+  suffix: Logistics Officer, Locked # DeltaV - Logistics Department replacing Cargo
   components:
   - type: ContainerFill
     containers:
@@ -758,6 +737,7 @@
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsSecurity ]
+  - type: AirlockVirusTarget
 
 - type: entity
   parent: AirlockSecurityGlass
@@ -767,15 +747,16 @@
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsDetective ]
+  - type: AirlockVirusTarget
 
-- type: entity
-  parent: AirlockSecurityGlass
-  id: AirlockBrigGlassLocked
-  suffix: Brig, Locked
-  components:
-  - type: ContainerFill
-    containers:
-      board: [ DoorElectronicsBrig ]
+#- type: entity
+#  parent: AirlockSecurityGlass
+#  id: AirlockBrigGlassLocked
+#  suffix: Brig, Locked
+#  components:
+#  - type: ContainerFill
+#    containers:
+#      board: [ DoorElectronicsBrig ]
 
 - type: entity
   parent: AirlockSecurityGlass
@@ -785,6 +766,7 @@
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsSecurityLawyer ]
+  - type: AirlockVirusTarget
 
 - type: entity
   parent: AirlockSecurityGlass
@@ -853,7 +835,7 @@
 - type: entity
   parent: AirlockMaint
   id: AirlockMaintCargoLocked
-  suffix: Cargo, Locked
+  suffix: Logistics, Locked # DeltaV - Logistics Department replacing Cargo
   components:
   - type: ContainerFill
     containers:
@@ -970,15 +952,6 @@
       board: [ DoorElectronicsKitchen ]
 
 - type: entity
-  parent: AirlockMaintServiceLocked
-  id: AirlockMaintKitchenHydroLocked
-  suffix: Kitchen/Hydroponics, Locked
-  components:
-  - type: ContainerFill
-    containers:
-      board: [ DoorElectronicsKitchenHydroponics ]
-
-- type: entity
   parent: AirlockMaint
   id: AirlockMaintIntLocked
   suffix: Interior, Locked
@@ -1019,7 +992,7 @@
 - type: entity
   parent: AirlockMaint
   id: AirlockMaintRnDLocked
-  suffix: Science, Locked
+  suffix: Epistemics, Locked # DeltaV - Epistemics Department replacing Science
   components:
   - type: ContainerFill
     containers:
@@ -1030,7 +1003,7 @@
 - type: entity
   parent: AirlockMaintRnDLocked
   id: AirlockMaintRnDMedLocked
-  suffix: Medical/Science, Locked
+  suffix: Medical/Epistemics, Locked # DeltaV - Epistemics Department replacing Science
   components:
   - type: ContainerFill
     containers:
@@ -1046,6 +1019,7 @@
       board: [ DoorElectronicsSecurity ]
   - type: Wires
     layoutId: AirlockSecurity
+  - type: AirlockVirusTarget
 
 - type: entity
   parent: AirlockMaintSecLocked
@@ -1221,9 +1195,6 @@
   components:
   - type: PriorityDock
     tag: DockArrivals
-  - type: ContainerFill
-    containers:
-      board: [ DoorElectronicsExternal ]
 
 - type: entity
   parent: AirlockGlassShuttle
@@ -1231,13 +1202,6 @@
   suffix: External, Escape 3x4, Glass, Docking
   components:
   - type: GridFill
-    addComponents:
-    - type: IFF
-      flags:
-      - HideLabel
-  - type: ContainerFill
-    containers:
-      board: [ DoorElectronicsExternal ]
 
 #HighSecDoors
 - type: entity
@@ -1275,6 +1239,15 @@
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsArmory ]
+
+- type: entity
+  parent: HighSecDoor
+  id: HighSecEngineeringLocked
+  suffix: Engineering, Locked
+  components:
+  - type: ContainerFill
+    containers:
+      board: [ DoorElectronicsEngineering ]
 
 #Airtight hatch
 

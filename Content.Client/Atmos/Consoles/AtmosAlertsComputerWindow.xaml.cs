@@ -13,6 +13,8 @@ using Robust.Client.UserInterface.XAML;
 using Robust.Shared.Map;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
+using Robust.Shared.ContentPack;
+using Robust.Shared.Prototypes;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
@@ -43,18 +45,6 @@ public sealed partial class AtmosAlertsComputerWindow : FancyWindow
 
     private const float SilencingDuration = 2.5f;
 
-    // Colors
-    private Color _wallColor = new Color(64, 64, 64);
-    private Color _tileColor = new Color(28, 28, 28);
-    private Color _monitorBlipColor = Color.Cyan;
-    private Color _untrackedEntColor = Color.DimGray;
-    private Color _regionBaseColor = new Color(154, 154, 154);
-    private Color _inactiveColor = StyleNano.DisabledFore;
-    private Color _statusTextColor = StyleNano.GoodGreenFore;
-    private Color _goodColor = Color.LimeGreen;
-    private Color _warningColor = new Color(255, 182, 72);
-    private Color _dangerColor = new Color(255, 67, 67);
-
     public AtmosAlertsComputerWindow(AtmosAlertsComputerBoundUserInterface userInterface, EntityUid? owner)
     {
         RobustXamlLoader.Load(this);
@@ -67,8 +57,8 @@ public sealed partial class AtmosAlertsComputerWindow : FancyWindow
         NavMap.Owner = _owner;
 
         // Set nav map colors
-        NavMap.WallColor = _wallColor;
-        NavMap.TileColor = _tileColor;
+        NavMap.WallColor = new Color(64, 64, 64);
+        NavMap.TileColor = Color.DimGray * NavMap.WallColor;
 
         // Set nav map grid uid
         var stationName = Loc.GetString("atmos-alerts-window-unknown-location");
@@ -82,7 +72,7 @@ public sealed partial class AtmosAlertsComputerWindow : FancyWindow
                 stationName = stationMetaData.EntityName;
 
             var msg = new FormattedMessage();
-            msg.TryAddMarkup(Loc.GetString("atmos-alerts-window-station-name", ("stationName", stationName)), out _);
+            msg.AddMarkup(Loc.GetString("atmos-alerts-window-station-name", ("stationName", stationName)));
 
             StationName.SetMessage(msg);
         }
@@ -226,7 +216,7 @@ public sealed partial class AtmosAlertsComputerWindow : FancyWindow
         if (consoleCoords != null && consoleUid != null)
         {
             var texture = _spriteSystem.Frame0(new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/NavMap/beveled_circle.png")));
-            var blip = new NavMapBlip(consoleCoords.Value, texture, _monitorBlipColor, true, false);
+            var blip = new NavMapBlip(consoleCoords.Value, texture, Color.Cyan, true, false);
             NavMap.TrackedEntities[consoleUid.Value] = blip;
         }
 
@@ -275,7 +265,7 @@ public sealed partial class AtmosAlertsComputerWindow : FancyWindow
                 VerticalAlignment = VAlignment.Center,
             };
 
-            label.SetMarkup(Loc.GetString("atmos-alerts-window-no-active-alerts", ("color", _statusTextColor.ToHexNoAlpha())));
+            label.SetMarkup(Loc.GetString("atmos-alerts-window-no-active-alerts", ("color", StyleNano.GoodGreenFore.ToHexNoAlpha())));
 
             AlertsTable.AddChild(label);
         }
@@ -335,7 +325,7 @@ public sealed partial class AtmosAlertsComputerWindow : FancyWindow
         var coords = _entManager.GetCoordinates(metaData.NetCoordinates);
 
         if (_trackedEntity != null && _trackedEntity != metaData.NetEntity)
-            color *= _untrackedEntColor;
+            color *= Color.DimGray;
 
         var selectable = true;
         var blip = new NavMapBlip(coords, _spriteSystem.Frame0(texture), color, _trackedEntity == metaData.NetEntity, selectable);
@@ -353,10 +343,10 @@ public sealed partial class AtmosAlertsComputerWindow : FancyWindow
             return false;
 
         // Color the region based on alarm state and entity tracking
-        color = blip.Value.Item2 * _regionBaseColor;
+        color = blip.Value.Item2 * new Color(154, 154, 154);
 
         if (_trackedEntity != null && _trackedEntity != regionOwner)
-            color *= _untrackedEntColor;
+            color *= Color.DimGray;
 
         return true;
     }
@@ -597,13 +587,13 @@ public sealed partial class AtmosAlertsComputerWindow : FancyWindow
         switch (alarmState)
         {
             case AtmosAlarmType.Invalid:
-                output = (new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/NavMap/beveled_circle.png")), _inactiveColor); break;
+                output = (new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/NavMap/beveled_circle.png")), StyleNano.DisabledFore); break;
             case AtmosAlarmType.Normal:
-                output = (new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/NavMap/beveled_circle.png")), _goodColor); break;
+                output = (new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/NavMap/beveled_circle.png")), Color.LimeGreen); break;
             case AtmosAlarmType.Warning:
-                output = (new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/NavMap/beveled_triangle.png")), _warningColor); break;
+                output = (new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/NavMap/beveled_triangle.png")), new Color(255, 182, 72)); break;
             case AtmosAlarmType.Danger:
-                output = (new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/NavMap/beveled_square.png")), _dangerColor); break;
+                output = (new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/NavMap/beveled_square.png")), new Color(255, 67, 67)); break;
         }
 
         return output;

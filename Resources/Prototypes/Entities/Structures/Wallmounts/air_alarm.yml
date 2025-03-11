@@ -91,7 +91,7 @@
     graph: AirAlarm
     node: air_alarm
   - type: Damageable
-    damageContainer: StructuralInorganic
+    damageContainer: Inorganic
     damageModifierSet: Metallic
   - type: Destructible
     thresholds:

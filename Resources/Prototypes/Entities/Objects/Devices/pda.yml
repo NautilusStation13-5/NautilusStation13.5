@@ -1,20 +1,15 @@
 - type: entity
   abstract: true
-  parent: [ BaseItem, StorePresetUplink] #PDA's have uplinks so they have to inherit the data.
+  parent: [ BaseItem, StorePresetUplink ] #PDA's have uplinks so they have to inherit the data.
   id: BasePDA
   name: PDA
   description: Personal Data Assistant.
   components:
   - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda
   - type: Sprite
     sprite: Objects/Devices/pda.rsi
     layers:
     - map: [ "enum.PdaVisualLayers.Base" ]
-      state: "pda"
     - state: "light_overlay"
       map: [ "enum.PdaVisualLayers.Flashlight" ]
       shader: "unshaded"
@@ -27,6 +22,7 @@
     sprite: Objects/Devices/pda.rsi
     state: pda
   - type: Pda
+    state: pda
     paiSlot:
       priority: -2
       whitelist:
@@ -45,7 +41,6 @@
       whitelist:
         components:
         - IdCard
-  - type: PdaVisuals
   - type: Item
     size: Small
   - type: ContainerContainer
@@ -81,6 +76,7 @@
       - CrewManifestCartridge
       - NotekeeperCartridge
       - NewsReaderCartridge
+      - NanoChatCartridge # DeltaV
     cartridgeSlot:
       priority: -1
       name: device-pda-slot-component-slot-name-cartridge
@@ -107,10 +103,16 @@
   - type: Tag
     tags:
     - DoorBumpOpener
-    - WhitelistChameleon
-    - WhitelistChameleonPDA
   - type: Input
     context: "human"
+  - type: LanguageSpeaker
+  - type: LanguageKnowledge
+    speaks: [TauCetiBasic, RobotTalk]
+    understands: [TauCetiBasic, RobotTalk]
+  - type: DamageOtherOnHit
+    damage:
+      types:
+        Blunt: 4
   - type: SentienceTarget # sentient PDA = pAI lite
     flavorKind: station-event-random-sentience-flavor-mechanical
     weight: 0.001 # 1,000 PDAs = as likely to be picked as 1 regular animal
@@ -120,18 +122,6 @@
     proto: robot
   - type: Speech
     speechVerb: Robotic
-
-- type: entity
-  parent: BasePDA
-  id: BaseSecurityPDA
-  abstract: true
-  components:
-  - type: CartridgeLoader
-    preinstalled:
-    - CrewManifestCartridge
-    - NotekeeperCartridge
-    - NewsReaderCartridge
-    - WantedListCartridge
 
 - type: entity
   parent: BasePDA
@@ -145,6 +135,7 @@
       - NotekeeperCartridge
       - NewsReaderCartridge
       - MedTekCartridge
+      - NanoChatCartridge # DeltaV
 
 - type: entity
   parent: BasePDA
@@ -154,6 +145,7 @@
   components:
   - type: Pda
     id: PassengerIDCard
+    state: pda
   - type: PdaBorderColor
     borderColor: "#717059"
 
@@ -165,11 +157,7 @@
   components:
   - type: Pda
     id: TechnicalAssistantIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-interntech
+    state: pda-interntech
   - type: PdaBorderColor
     borderColor: "#717059"
     accentVColor: "#949137"
@@ -184,11 +172,13 @@
   components:
   - type: Pda
     id: MedicalInternIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-internmed
+    state: pda-internmed
+    penSlot: # Pen Lights
+      startingItem: PenLightBase
+      priority: -1
+      whitelist:
+        tags:
+        - Write
   - type: PdaBorderColor
     borderColor: "#717059"
     accentVColor: "#447987"
@@ -199,23 +189,27 @@
     - Medical Doctor
 
 - type: entity
-  parent: BaseSecurityPDA
+  parent: BasePDA
   id: SecurityCadetPDA
   name: security cadet PDA
   description: Why isn't it red?
   components:
   - type: Pda
     id: SecurityCadetIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-interncadet
+    state: pda-interncadet
   - type: PdaBorderColor
     borderColor: "#717059"
     accentVColor: "#A32D26"
   - type: Icon
     state: pda-interncadet
+  - type: CartridgeLoader # DeltaV - Crime Assist + SecWatch
+    preinstalled:
+      - CrewManifestCartridge
+      - NotekeeperCartridge
+      - NewsReaderCartridge
+      - CrimeAssistCartridge
+      - SecWatchCartridge
+      - NanoChatCartridge
 
 - type: entity
   parent: BasePDA
@@ -225,11 +219,7 @@
   components:
   - type: Pda
     id: ResearchAssistantIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-internsci
+    state: pda-internsci
   - type: PdaBorderColor
     borderColor: "#717059"
     accentVColor: "#8900c9"
@@ -244,11 +234,7 @@
   components:
   - type: Pda
     id: ServiceWorkerIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-internservice
+    state: pda-internservice
   - type: PdaBorderColor
     borderColor: "#717059"
     accentVColor: "#00cc35"
@@ -263,11 +249,7 @@
   components:
   - type: Pda
     id: ChefIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-cook
+    state: pda-cook
   - type: PdaBorderColor
     borderColor: "#d7d7d0"
   - type: Icon
@@ -283,11 +265,7 @@
   components:
   - type: Pda
     id: BotanistIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-hydro
+    state: pda-hydro
   - type: PdaBorderColor
     borderColor: "#44843c"
     accentVColor: "#00cc35"
@@ -302,26 +280,26 @@
   components:
   - type: Pda
     id: ClownIDCard
+    state: pda-clown
     penSlot:
       startingItem: CrayonOrange # no pink crayon?!?
       # ^ Still unacceptable.
-      # ^ I would have to concur.
       ejectSound: /Audio/Items/bikehorn.ogg
       priority: -1
       whitelist:
         tags:
         - Write
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-clown
   - type: PdaBorderColor
     borderColor: "#C18199"
   - type: Icon
     state: pda-clown
-  - type: Slippery # secretly made of bananium
+  - type: Slippery
+    paralyzeTime: 4
+    launchForwardsMultiplier: 1.5
   - type: StepTrigger
+    triggerGroups:
+      types:
+      - SlipEntity
   - type: CollisionWake
     enabled: false
   - type: Physics
@@ -344,17 +322,6 @@
         - ItemMask
 
 - type: entity
-  parent: ClownPDA
-  id: VisitorClownPDA
-  suffix: Visitor
-  components:
-  - type: Pda
-    id: VisitorIDCard
-  - type: Tag #  Ignore Chameleon tags
-    tags:
-    - DoorBumpOpener
-
-- type: entity
   parent: BasePDA
   id: MimePDA
   name: mime PDA
@@ -362,16 +329,12 @@
   components:
   - type: Pda
     id: MimeIDCard
+    state: pda-mime
     idSlot: #  rewrite without sound because mime
       name: ID Card
       whitelist:
         components:
         - IdCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-mime
   - type: PdaBorderColor
     borderColor: "#d7d7d0"
     accentHColor: "#333333"
@@ -381,69 +344,106 @@
 
 - type: entity
   name: chaplain PDA
-  parent: BasePDA
+  parent: SciencePDA # DeltaV - Chaplain is part of episetmics
   id: ChaplainPDA
   description: God's chosen PDA.
   components:
+  - type: Sprite # DeltaV - Give Chaplain PDA Epistemics colors
+    sprite: DeltaV/Objects/Devices/pda.rsi
+    layers:
+    - map: [ "enum.PdaVisualLayers.Base" ]
+    - state: "light_overlay"
+      map: [ "enum.PdaVisualLayers.Flashlight" ]
+      shader: "unshaded"
+      visible: false
+    - state: "id_overlay"
+      map: [ "enum.PdaVisualLayers.IdLight" ]
+      shader: "unshaded"
+      visible: false
   - type: Pda
     id: ChaplainIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-chaplain
+    state: pda-chaplain
   - type: PdaBorderColor
     borderColor: "#333333"
+    accentVColor: "#8900c9" # DeltaV - Give Chaplain PDA Epistemics colors
   - type: Icon
+    sprite: DeltaV/Objects/Devices/pda.rsi # DeltaV - Give Chaplain PDA Epistemics colors
     state: pda-chaplain
+  - type: CartridgeLoader # Nyanotrasen - Glimmer Monitor
+    preinstalled:
+      - CrewManifestCartridge
+      - NotekeeperCartridge
+      - NewsReaderCartridge
+      - GlimmerMonitorCartridge
+      - NanoChatCartridge # DeltaV
+      - PsiWatchCartridge
 
 - type: entity
-  parent: ChaplainPDA
-  id: VisitorChaplainPDA
-  suffix: Visitor
-  components:
-  - type: Pda
-    id: VisitorIDCard
-  - type: Tag #  Ignore Chameleon tags
-    tags:
-    - DoorBumpOpener
-
-- type: entity
-  name: harbormaster PDA
+  name: logistics officer PDA # DeltaV - Logistics Department replacing Cargo
   parent: BasePDA
   id: QuartermasterPDA
-  description: PDA for the guy that orders the guns.
+  description: PDA for the guy that directs logistics. # DeltaV - Logistics Department replacing Cargo
   components:
   - type: Pda
     id: QuartermasterIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-qm
+    state: pda-qm
   - type: PdaBorderColor
     borderColor: "#e39751"
     accentVColor: "#a23e3e"
   - type: Icon
     state: pda-qm
+  - type: CartridgeLoader # Adds the MailMetrics courier tracker
+    preinstalled:
+      - CrewManifestCartridge
+      - NotekeeperCartridge
+      - NewsReaderCartridge
+      - MailMetricsCartridge
+      - NanoChatCartridge
+      - StockTradingCartridge # DeltaV - StockTrading
+
+- type: entity
+  name: LO special PDA unit # DeltaV - Logistics Department replacing Cargo
+  parent: BasePDA
+  id: QuartermasterNTPDA
+  description: PDA for the guy that directs logistics.it says in gold "special unit unique to the best logistics officer in the sector". # DeltaV - Logistics Department replacing Cargo
+  components:
+  - type: Pda
+    id: QuartermasterIDCard
+    state: pda-qmnano
+  - type: PdaBorderColor
+    borderColor: "#e39751"
+    accentVColor: "#a23e3e"
+  - type: Icon
+    state: pda-qmnano
+  - type: CartridgeLoader # Adds the MailMetrics courier tracker
+    preinstalled:
+      - CrewManifestCartridge
+      - NotekeeperCartridge
+      - NewsReaderCartridge
+      - MailMetricsCartridge # DeltaV - MailMetrics courier tracker
+      - StockTradingCartridge # DeltaV - StockTrading
+      - NanoChatCartridge # DeltaV
 
 - type: entity
   parent: BasePDA
   id: CargoPDA
-  name: cargo PDA
-  description: PDA for the guys that order the pizzas.
+  name: logistics PDA # DeltaV - Logistics Department replacing Cargo
+  description: PDA for the guys that order the pizzas. # DeltaV - Logistics Department replacing Cargo
   components:
   - type: Pda
     id: CargoIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-cargo
+    state: pda-cargo
   - type: PdaBorderColor
     borderColor: "#e39751"
   - type: Icon
     state: pda-cargo
+  - type: CartridgeLoader # DeltaV
+    preinstalled:
+    - CrewManifestCartridge
+    - NotekeeperCartridge
+    - NewsReaderCartridge
+    - StockTradingCartridge # DeltaV - StockTrading
+    - NanoChatCartridge # DeltaV
 
 - type: entity
   parent: BasePDA
@@ -453,11 +453,7 @@
   components:
   - type: Pda
     id: SalvageIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-miner
+    state: pda-miner
   - type: PdaBorderColor
     borderColor: "#af9366"
     accentVColor: "#8900c9"
@@ -470,36 +466,7 @@
       - NotekeeperCartridge
       - NewsReaderCartridge
       - AstroNavCartridge
-
-- type: entity
-  parent: BasePDA
-  id: PilotPDA
-  name: pilot PDA
-  description: Protocol III, protect the PDA.
-  components:
-  - type: Pda
-    id: PilotIDCard
-    state: pda-miner
-  - type: PdaBorderColor
-    borderColor: "#af9366"
-    accentVColor: "#8900c9"
-  - type: Icon
-    state: pda-miner
-
-- type: entity
-  parent: BasePDA
-  id: BasinTechPDA
-  name: basin technician PDA
-  description: It's completely waterlogged.
-  components:
-  - type: Pda
-    id: BasinTechIDCard
-    state: pda-miner
-  - type: PdaBorderColor
-    borderColor: "#af9366"
-    accentVColor: "#8900c9"
-  - type: Icon
-    state: pda-miner
+      - NanoChatCartridge
 
 - type: entity
   parent: BasePDA
@@ -509,11 +476,7 @@
   components:
   - type: Pda
     id: BartenderIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-bartender
+    state: pda-bartender
   - type: PdaBorderColor
     borderColor: "#333333"
   - type: Icon
@@ -527,67 +490,53 @@
   components:
   - type: Pda
     id: LibrarianIDCard
+    state: pda-library
     penSlot:
       startingItem: LuxuryPen
       priority: -1
       whitelist:
         tags:
         - Write
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-library
   - type: PdaBorderColor
     borderColor: "#858585"
   - type: Icon
     state: pda-library
+  - type: CartridgeLoader
+    preinstalled:
+      - CrewManifestCartridge
+      - NotekeeperCartridge
+      - NewsReaderCartridge
+      - GlimmerMonitorCartridge
+      - NanoChatCartridge
+      - PsiWatchCartridge
 
 - type: entity
-  parent: LibrarianPDA
-  id: VisitorLibrarianPDA
-  suffix: Visitor
-  components:
-  - type: Pda
-    id: VisitorIDCard
-  - type: Tag #  Ignore Chameleon tags
-    tags:
-    - DoorBumpOpener
-
-- type: entity
-  parent: BaseSecurityPDA
+  parent: BasePDA
   id: LawyerPDA
   name: lawyer PDA
   description: For lawyers to poach dubious clients.
   components:
   - type: Pda
     id: LawyerIDCard
+    state: pda-lawyer
     penSlot:
       startingItem: LuxuryPen
       priority: -1
       whitelist:
         tags:
         - Write
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-lawyer
   - type: PdaBorderColor
     borderColor: "#6f6192"
   - type: Icon
     state: pda-lawyer
-
-- type: entity
-  parent: LawyerPDA
-  id: VisitorLawyerPDA
-  suffix: Visitor
-  components:
-  - type: Pda
-    id: VisitorIDCard
-  - type: Tag #  Ignore Chameleon tags
-    tags:
-    - DoorBumpOpener
+  - type: CartridgeLoader # DeltaV - Crime Assist + SecWatch
+    preinstalled:
+      - CrewManifestCartridge
+      - NotekeeperCartridge
+      - NewsReaderCartridge
+      - CrimeAssistCartridge
+      - SecWatchCartridge
+      - NanoChatCartridge
 
 - type: entity
   parent: BasePDA
@@ -597,11 +546,7 @@
   components:
   - type: Pda
     id: JanitorIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-janitor
+    state: pda-janitor
   - type: PdaBorderColor
     borderColor: "#5D2D56"
   - type: Icon
@@ -610,26 +555,49 @@
 - type: entity
   parent: BasePDA
   id: CaptainPDA
-  name: overseer PDA
-  description: Surprisingly no different from your PDA.
+  name: captain PDA
+  description: Surprisingly no different from your PDA... Wait, it's a fair bit heavy to hold.
   components:
   - type: Pda
     id: CaptainIDCard
+    state: pda-captain
     penSlot:
       startingItem: PenCap
       priority: -1
       whitelist:
         tags:
         - Write
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-captain
   - type: PdaBorderColor
     borderColor: "#7C5D00"
   - type: Icon
     state: pda-captain
+  - type: DamageOtherOnHit
+    damage:
+      types:
+        Blunt: 8
+    staminaCost: 5
+    soundHit:
+      collection: MetalThud
+
+- type: entity
+  parent: BasePDA
+  id: CaptainNTPDA
+  name: CAP special PDA unit
+  description: incredibly shining with embossed details.it says in gold "special unit unique to the best captain in the sector".
+  components:
+  - type: Pda
+    id: CaptainIDCard
+    state: pda-captainnano
+    penSlot:
+      startingItem: PenCap
+      priority: -1
+      whitelist:
+        tags:
+        - Write
+  - type: PdaBorderColor
+    borderColor: "#7C5D00"
+  - type: Icon
+    state: pda-captainnano
 
 - type: entity
   parent: BasePDA
@@ -639,22 +607,39 @@
   components:
   - type: Pda
     id: HoPIDCard
+    state: pda-hop
     penSlot:
       startingItem: PenHop
       priority: -1
       whitelist:
         tags:
         - Write
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-hop
   - type: PdaBorderColor
     borderColor: "#789876"
     accentHColor: "#447987"
   - type: Icon
     state: pda-hop
+
+- type: entity
+  parent: BasePDA
+  id: HoPNTPDA
+  name: HOP special PDA unit
+  description: Looks like it's been chewed on.it says in gold "special unit unique to the best head of personnel in the sector".
+  components:
+  - type: Pda
+    id: HoPIDCard
+    state: pda-hopnano
+    penSlot:
+      startingItem: PenHop
+      priority: -1
+      whitelist:
+        tags:
+        - Write
+  - type: PdaBorderColor
+    borderColor: "#789876"
+    accentHColor: "#447987"
+  - type: Icon
+    state: pda-hopnano
 
 - type: entity
   parent: BasePDA
@@ -664,16 +649,27 @@
   components:
   - type: Pda
     id: CEIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-ce
+    state: pda-ce
   - type: PdaBorderColor
     borderColor: "#949137"
     accentHColor: "#447987"
   - type: Icon
     state: pda-ce
+
+- type: entity
+  parent: BasePDA
+  id: CENTPDA
+  name: CE special PDA unit
+  description: Looks like it's barely been used.it says in gold "special unit unique to the best chief engineer in the sector".
+  components:
+  - type: Pda
+    id: CEIDCard
+    state: pda-cenano
+  - type: PdaBorderColor
+    borderColor: "#949137"
+    accentHColor: "#447987"
+  - type: Icon
+    state: pda-cenano
 
 - type: entity
   parent: BasePDA
@@ -683,11 +679,7 @@
   components:
   - type: Pda
     id: EngineeringIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-engineer
+    state: pda-engineer
   - type: PdaBorderColor
     borderColor: "#949137"
     accentVColor: "#A32D26"
@@ -702,11 +694,13 @@
   components:
   - type: Pda
     id: CMOIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-cmo
+    state: pda-cmo
+    penSlot: # Fancy Pen Light
+      startingItem: CMOPenLight
+      priority: -1
+      whitelist:
+        tags:
+        - Write
   - type: PdaBorderColor
     borderColor: "#d7d7d0"
     accentHColor: "#447987"
@@ -716,17 +710,41 @@
 
 - type: entity
   parent: BaseMedicalPDA
+  id: CMONTPDA
+  name: CMO special pda unit
+  description: Extraordinarily shiny and sterile.it says in gold "special unit unique to the best chief medical officer in the sector". Has a built-in health analyzer.
+  components:
+  - type: Pda
+    id: CMOIDCard
+    state: pda-cmonano
+    penSlot: # Fancy Pen Light
+      startingItem: CMOPenLight
+      priority: -1
+      whitelist:
+        tags:
+        - Write
+  - type: PdaBorderColor
+    borderColor: "#d7d7d0"
+    accentHColor: "#447987"
+    accentVColor: "#447987"
+  - type: Icon
+    state: pda-cmonano
+
+- type: entity
+  parent: BaseMedicalPDA
   id: MedicalPDA
   name: medical PDA
   description: Shiny and sterile.
   components:
   - type: Pda
     id: MedicalIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-medical
+    state: pda-medical
+    penSlot: # Pen Lights
+      startingItem: PenLightBase
+      priority: -1
+      whitelist:
+        tags:
+        - Write
   - type: PdaBorderColor
     borderColor: "#d7d7d0"
     accentVColor: "#447987"
@@ -737,17 +755,6 @@
     - Medical Doctor
 
 - type: entity
-  parent: MedicalPDA
-  id: VisitorMedicalPDA
-  suffix: Visitor
-  components:
-  - type: Pda
-    id: VisitorIDCard
-  - type: Tag #  Ignore Chameleon tags
-    tags:
-    - DoorBumpOpener
-
-- type: entity
   parent: BaseMedicalPDA
   id: ParamedicPDA
   name: paramedic PDA
@@ -755,11 +762,13 @@
   components:
   - type: Pda
     id: ParamedicIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-paramedic
+    state: pda-paramedic
+    penSlot: # Pen Lights
+      startingItem: PenLightBase
+      priority: -1
+      whitelist:
+        tags:
+        - Write
   - type: PdaBorderColor
     borderColor: "#d7d7d0"
     accentVColor: "#2a4b5b"
@@ -774,11 +783,13 @@
   components:
   - type: Pda
     id: ChemistIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-chemistry
+    state: pda-chemistry
+    penSlot: # Pen Lights
+      startingItem: PenLightBase
+      priority: -1
+      whitelist:
+        tags:
+        - Write
   - type: PdaBorderColor
     borderColor: "#d7d7d0"
     accentVColor: "#B34200"
@@ -788,123 +799,194 @@
 - type: entity
   parent: BasePDA
   id: RnDPDA
-  name: research director PDA
+  name: mystagogue PDA # DeltaV - Epistemics Department replacing Science
   description: It appears surprisingly ordinary.
   components:
   - type: Pda
     id: RDIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-rd
+    state: pda-rd
   - type: PdaBorderColor
     borderColor: "#d7d7d0"
     accentHColor: "#447987"
     accentVColor: "#8900c9"
   - type: Icon
     state: pda-rd
+  - type: CartridgeLoader # Nyanotrasen - Glimmer Monitor
+    preinstalled:
+      - CrewManifestCartridge
+      - NotekeeperCartridge
+      - NewsReaderCartridge
+      - GlimmerMonitorCartridge
+      - NanoChatCartridge # DeltaV
+      - PsiWatchCartridge
+
+- type: entity
+  parent: BasePDA
+  id: RnDNTPDA
+  name: MY special PDA unit # DeltaV - Epistemics Department replacing Science
+  description: It appears surprisingly ordinary.it says in gold "special unit unique to the best Mystagogue in the sector".
+  components:
+  - type: Pda
+    id: RDIDCard
+    state: pda-rdnano
+  - type: PdaBorderColor
+    borderColor: "#d7d7d0"
+    accentHColor: "#447987"
+    accentVColor: "#8900c9"
+  - type: Icon
+    state: pda-rdnano
+  - type: CartridgeLoader # Nyanotrasen - Glimmer Monitor
+    preinstalled:
+      - CrewManifestCartridge
+      - NotekeeperCartridge
+      - NewsReaderCartridge
+      - GlimmerMonitorCartridge
+      - NanoChatCartridge
+      - PsiWatchCartridge
 
 - type: entity
   parent: BasePDA
   id: SciencePDA
-  name: science PDA
+  name: epistemics PDA # DeltaV - Epistemics Department replacing Science
   description: It's covered with an unknown gooey substance.
   components:
   - type: Pda
     id: ResearchIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-science
+    state: pda-science
   - type: PdaBorderColor
     borderColor: "#d7d7d0"
     accentVColor: "#8900c9"
   - type: Icon
     state: pda-science
+  - type: CartridgeLoader # Nyanotrasen - Glimmer Monitor
+    preinstalled:
+      - CrewManifestCartridge
+      - NotekeeperCartridge
+      - NewsReaderCartridge
+      - GlimmerMonitorCartridge
+      - NanoChatCartridge # DeltaV
 
 - type: entity
-  parent: BaseSecurityPDA
+  parent: SciencePDA
+  name: robotics PDA
+  id: RoboticsPDA
+  description: It has its back panel covered in duct tape.
+  components:
+  - type: Pda
+    id: RoboticsIDCard
+    state: pda-robotics
+  - type: PdaBorderColor
+    borderColor: "#d7d7d0"
+    accentVColor: "#952004"
+  - type: Icon
+    state: pda-robotics
+
+- type: entity
+  parent: BasePDA
   id: HoSPDA
   name: head of security PDA
   description: Whosoever bears this PDA is the law.
   components:
   - type: Pda
     id: HoSIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-hos
+    state: pda-hos
   - type: PdaBorderColor
     borderColor: "#A32D26"
     accentHColor: "#447987"
   - type: Icon
     state: pda-hos
-  - type: CartridgeLoader
+  - type: CartridgeLoader # DeltaV - Crime Assist + SecWatch
     preinstalled:
     - CrewManifestCartridge
     - NotekeeperCartridge
     - NewsReaderCartridge
-    - WantedListCartridge
+    - CrimeAssistCartridge # DeltaV
+    - SecWatchCartridge # DeltaV: SecWatch replaces WantedList
     - LogProbeCartridge
+    - NanoChatCartridge # DeltaV
 
 - type: entity
-  parent: BaseSecurityPDA
+  parent: BasePDA
+  id: HoSNTPDA
+  name: HOS special PDA unit
+  description: Whosoever bears this PDA is the law.it says in gold "special unit unique to the best head of security in the sector".
+  components:
+  - type: Pda
+    id: HoSIDCard
+    state: pda-hosnano
+  - type: PdaBorderColor
+    borderColor: "#A32D26"
+    accentHColor: "#447987"
+  - type: Icon
+    state: pda-hosnano
+  - type: CartridgeLoader # DeltaV - Crime Assist + SecWatch
+    preinstalled:
+      - CrewManifestCartridge
+      - NotekeeperCartridge
+      - NewsReaderCartridge
+      - CrimeAssistCartridge
+      - SecWatchCartridge
+      - NanoChatCartridge
+
+- type: entity
+  parent: BasePDA
   id: WardenPDA
   name: warden PDA
   description: The OS appears to have been jailbroken.
   components:
   - type: Pda
     id: WardenIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-warden
+    state: pda-warden
   - type: PdaBorderColor
     borderColor: "#A32D26"
     accentVColor: "#949137"
   - type: Icon
     state: pda-warden
+  - type: CartridgeLoader # DeltaV - Crime Assist + SecWatch
+    preinstalled:
+      - CrewManifestCartridge
+      - NotekeeperCartridge
+      - NewsReaderCartridge
+      - CrimeAssistCartridge
+      - SecWatchCartridge
+      - NanoChatCartridge
 
 - type: entity
-  parent: BaseSecurityPDA
+  parent: BasePDA
   id: SecurityPDA
   name: security PDA
   description: Red to hide the stains of passenger blood.
   components:
   - type: Pda
     id: SecurityIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-security
+    state: pda-security
   - type: PdaBorderColor
     borderColor: "#A32D26"
   - type: Icon
     state: pda-security
+  - type: CartridgeLoader # DeltaV - Crime Assist + SecWatch
+    preinstalled:
+      - CrewManifestCartridge
+      - NotekeeperCartridge
+      - NewsReaderCartridge
+      - CrimeAssistCartridge
+      - SecWatchCartridge
+      - NanoChatCartridge
 
 - type: entity
-  parent: BaseSecurityPDA
+  parent: BasePDA
   id: CentcomPDA
-  name: CentComm PDA
+  name: CentCom PDA
   description: Light green sign of walking bureaucracy.
   components:
   - type: Pda
     id: CentcomIDCard
+    state: pda-centcom
     penSlot:
       startingItem: PenCentcom
       whitelist:
         tags:
         - Write
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-centcom
   - type: PdaBorderColor
     borderColor: "#00842e"
   - type: Icon
@@ -915,56 +997,41 @@
       - CrewManifestCartridge
       - NotekeeperCartridge
       - NewsReaderCartridge
-      - MedTekCartridge
-      - WantedListCartridge
+      - SecWatchCartridge # DeltaV: SecWatch replaces WantedList
       - LogProbeCartridge
-      - AstroNavCartridge
-
-- type: entity
-  parent: BasePDA
-  id: NanotrasenPDA
-  name: Nanotrasen PDA
-  description: Light green sign of walking bureaucracy, now including free bulletholes and fire!
-  components:
-  - type: Pda
-    id: CentcomIDCardDeathsquad
-    state: pda-centcom
-    penSlot:
-      startingItem: PenCentcom
-      whitelist:
-        tags:
-        - Write
-  - type: PdaBorderColor
-    borderColor: "#00842e"
-  - type: Icon
-    state: pda-centcom
+      - NanoChatCartridge # DeltaV
 
 - type: entity
   parent: CentcomPDA
   id: AdminPDA
   name: Admin PDA
-  suffix: Admin
   description: If you are not an admin please return this PDA to the nearest admin.
   components:
   - type: Pda
-    id: UniversalIDCard
+    id: PassengerIDCard
   - type: HealthAnalyzer
     scanDelay: 0
-    silent: true
   - type: CartridgeLoader
     uiKey: enum.PdaUiKey.Key
     notificationsEnabled: false
+    diskSpace: 10 # DeltaV
     preinstalled:
       - CrewManifestCartridge
       - NotekeeperCartridge
       - NewsReaderCartridge
       - LogProbeCartridge
-      - WantedListCartridge
-      - MedTekCartridge
-      - AstroNavCartridge
-  - type: Tag #  Ignore Chameleon tags
-    tags:
-    - DoorBumpOpener
+      - SecWatchCartridge # DeltaV: SecWatch replaces WantedList
+      - StockTradingCartridge # Delta-V
+      - NanoChatCartridge # DeltaV
+      - PsiWatchCartridge
+
+- type: entity
+  parent: CentcomPDA
+  id: CentcomPDAFake
+  suffix: Fake
+  components:
+  - type: Pda
+    id: CentcomIDCardSyndie
 
 - type: entity
   parent: CentcomPDA
@@ -973,9 +1040,6 @@
   components:
   - type: Pda
     id: CentcomIDCardDeathsquad
-  - type: Tag #  Ignore Chameleon tags
-    tags:
-    - DoorBumpOpener
 
 - type: entity
   parent: BasePDA
@@ -985,11 +1049,7 @@
   components:
   - type: Pda
     id: MusicianIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-musician
+    state: pda-musician
   - type: PdaBorderColor
     borderColor: "#333333"
   - type: Icon
@@ -1001,17 +1061,6 @@
     program: 2
 
 - type: entity
-  parent: MusicianPDA
-  id: VisitorMusicianPDA
-  suffix: Visitor
-  components:
-  - type: Pda
-    id: VisitorIDCard
-  - type: Tag #  Ignore Chameleon tags
-    tags:
-    - DoorBumpOpener
-
-- type: entity
   parent: BasePDA
   id: AtmosPDA
   name: atmos PDA
@@ -1019,11 +1068,7 @@
   components:
   - type: Pda
     id: AtmosIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-atmos
+    state: pda-atmos
   - type: PdaBorderColor
     borderColor: "#949137"
     accentVColor: "#447987"
@@ -1038,25 +1083,11 @@
   components:
   - type: Pda
     id: PassengerIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-clear
+    state: pda-clear
   - type: PdaBorderColor
     borderColor: "#288e4d"
   - type: Icon
     state: pda-clear
-
-- type: entity
-  parent: ClearPDA
-  id: VisitorPDA
-  components:
-  - type: Pda
-    id: VisitorIDCard
-  - type: Tag #  Ignore Chameleon tags
-    tags:
-    - DoorBumpOpener
 
 - type: entity
   parent: BasePDA
@@ -1066,11 +1097,7 @@
   components:
   - type: Pda
     id: SyndicateIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-syndi
+    state: pda-syndi
   - type: PdaBorderColor
     borderColor: "#891417"
   - type: Icon
@@ -1079,9 +1106,20 @@
     uiKey: enum.PdaUiKey.Key
     preinstalled:
       - NotekeeperCartridge
+      - NanoChatCartridge # DeltaV
+    cartridgeSlot:
+      priority: -1
+      name: Cartridge
+      ejectSound: /Audio/Machines/id_swipe.ogg
+      insertSound: /Audio/Machines/id_insert.ogg
+      whitelist:
+        components:
+          - Cartridge
+  - type: ClothingAddFaction
+    faction: Syndicate
 
 - type: entity
-  parent: BaseSecurityPDA
+  parent: BasePDA
   id: ERTLeaderPDA
   name: ERT Leader PDA
   suffix: Leader
@@ -1089,11 +1127,7 @@
   components:
   - type: Pda
     id: ERTLeaderIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-ert
+    state: pda-ert
   - type: PdaBorderColor
     borderColor: "#A32D26"
     accentHColor: "#447987"
@@ -1106,10 +1140,10 @@
       - CrewManifestCartridge
       - NotekeeperCartridge
       - NewsReaderCartridge
-      - MedTekCartridge
-      - WantedListCartridge
+      - SecWatchCartridge # DeltaV: SecWatch replaces WantedList
       - LogProbeCartridge
-      - AstroNavCartridge
+      - NanoChatCartridge # DeltaV
+      - MedTekCartridge
 
 - type: entity
   parent: ERTLeaderPDA
@@ -1150,6 +1184,15 @@
   components:
   - type: Pda
     id: ERTMedicIDCard
+  - type: CartridgeLoader
+    uiKey: enum.PdaUiKey.Key
+    preinstalled:
+      - CrewManifestCartridge
+      - NotekeeperCartridge
+      - NewsReaderCartridge
+      - MedTekCartridge
+      - CrimeAssistCartridge
+      - SecWatchCartridge
 
 - type: entity
   parent: ERTLeaderPDA
@@ -1175,18 +1218,20 @@
     accentVColor: "#447987"
 
 - type: entity
-  parent: BasePDA
+  parent: BaseMedicalPDA
   id: PsychologistPDA
   name: psychologist PDA
   description: Looks immaculately cleaned.
   components:
   - type: Pda
     id: PsychologistIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-medical
+    state: pda-medical
+    penSlot: # Pen Lights
+      startingItem: PenLightBase
+      priority: -1
+      whitelist:
+        tags:
+        - Write
   - type: PdaBorderColor
     borderColor: "#d7d7d0"
     accentVColor: "#447987"
@@ -1201,21 +1246,24 @@
   components:
   - type: Pda
     id: ReporterIDCard
+    state: pda-reporter
     penSlot:
       startingItem: LuxuryPen
       priority: -1
       whitelist:
         tags:
         - Write
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-reporter
   - type: PdaBorderColor
     borderColor: "#3f3f74"
   - type: Icon
     state: pda-reporter
+  - type: CartridgeLoader # DeltaV
+    preinstalled:
+    - CrewManifestCartridge
+    - NotekeeperCartridge
+    - NewsReaderCartridge
+    - StockTradingCartridge # DeltaV - StockTrading
+    - NanoChatCartridge # DeltaV
 
 - type: entity
   parent: BasePDA
@@ -1225,11 +1273,7 @@
   components:
   - type: Pda
     id: ZookeeperIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-zookeeper
+    state: pda-zookeeper
   - type: PdaBorderColor
     borderColor: "#ffe685"
   - type: Icon
@@ -1243,11 +1287,7 @@
   components:
   - type: Pda
     id: BoxerIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-boxer
+    state: pda-boxer
   - type: PdaBorderColor
     borderColor: "#333333"
     accentVColor: "#390504"
@@ -1255,29 +1295,27 @@
     state: pda-boxer
 
 - type: entity
-  parent: BaseSecurityPDA
+  parent: BasePDA
   id: DetectivePDA
   name: detective PDA
   description: Smells like rain... pouring down the rooftops...
   components:
   - type: Pda
     id: DetectiveIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-detective
+    state: pda-detective
   - type: PdaBorderColor
     borderColor: "#774705"
   - type: Icon
     state: pda-detective
-  - type: CartridgeLoader
+  - type: CartridgeLoader # DeltaV - Crime Assist + SecWatch
     preinstalled:
     - CrewManifestCartridge
     - NotekeeperCartridge
     - NewsReaderCartridge
-    - WantedListCartridge
+    - CrimeAssistCartridge # DeltaV
+    - SecWatchCartridge # DeltaV: SecWatch replaces WantedList
     - LogProbeCartridge
+    - NanoChatCartridge # DeltaV
 
 - type: entity
   parent: BaseMedicalPDA
@@ -1287,24 +1325,27 @@
   components:
   - type: Pda
     id: BrigmedicIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-brigmedic
+    state: pda-brigmedic
+    penSlot: # Pen Lights
+      startingItem: PenLightBase
+      priority: -1
+      whitelist:
+        tags:
+        - Write
   - type: PdaBorderColor
     borderColor: "#A32D26"
     accentHColor: "#d7d7d0"
     accentVColor: "#d7d7d0"
   - type: Icon
     state: pda-brigmedic
-  - type: CartridgeLoader
+  - type: CartridgeLoader # DeltaV - Crime Assist + SecWatch
     preinstalled:
     - CrewManifestCartridge
     - NotekeeperCartridge
     - NewsReaderCartridge
-    - WantedListCartridge
-    - MedTekCartridge
+    - CrimeAssistCartridge # DeltaV
+    - SecWatchCartridge # DeltaV: SecWatch replaces WantedList
+    - NanoChatCartridge # DeltaV
 
 - type: entity
   parent: ClownPDA
@@ -1315,11 +1356,7 @@
   components:
   - type: Pda
     id: CluwneIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-cluwne
+    state: pda-cluwne
   - type: PdaBorderColor
     borderColor: "#1c8f4d"
   - type: Icon
@@ -1341,11 +1378,7 @@
   components:
   - type: Pda
     id: SeniorEngineerIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-seniorengineer
+    state: pda-seniorengineer
   - type: PdaBorderColor
     borderColor: "#949137"
     accentVColor: "#CD6900"
@@ -1360,17 +1393,16 @@
   components:
   - type: Pda
     id: SeniorResearcherIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-seniorresearcher
+    state: pda-seniorresearcher
   - type: PdaBorderColor
     borderColor: "#d7d7d0"
     accentHColor: "#8900c9"
     accentVColor: "#8900c9"
   - type: Icon
     state: pda-seniorresearcher
+  - type: CartridgeLoader
+    preinstalled:
+    - PsiWatchCartridge
 
 - type: entity
   parent: BaseMedicalPDA
@@ -1380,11 +1412,13 @@
   components:
   - type: Pda
     id: SeniorPhysicianIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-seniorphysician
+    state: pda-seniorphysician
+    penSlot: # Pen Lights
+      startingItem: PenLightBase
+      priority: -1
+      whitelist:
+        tags:
+        - Write
   - type: PdaBorderColor
     borderColor: "#d7d7d0"
     accentHColor: "#447987"
@@ -1393,23 +1427,27 @@
     state: pda-seniorphysician
 
 - type: entity
-  parent: BaseSecurityPDA
+  parent: BasePDA
   id: SeniorOfficerPDA
   name: senior officer PDA
   description: Beaten, battered and broken, but just barely useable.
   components:
   - type: Pda
     id: SeniorOfficerIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-seniorofficer
+    state: pda-seniorofficer
   - type: PdaBorderColor
     borderColor: "#A32D26"
     accentVColor: "#DFDFDF"
   - type: Icon
     state: pda-seniorofficer
+  - type: CartridgeLoader # DeltaV - Crime Assist + SecWatch
+    preinstalled:
+      - CrewManifestCartridge
+      - NotekeeperCartridge
+      - NewsReaderCartridge
+      - CrimeAssistCartridge
+      - SecWatchCartridge
+      - NanoChatCartridge
 
 - type: entity
   parent: SyndiPDA
@@ -1419,11 +1457,7 @@
   components:
   - type: Pda
     id: PirateIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-pirate
+    state: pda-pirate
   - type: Icon
     state: pda-pirate
 
@@ -1435,11 +1469,13 @@
   components:
   - type: Pda
     id: SyndicateIDCard
-  - type: Appearance
-    appearanceDataInit:
-     enum.PdaVisuals.PdaType:
-       !type:String
-       pda-syndi-agent
+    state: pda-syndi-agent
+    penSlot: # Pen Lights
+      startingItem: PenLightBase
+      priority: -1
+      whitelist:
+        tags:
+        - Write
   - type: PdaBorderColor
     borderColor: "#891417"
   - type: Icon
@@ -1449,34 +1485,14 @@
     preinstalled:
       - NotekeeperCartridge
       - MedTekCartridge
-
-- type: entity
-  parent: BasePDA
-  id: ChameleonPDA
-  name: passenger PDA
-  description: Why isn't it gray?
-  suffix: Chameleon
-  components:
-  - type: PdaBorderColor
-    borderColor: "#717059"
-  - type: Tag
-    tags: # ignore "WhitelistChameleon" tag
-    - DoorBumpOpener
-  - type: ChameleonClothing
-    slot: [idcard]
-    default: PassengerPDA
-    requireTag: WhitelistChameleonPDA
-  - type: UserInterface
-    interfaces:
-      enum.PdaUiKey.Key:
-        type: PdaBoundUserInterface
-      enum.StoreUiKey.Key:
-        type: StoreBoundUserInterface
-      enum.RingerUiKey.Key:
-        type: RingerBoundUserInterface
-      enum.InstrumentUiKey.Key:
-        type: InstrumentBoundUserInterface
-      enum.HealthAnalyzerUiKey.Key:
-        type: HealthAnalyzerBoundUserInterface
-      enum.ChameleonUiKey.Key:
-        type: ChameleonBoundUserInterface
+      - NanoChatCartridge
+    cartridgeSlot:
+      priority: -1
+      name: Cartridge
+      ejectSound: /Audio/Machines/id_swipe.ogg
+      insertSound: /Audio/Machines/id_insert.ogg
+      whitelist:
+        components:
+          - Cartridge
+  - type: ClothingAddFaction
+    faction: Syndicate

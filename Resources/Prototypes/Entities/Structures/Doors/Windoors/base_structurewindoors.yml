@@ -32,7 +32,6 @@
     - state: closed_unlit
       shader: unshaded
       map: ["enum.DoorVisualLayers.BaseUnlit"]
-      visible: false
     - state: welded
       map: ["enum.WeldableLayers.BaseWelded"]
     - state: bolted_unlit
@@ -43,12 +42,10 @@
       map: ["enum.DoorVisualLayers.BaseEmergencyAccess"]
     - state: panel_open
       map: ["enum.WiresVisualLayers.MaintenancePanel"]
-    - state: electrified
-      sprite: Interface/Misc/ai_hud.rsi
-      shader: unshaded
-      visible: false
-      map: ["enum.ElectrifiedLayers.HUD"]
   - type: AnimationPlayer
+  - type: Tag
+    tags:
+      - WeldbotFixableStructure
   - type: ApcPowerReceiver
   - type: ExtensionCableReceiver
   - type: DoorSignalControl
@@ -70,7 +67,7 @@
     lastSignals:
       DoorStatus: false
   - type: Damageable
-    damageContainer: StructuralInorganic
+    damageContainer: Inorganic
     damageModifierSet: Glass
   - type: ExaminableDamage
     messages: WindowMessages
@@ -143,7 +140,6 @@
         type: WiresBoundUserInterface
   - type: Appearance
   - type: WiresVisuals
-  - type: ElectrocutionHUDVisuals
   - type: Airtight
     noAirWhenFullyAirBlocked: false
     airBlockedDirection:
@@ -154,8 +150,11 @@
     containers:
     - board
   - type: StaticPrice
-    price: 150
+    price: 100
   - type: PryUnpowered
+  - type: InteractionVerbs
+    allowedVerbs:
+    - KnockOn
 
 - type: entity
   id: BaseSecureWindoor
@@ -171,7 +170,6 @@
     - state: closed_unlit
       shader: unshaded
       map: [ "enum.DoorVisualLayers.BaseUnlit" ]
-      visible: false
     - state: welded
       map: [ "enum.WeldableLayers.BaseWelded" ]
     - state: bolted_unlit
@@ -183,13 +181,6 @@
     - state: panel_open
       map: [ "enum.WiresVisualLayers.MaintenancePanel" ]
       visible: false
-    - state: electrified
-      sprite: Interface/Misc/ai_hud.rsi
-      shader: unshaded
-      visible: false
-      map: [ "enum.ElectrifiedLayers.HUD" ]
-  - type: Damageable
-    damageModifierSet: RGlass
   - type: Destructible
     thresholds:
     - trigger:
@@ -216,12 +207,7 @@
     graph: Windoor
     node: windoorSecure
   - type: StaticPrice
-    price: 350
-  - type: Tag
-    tags:
-      - SecureWindoor
-      # This tag is used to nagivate the Airlock construction graph. It's needed because the construction graph is shared between Airlock, AirlockGlass, and HighSecDoor
-
+    price: 200
 
 #Plasma Windoors
 - type: entity
@@ -237,7 +223,6 @@
     - state: closed_unlit
       shader: unshaded
       map: [ "enum.DoorVisualLayers.BaseUnlit" ]
-      visible: false
     - state: welded
       map: [ "enum.WeldableLayers.BaseWelded" ]
     - state: bolted_unlit
@@ -249,11 +234,6 @@
     - state: panel_open
       map: [ "enum.WiresVisualLayers.MaintenancePanel" ]
       visible: false
-    - state: electrified
-      sprite: Interface/Misc/ai_hud.rsi
-      shader: unshaded
-      visible: false
-      map: [ "enum.ElectrifiedLayers.HUD" ]
   - type: Destructible
     thresholds:
     - trigger:
@@ -280,13 +260,13 @@
     graph: Windoor
     node: pwindoor
   - type: StaticPrice
-    price: 500
+    price: 170
   - type: RadiationBlocker
-    resistance: 2
+    resistance: 4
 
 - type: entity
   id: BaseSecurePlasmaWindoor
-  parent: BaseSecureWindoor
+  parent: BaseWindoor
   abstract: true
   components:
   - type: Sprite
@@ -298,7 +278,6 @@
     - state: closed_unlit
       shader: unshaded
       map: [ "enum.DoorVisualLayers.BaseUnlit" ]
-      visible: false
     - state: welded
       map: [ "enum.WeldableLayers.BaseWelded" ]
     - state: bolted_unlit
@@ -310,11 +289,6 @@
     - state: panel_open
       map: [ "enum.WiresVisualLayers.MaintenancePanel" ]
       visible: false
-    - state: electrified
-      sprite: Interface/Misc/ai_hud.rsi
-      shader: unshaded
-      visible: false
-      map: ["enum.ElectrifiedLayers.HUD"]
   - type: Destructible
     thresholds:
     - trigger:
@@ -341,14 +315,9 @@
     graph: Windoor
     node: pwindoorSecure
   - type: StaticPrice
-    price: 500
+    price: 312
   - type: RadiationBlocker
-    resistance: 4
-  - type: Tag
-    tags:
-      - SecurePlasmaWindoor
-      # This tag is used to nagivate the Airlock construction graph. It's needed because the construction graph is shared between Airlock, AirlockGlass, and HighSecDoor
-
+    resistance: 6
 
 #Uranium Windoors
 - type: entity
@@ -364,7 +333,6 @@
     - state: closed_unlit
       shader: unshaded
       map: [ "enum.DoorVisualLayers.BaseUnlit" ]
-      visible: false
     - state: welded
       map: [ "enum.WeldableLayers.BaseWelded" ]
     - state: bolted_unlit
@@ -376,11 +344,6 @@
     - state: panel_open
       map: [ "enum.WiresVisualLayers.MaintenancePanel" ]
       visible: false
-    - state: electrified
-      sprite: Interface/Misc/ai_hud.rsi
-      shader: unshaded
-      visible: false
-      map: [ "enum.ElectrifiedLayers.HUD" ]
   - type: Destructible
     thresholds:
     - trigger:
@@ -407,13 +370,13 @@
     graph: Windoor
     node: uwindoor
   - type: StaticPrice
-    price: 560
+    price: 180
   - type: RadiationBlocker
-    resistance: 3
+    resistance: 5
 
 - type: entity
   id: BaseSecureUraniumWindoor
-  parent: BaseSecureWindoor
+  parent: BaseWindoor
   abstract: true
   components:
   - type: Sprite
@@ -425,7 +388,6 @@
     - state: closed_unlit
       shader: unshaded
       map: [ "enum.DoorVisualLayers.BaseUnlit" ]
-      visible: false
     - state: welded
       map: [ "enum.WeldableLayers.BaseWelded" ]
     - state: bolted_unlit
@@ -437,11 +399,6 @@
     - state: panel_open
       map: [ "enum.WiresVisualLayers.MaintenancePanel" ]
       visible: false
-    - state: electrified
-      sprite: Interface/Misc/ai_hud.rsi
-      shader: unshaded
-      visible: false
-      map: [ "enum.ElectrifiedLayers.HUD" ]
   - type: Destructible
     thresholds:
     - trigger:
@@ -468,10 +425,6 @@
     graph: Windoor
     node: uwindoorSecure
   - type: StaticPrice
-    price: 750
+    price: 462
   - type: RadiationBlocker
-    resistance: 5
-  - type: Tag
-    tags:
-      - SecureUraniumWindoor
-      # This tag is used to nagivate the Airlock construction graph. It's needed because the construction graph is shared between Airlock, AirlockGlass, and HighSecDoor
+    resistance: 8

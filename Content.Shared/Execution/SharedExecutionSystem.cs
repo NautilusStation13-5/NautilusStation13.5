@@ -1,10 +1,10 @@
 using Content.Shared.ActionBlocker;
 using Content.Shared.Chat;
 using Content.Shared.CombatMode;
+using Content.Shared.Containers.ItemSlots;
 using Content.Shared.Damage;
 using Content.Shared.Database;
 using Content.Shared.DoAfter;
-using Content.Shared.IdentityManagement;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Popups;
@@ -13,6 +13,8 @@ using Content.Shared.Weapons.Melee;
 using Content.Shared.Weapons.Melee.Events;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Mind;
+using Content.Shared.Tag;
+using Content.Shared.Weapons.Ranged.Components;
 using Robust.Shared.Player;
 using Robust.Shared.Audio.Systems;
 
@@ -32,6 +34,10 @@ public sealed class SharedExecutionSystem : EntitySystem
     [Dependency] private readonly SharedCombatModeSystem _combat = default!;
     [Dependency] private readonly SharedExecutionSystem _execution = default!;
     [Dependency] private readonly SharedMeleeWeaponSystem _melee = default!;
+    [Dependency] private readonly SharedMindSystem _mind = default!;
+    [Dependency] private readonly SharedTransformSystem _transform = default!;
+    [Dependency] private readonly TagSystem _tag = default!;
+    [Dependency] private readonly ItemSlotsSystem _itemSlots = default!;
 
     /// <inheritdoc/>
     public override void Initialize()
@@ -53,7 +59,7 @@ public sealed class SharedExecutionSystem : EntitySystem
         var weapon = args.Using.Value;
         var victim = args.Target;
 
-        if (!CanBeExecuted(victim, attacker))
+        if (!CanBeExecuted(victim, attacker, weapon))
             return;
 
         UtilityVerb verb = new()
@@ -69,7 +75,7 @@ public sealed class SharedExecutionSystem : EntitySystem
 
     private void TryStartExecutionDoAfter(EntityUid weapon, EntityUid victim, EntityUid attacker, ExecutionComponent comp)
     {
-        if (!CanBeExecuted(victim, attacker))
+        if (!CanBeExecuted(victim, attacker, weapon))
             return;
 
         if (attacker == victim)
@@ -95,7 +101,7 @@ public sealed class SharedExecutionSystem : EntitySystem
 
     }
 
-    public bool CanBeExecuted(EntityUid victim, EntityUid attacker)
+    public bool CanBeExecuted(EntityUid victim, EntityUid attacker, EntityUid weapon)
     {
         // No point executing someone if they can't take damage
         if (!HasComp<DamageableComponent>(victim))
@@ -124,9 +130,7 @@ public sealed class SharedExecutionSystem : EntitySystem
     private void OnGetMeleeDamage(Entity<ExecutionComponent> entity, ref GetMeleeDamageEvent args)
     {
         if (!TryComp<MeleeWeaponComponent>(entity, out var melee) || !entity.Comp.Executing)
-        {
             return;
-        }
 
         var bonus = melee.Damage * entity.Comp.DamageMultiplier - melee.Damage;
         args.Damage += bonus;
@@ -146,7 +150,7 @@ public sealed class SharedExecutionSystem : EntitySystem
 
         ShowExecutionInternalPopup(internalMsg, args.Victim, args.Victim, entity, false);
         ShowExecutionExternalPopup(externalMsg, args.Victim, args.Victim, entity);
-        _audio.PlayPredicted(melee.HitSound, args.Victim, args.Victim);
+        _audio.PlayPredicted(melee.SoundHit, args.Victim, args.Victim);
         _suicide.ApplyLethalDamage((args.Victim, damageableComponent), melee.Damage);
         args.Handled = true;
     }
@@ -156,7 +160,7 @@ public sealed class SharedExecutionSystem : EntitySystem
         if (predict)
         {
             _popup.PopupClient(
-               Loc.GetString(locString, ("attacker", Identity.Entity(attacker, EntityManager)), ("victim", Identity.Entity(victim, EntityManager)), ("weapon", weapon)),
+               Loc.GetString(locString, ("attacker", attacker), ("victim", victim), ("weapon", weapon)),
                attacker,
                attacker,
                PopupType.MediumCaution
@@ -165,7 +169,7 @@ public sealed class SharedExecutionSystem : EntitySystem
         else
         {
             _popup.PopupEntity(
-               Loc.GetString(locString, ("attacker", Identity.Entity(attacker, EntityManager)), ("victim", Identity.Entity(victim, EntityManager)), ("weapon", weapon)),
+               Loc.GetString(locString, ("attacker", attacker), ("victim", victim), ("weapon", weapon)),
                attacker,
                attacker,
                PopupType.MediumCaution
@@ -176,7 +180,7 @@ public sealed class SharedExecutionSystem : EntitySystem
     private void ShowExecutionExternalPopup(string locString, EntityUid attacker, EntityUid victim, EntityUid weapon)
     {
         _popup.PopupEntity(
-            Loc.GetString(locString, ("attacker", Identity.Entity(attacker, EntityManager)), ("victim", Identity.Entity(victim, EntityManager)), ("weapon", weapon)),
+            Loc.GetString(locString, ("attacker", attacker), ("victim", victim), ("weapon", weapon)),
             attacker,
             Filter.PvsExcept(attacker),
             true,
@@ -196,7 +200,7 @@ public sealed class SharedExecutionSystem : EntitySystem
         var victim = args.Target.Value;
         var weapon = args.Used.Value;
 
-        if (!_execution.CanBeExecuted(victim, attacker))
+        if (!_execution.CanBeExecuted(victim, attacker, weapon))
             return;
 
         // This is needed so the melee system does not stop it.
@@ -216,9 +220,7 @@ public sealed class SharedExecutionSystem : EntitySystem
             RaiseLocalEvent(victim, suicideGhostEvent);
         }
         else
-        {
             _melee.AttemptLightAttack(attacker, weapon, meleeWeaponComp, victim);
-        }
 
         _combat.SetInCombatMode(attacker, prev);
         entity.Comp.Executing = false;

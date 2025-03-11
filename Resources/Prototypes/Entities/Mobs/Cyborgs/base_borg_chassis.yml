@@ -1,5 +1,5 @@
 - type: entity
-  parent: [BaseMob, StripableInventoryBase]
+  parent: BaseMob
   id: BaseBorgChassis
   name: cyborg
   description: A man-machine hybrid that assists in station activity. They love being asked to state their laws over and over.
@@ -65,14 +65,10 @@
     interfaces:
       enum.SiliconLawsUiKey.Key:
         type: SiliconLawBoundUserInterface
-        requireInputValidation: false
       enum.BorgUiKey.Key:
         type: BorgBoundUserInterface
       enum.StrippingUiKey.Key:
         type: StrippableBoundUserInterface
-      # Only used for NT borgs that can switch type, defined here to avoid copy-pasting the rest of this component.
-      enum.BorgSwitchableTypeUiKey.SelectBorgType:
-        type: BorgSelectTypeUserInterface
   - type: ActivatableUI
     key: enum.BorgUiKey.Key
   - type: SiliconLawBound
@@ -82,14 +78,16 @@
   - type: EmagSiliconLaw
     stunTime: 5
   - type: SiliconLawProvider
-    laws: Crewsimov
+    laws: Asimov
   - type: IonStormTarget
+  - type: Strippable
+  - type: StationAiVision
+  - type: InventorySlots
   - type: Inventory
     templateId: borg
   - type: Hands
     showInHands: false
     disableExplosionRecursion: true
-    canBeStripped: false
   - type: ComplexInteraction
   - type: IntrinsicRadioReceiver
   - type: IntrinsicRadioTransmitter
@@ -107,11 +105,6 @@
     doAfterDelay: 10
     allowSelfRepair: false
   - type: BorgChassis
-  - type: LockingWhitelist
-    blacklist:
-      components:
-      - BorgChassis
-      - RoboticsConsole
   - type: WiresPanel
   - type: ActivatableUIRequiresPanel
   - type: NameIdentifier
@@ -126,10 +119,7 @@
     cellSlotId: cell_slot
     fitsInCharger: true
   - type: ItemToggle
-    onActivate: false # You should not be able to turn off a borg temporarily.
-    activated: false # gets activated when a mind is added
     onUse: false # no item-borg toggling sorry
-  - type: ItemTogglePointLight
   - type: AccessToggle
   # TODO: refactor movement to just be based on toggle like speedboots but for the boots themselves
   # TODO: or just have sentient speedboots be fast idk
@@ -141,12 +131,12 @@
       cell_slot:
         name: power-cell-slot-component-slot-name-default
   - type: Body
+    thermalVisibility: false
   - type: StatusEffects
     allowed:
     - Stun
     - KnockedDown
     - SlowedDown
-    - Flashed
   - type: TypingIndicator
     proto: robot
   - type: Speech
@@ -161,16 +151,14 @@
       collection: FootstepBorg
   - type: Construction
     graph: Cyborg
-    node: cyborg
     containers:
     - part-container
     - cell_slot
   - type: Lock
     locked: true
-    breakOnEmag: false
-    unlockOnClick: false
   - type: ActivatableUIRequiresLock
   - type: LockedWiresPanel
+  - type: Flashable
   - type: Damageable
     damageContainer: Silicon
   - type: Destructible
@@ -235,23 +223,27 @@
     - DoorBumpOpener
     - FootstepSound
     - CanPilot
+    - SiliconEmotes
+    - SiliconMob
   - type: Emoting
   - type: GuideHelp
     guides:
-    - Cyborgs
-    - Robotics
-  - type: ProtectedFromStepTriggers
-  - type: DamageOnInteractProtection
-    damageProtection:
-      flatReductions:
-        Heat: 10 # capable of touching light bulbs and stoves without feeling pain!
-  - type: InGas
-    gasId: 9 # short-circuits in water
-    damagedByGas: true
-    gasThreshold: 50
-    damage:
-        types:
-            Shock: 5
+      - Cyborgs
+  - type: StepTriggerImmune
+  - type: Eye
+    visMask:
+      - PsionicInvisibility
+      - Normal
+  - type: LanguageKnowledge
+    speaks:
+    - TauCetiBasic
+    - RobotTalk
+    understands:
+    - TauCetiBasic
+    - RobotTalk
+  - type: PsionicInsulation
+  - type: TwistedConstructionTarget
+    replacementProto: ConstructShell
 
 - type: entity
   abstract: true
@@ -287,22 +279,17 @@
   parent: [BaseBorgChassis, BaseBorgTransponder]
   abstract: true
   components:
-  - type: RandomMetadata
-    nameSegments:
-      - names_borg
   - type: NpcFactionMember
     factions:
     - NanoTrasen
   - type: Access
     enabled: false
     groups:
-    - AllAccess
+    - AllAccessBorg
   - type: AccessReader
     access: [["Command"], ["Research"]]
   - type: ShowJobIcons
-  - type: InteractionPopup
-    interactSuccessSound:
-      path: /Audio/Ambience/Objects/periodic_beep.ogg
+  - type: ShowMindShieldIcons
 
 - type: entity
   id: BaseBorgChassisSyndicate
@@ -320,7 +307,6 @@
     access: [["SyndicateAgent"], ["NuclearOperative"]]
   - type: SiliconLawProvider
     laws: SyndicateStatic
-    subverted: true
   - type: IntrinsicRadioTransmitter
     channels:
     - Binary
@@ -332,29 +318,8 @@
   - type: MovementAlwaysTouching
   - type: Speech
     speechSounds: SyndieBorg
+    allowedEmotes:
+    - Laugh
   - type: Vocal
     sounds:
       Unsexed: UnisexSiliconSyndicate
-  - type: PointLight
-    color: "#dd200b"
-
-- type: entity
-  id: BaseBorgChassisDerelict
-  parent: BaseBorgChassis
-  abstract: true
-  components:
-  - type: NpcFactionMember
-    factions:
-    - NanoTrasen #The seemingly best fit. It was a regular NT cyborg once, after all.
-  - type: Access
-    enabled: false
-    groups:
-    - AllAccess #Randomized access would be fun. AllAccess is the best i can think of right now that does make it too hard for it to enter the station or navigate it..
-  - type: AccessReader
-    access: [["Command"], ["Research"]]
-  - type: StartIonStormed
-    ionStormAmount: 3
-  - type: IonStormTarget
-    chance: 1
-  - type: ShowJobIcons
-

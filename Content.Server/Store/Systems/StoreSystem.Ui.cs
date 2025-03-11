@@ -30,6 +30,7 @@ public sealed partial class StoreSystem
     [Dependency] private readonly SharedAudioSystem _audio = default!;
     [Dependency] private readonly StackSystem _stack = default!;
     [Dependency] private readonly UserInterfaceSystem _ui = default!;
+    [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
 
     private void InitializeUi()
     {
@@ -256,26 +257,23 @@ public sealed partial class StoreSystem
                 RaiseLocalEvent(buyer, listing.ProductEvent);
         }
 
-        if (listing.DisableRefund)
-        {
-            component.RefundAllowed = false;
-        }
-
         //log dat shit.
         _admin.Add(LogType.StorePurchase,
             LogImpact.Low,
-            $"{ToPrettyString(buyer):player} purchased listing \"{ListingLocalisationHelpers.GetLocalisedNameOrEntityName(listing, _proto)}\" from {ToPrettyString(uid)}");
+            $"{ToPrettyString(buyer):player} purchased listing \"{ListingLocalisationHelpers.GetLocalisedNameOrEntityName(listing, _prototypeManager)}\" from {ToPrettyString(uid)}");
 
         listing.PurchaseAmount++; //track how many times something has been purchased
         _audio.PlayEntity(component.BuySuccessSound, msg.Actor, uid); //cha-ching!
 
+        // Nyano code needs to know when a buy finished. Probably a better way?
         var buyFinished = new StoreBuyFinishedEvent
         {
+            Buyer = buyer,
             PurchasedItem = listing,
             StoreUid = uid
         };
-        RaiseLocalEvent(ref buyFinished);
 
+        RaiseLocalEvent(ref buyFinished);
         UpdateUserInterface(buyer, uid, component);
     }
 
@@ -288,9 +286,6 @@ public sealed partial class StoreSystem
     /// </remarks>
     private void OnRequestWithdraw(EntityUid uid, StoreComponent component, StoreRequestWithdrawMessage msg)
     {
-        if (msg.Amount <= 0)
-            return;
-
         //make sure we have enough cash in the bank and we actually support this currency
         if (!component.Balance.TryGetValue(msg.Currency, out var currentAmount) || currentAmount < msg.Amount)
             return;
@@ -314,8 +309,7 @@ public sealed partial class StoreSystem
             var cashId = proto.Cash[value];
             var amountToSpawn = (int) MathF.Floor((float) (amountRemaining / value));
             var ents = _stack.SpawnMultiple(cashId, amountToSpawn, coordinates);
-            if (ents.FirstOrDefault() is {} ent)
-                _hands.PickupOrDrop(buyer, ent);
+            _hands.PickupOrDrop(buyer, ents.First());
             amountRemaining -= value * amountToSpawn;
         }
 
@@ -395,14 +389,3 @@ public sealed partial class StoreSystem
         component.RefundAllowed = false;
     }
 }
-
-/// <summary>
-/// Event of successfully finishing purchase in store (<see cref="StoreSystem"/>.
-/// </summary>
-/// <param name="StoreUid">EntityUid on which store is placed.</param>
-/// <param name="PurchasedItem">ListingItem that was purchased.</param>
-[ByRefEvent]
-public readonly record struct StoreBuyFinishedEvent(
-    EntityUid StoreUid,
-    ListingDataWithCostModifiers PurchasedItem
-);

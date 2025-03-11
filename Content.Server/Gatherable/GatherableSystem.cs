@@ -5,6 +5,7 @@ using Content.Shared.Tag;
 using Content.Shared.Weapons.Melee.Events;
 using Content.Shared.Whitelist;
 using Robust.Server.GameObjects;
+using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
@@ -46,7 +47,7 @@ public sealed partial class GatherableSystem : EntitySystem
         if (_whitelistSystem.IsWhitelistFailOrNull(gatherable.Comp.ToolWhitelist, args.User))
             return;
 
-        Gather(gatherable, args.User);
+        Gather(args.Target, args.User, gatherable.Comp);
         args.Handled = true;
     }
 
@@ -56,9 +57,7 @@ public sealed partial class GatherableSystem : EntitySystem
             return;
 
         if (TryComp<SoundOnGatherComponent>(gatheredUid, out var soundComp))
-        {
             _audio.PlayPvs(soundComp.Sound, Transform(gatheredUid).Coordinates);
-        }
 
         // Complete the gathering process
         _destructible.DestroyEntity(gatheredUid);
@@ -78,11 +77,8 @@ public sealed partial class GatherableSystem : EntitySystem
             }
             var getLoot = _proto.Index(table);
             var spawnLoot = getLoot.GetSpawns(_random);
-            foreach (var loot in spawnLoot)
-            {
-                var spawnPos = pos.Offset(_random.NextVector2(component.GatherOffset));
-                Spawn(loot, spawnPos);
-            }
+            var spawnPos = pos.Offset(_random.NextVector2(component.GatherOffset));
+            Spawn(spawnLoot[0], spawnPos);
         }
     }
 }

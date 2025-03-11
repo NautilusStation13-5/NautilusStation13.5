@@ -9,18 +9,17 @@ using System.Threading.Tasks;
 using Content.Server.Administration.Logs;
 using Content.Server.Administration.Managers;
 using Content.Shared.Administration.Logs;
+using Content.Shared.Clothing.Loadouts.Systems;
 using Content.Shared.Database;
 using Content.Shared.Humanoid;
 using Content.Shared.Humanoid.Markings;
 using Content.Shared.Preferences;
-using Content.Shared.Preferences.Loadouts;
-using Content.Shared.Roles;
-using Content.Shared.Traits;
 using Microsoft.EntityFrameworkCore;
 using Robust.Shared.Enums;
 using Robust.Shared.Network;
-using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
+using Content.Shared.Roles;
+using Robust.Shared.Prototypes;
 
 namespace Content.Server.Database
 {
@@ -48,11 +47,8 @@ namespace Content.Server.Database
                 .Include(p => p.Profiles).ThenInclude(h => h.Jobs)
                 .Include(p => p.Profiles).ThenInclude(h => h.Antags)
                 .Include(p => p.Profiles).ThenInclude(h => h.Traits)
-                .Include(p => p.Profiles)
-                    .ThenInclude(h => h.Loadouts)
-                    .ThenInclude(l => l.Groups)
-                    .ThenInclude(group => group.Loadouts)
-                .AsSplitQuery()
+                .Include(p => p.Profiles).ThenInclude(h => h.Loadouts)
+                .AsSingleQuery()
                 .SingleOrDefaultAsync(p => p.UserId == userId.UserId, cancel);
 
             if (prefs is null)
@@ -101,8 +97,6 @@ namespace Content.Server.Database
                 .Include(p => p.Antags)
                 .Include(p => p.Traits)
                 .Include(p => p.Loadouts)
-                    .ThenInclude(l => l.Groups)
-                    .ThenInclude(group => group.Loadouts)
                 .AsSplitQuery()
                 .SingleOrDefault(h => h.Slot == slot);
 
@@ -152,7 +146,7 @@ namespace Content.Server.Database
 
             await db.DbContext.SaveChangesAsync();
 
-            return new PlayerPreferences(new[] {new KeyValuePair<int, ICharacterProfile>(0, defaultProfile)}, 0, Color.FromHex(prefs.AdminOOCColor));
+            return new PlayerPreferences(new[] { new KeyValuePair<int, ICharacterProfile>(0, defaultProfile) }, 0, Color.FromHex(prefs.AdminOOCColor));
         }
 
         public async Task DeleteSlotAndSetSelectedIndex(NetUserId userId, int deleteSlot, int newSlot)
@@ -186,13 +180,22 @@ namespace Content.Server.Database
 
         private static HumanoidCharacterProfile ConvertProfiles(Profile profile)
         {
-            var jobs = profile.Jobs.ToDictionary(j => new ProtoId<JobPrototype>(j.JobName), j => (JobPriority) j.Priority);
-            var antags = profile.Antags.Select(a => new ProtoId<AntagPrototype>(a.AntagName));
-            var traits = profile.Traits.Select(t => new ProtoId<TraitPrototype>(t.TraitName));
+            var jobs = profile.Jobs.ToDictionary(j => j.JobName, j => (JobPriority) j.Priority);
+            var antags = profile.Antags.Select(a => a.AntagName);
+            var traits = profile.Traits.Select(t => t.TraitName);
+            var loadouts = profile.Loadouts.Select(Shared.Clothing.Loadouts.Systems.Loadout (l) => l);
 
             var sex = Sex.Male;
             if (Enum.TryParse<Sex>(profile.Sex, true, out var sexVal))
                 sex = sexVal;
+
+            var clothing = ClothingPreference.Jumpsuit;
+            if (Enum.TryParse<ClothingPreference>(profile.Clothing, true, out var clothingVal))
+                clothing = clothingVal;
+
+            var backpack = BackpackPreference.Backpack;
+            if (Enum.TryParse<BackpackPreference>(profile.Backpack, true, out var backpackVal))
+                backpack = backpackVal;
 
             var spawnPriority = (SpawnPriorityPreference) profile.SpawnPriority;
 
@@ -216,38 +219,20 @@ namespace Content.Server.Database
                 }
             }
 
-            var loadouts = new Dictionary<string, RoleLoadout>();
-
-            foreach (var role in profile.Loadouts)
-            {
-                var loadout = new RoleLoadout(role.RoleName)
-                {
-                };
-
-                foreach (var group in role.Groups)
-                {
-                    var groupLoadouts = loadout.SelectedLoadouts.GetOrNew(group.GroupName);
-                    foreach (var profLoadout in group.Loadouts)
-                    {
-                        groupLoadouts.Add(new Loadout()
-                        {
-                            Prototype = profLoadout.LoadoutName,
-                        });
-                    }
-                }
-
-                loadouts[role.RoleName] = loadout;
-            }
-
             return new HumanoidCharacterProfile(
                 profile.CharacterName,
                 profile.FlavorText,
                 profile.Species,
+                profile.CustomSpecieName,
+                profile.Height,
+                profile.Width,
                 profile.Age,
                 sex,
                 gender,
-                new HumanoidCharacterAppearance
-                (
+                profile.DisplayPronouns,
+                profile.StationAiName,
+                profile.CyborgName,
+                new HumanoidCharacterAppearance(
                     profile.HairName,
                     Color.FromHex(profile.HairColor),
                     profile.FacialHairName,
@@ -258,10 +243,16 @@ namespace Content.Server.Database
                 ),
                 spawnPriority,
                 jobs,
+                clothing,
+                backpack,
                 (PreferenceUnavailableMode) profile.PreferenceUnavailable,
                 antags.ToHashSet(),
                 traits.ToHashSet(),
-                loadouts
+                loadouts.Select(l => new LoadoutPreference(l.LoadoutName)
+                {
+                    CustomName = l.CustomName, CustomDescription = l.CustomDescription,
+                    CustomColorTint = l.CustomColorTint, CustomHeirloom = l.CustomHeirloom, Selected = true,
+                }).ToHashSet()
             );
         }
 
@@ -279,15 +270,23 @@ namespace Content.Server.Database
             profile.CharacterName = humanoid.Name;
             profile.FlavorText = humanoid.FlavorText;
             profile.Species = humanoid.Species;
+            profile.CustomSpecieName = humanoid.Customspeciename;
             profile.Age = humanoid.Age;
             profile.Sex = humanoid.Sex.ToString();
             profile.Gender = humanoid.Gender.ToString();
+            profile.DisplayPronouns = humanoid.DisplayPronouns;
+            profile.StationAiName = humanoid.StationAiName;
+            profile.CyborgName = humanoid.CyborgName;
+            profile.Height = humanoid.Height;
+            profile.Width = humanoid.Width;
             profile.HairName = appearance.HairStyleId;
             profile.HairColor = appearance.HairColor.ToHex();
             profile.FacialHairName = appearance.FacialHairStyleId;
             profile.FacialHairColor = appearance.FacialHairColor.ToHex();
             profile.EyeColor = appearance.EyeColor.ToHex();
             profile.SkinColor = appearance.SkinColor.ToHex();
+            profile.Clothing = humanoid.Clothing.ToString();
+            profile.Backpack = humanoid.Backpack.ToString();
             profile.SpawnPriority = (int) humanoid.SpawnPriority;
             profile.Markings = markings;
             profile.Slot = slot;
@@ -297,50 +296,24 @@ namespace Content.Server.Database
             profile.Jobs.AddRange(
                 humanoid.JobPriorities
                     .Where(j => j.Value != JobPriority.Never)
-                    .Select(j => new Job {JobName = j.Key, Priority = (DbJobPriority) j.Value})
+                    .Select(j => new Job { JobName = j.Key, Priority = (DbJobPriority) j.Value })
             );
 
             profile.Antags.Clear();
             profile.Antags.AddRange(
                 humanoid.AntagPreferences
-                    .Select(a => new Antag {AntagName = a})
+                    .Select(a => new Antag { AntagName = a })
             );
 
             profile.Traits.Clear();
             profile.Traits.AddRange(
                 humanoid.TraitPreferences
-                        .Select(t => new Trait {TraitName = t})
+                        .Select(t => new Trait { TraitName = t })
             );
 
             profile.Loadouts.Clear();
-
-            foreach (var (role, loadouts) in humanoid.Loadouts)
-            {
-                var dz = new ProfileRoleLoadout()
-                {
-                    RoleName = role,
-                };
-
-                foreach (var (group, groupLoadouts) in loadouts.SelectedLoadouts)
-                {
-                    var profileGroup = new ProfileLoadoutGroup()
-                    {
-                        GroupName = group,
-                    };
-
-                    foreach (var loadout in groupLoadouts)
-                    {
-                        profileGroup.Loadouts.Add(new ProfileLoadout()
-                        {
-                            LoadoutName = loadout.Prototype,
-                        });
-                    }
-
-                    dz.Groups.Add(profileGroup);
-                }
-
-                profile.Loadouts.Add(dz);
-            }
+            profile.Loadouts.AddRange(humanoid.LoadoutPreferences
+                .Select(l => new Loadout(l.LoadoutName, l.CustomName, l.CustomDescription, l.CustomColorTint, l.CustomHeirloom)));
 
             return profile;
         }
@@ -518,23 +491,16 @@ namespace Content.Server.Database
         public async Task EditServerRoleBan(int id, string reason, NoteSeverity severity, DateTimeOffset? expiration, Guid editedBy, DateTimeOffset editedAt)
         {
             await using var db = await GetDb();
-            var roleBanDetails = await db.DbContext.RoleBan
-                .Where(b => b.Id == id)
-                .Select(b => new { b.BanTime, b.PlayerUserId })
-                .SingleOrDefaultAsync();
 
-            if (roleBanDetails == default)
+            var ban = await db.DbContext.RoleBan.SingleOrDefaultAsync(b => b.Id == id);
+            if (ban is null)
                 return;
-
-            await db.DbContext.RoleBan
-                .Where(b => b.BanTime == roleBanDetails.BanTime && b.PlayerUserId == roleBanDetails.PlayerUserId)
-                .ExecuteUpdateAsync(setters => setters
-                    .SetProperty(b => b.Severity, severity)
-                    .SetProperty(b => b.Reason, reason)
-                    .SetProperty(b => b.ExpirationTime, expiration.HasValue ? expiration.Value.UtcDateTime : (DateTime?)null)
-                    .SetProperty(b => b.LastEditedById, editedBy)
-                    .SetProperty(b => b.LastEditedAt, editedAt.UtcDateTime)
-                );
+            ban.Severity = severity;
+            ban.Reason = reason;
+            ban.ExpirationTime = expiration?.UtcDateTime;
+            ban.LastEditedById = editedBy;
+            ban.LastEditedAt = editedAt.UtcDateTime;
+            await db.DbContext.SaveChangesAsync();
         }
         #endregion
 
@@ -751,20 +717,6 @@ namespace Content.Server.Database
             existing.Flags = admin.Flags;
             existing.Title = admin.Title;
             existing.AdminRankId = admin.AdminRankId;
-            existing.Deadminned = admin.Deadminned;
-            existing.Suspended = admin.Suspended;
-
-            await db.DbContext.SaveChangesAsync(cancel);
-        }
-
-        public async Task UpdateAdminDeadminnedAsync(NetUserId userId, bool deadminned, CancellationToken cancel)
-        {
-            await using var db = await GetDb(cancel);
-
-            var adminRecord = db.DbContext.Admin.Where(a => a.UserId == userId);
-            await adminRecord.ExecuteUpdateAsync(
-                set => set.SetProperty(p => p.Deadminned, deadminned),
-                cancellationToken: cancel);
 
             await db.DbContext.SaveChangesAsync(cancel);
         }
@@ -902,41 +854,10 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
 
         public async Task AddAdminLogs(List<AdminLog> logs)
         {
-            const int maxRetryAttempts = 5;
-            var initialRetryDelay = TimeSpan.FromSeconds(5);
-
             DebugTools.Assert(logs.All(x => x.RoundId > 0), "Adding logs with invalid round ids.");
-
-            var attempt = 0;
-            var retryDelay = initialRetryDelay;
-
-            while (attempt < maxRetryAttempts)
-            {
-                try
-                {
-                    await using var db = await GetDb();
-                    db.DbContext.AdminLog.AddRange(logs);
-                    await db.DbContext.SaveChangesAsync();
-                    _opsLog.Debug($"Successfully saved {logs.Count} admin logs.");
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    attempt += 1;
-                    _opsLog.Error($"Attempt {attempt} failed to save logs: {ex}");
-
-                    if (attempt >= maxRetryAttempts)
-                    {
-                        _opsLog.Error($"Max retry attempts reached. Failed to save {logs.Count} admin logs.");
-                        return;
-                    }
-
-                    _opsLog.Warning($"Retrying in {retryDelay.TotalSeconds} seconds...");
-                    await Task.Delay(retryDelay);
-
-                    retryDelay *= 2;
-                }
-            }
+            await using var db = await GetDb();
+            db.DbContext.AdminLog.AddRange(logs);
+            await db.DbContext.SaveChangesAsync();
         }
 
         protected abstract IQueryable<AdminLog> StartAdminLogsQuery(ServerDbContext db, LogFilter? filter = null);
@@ -1638,7 +1559,7 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
 
             // Client side query, as EF can't do groups yet
             var bansEnumerable = bansQuery
-                    .GroupBy(ban => new { ban.BanTime, CreatedBy = (Player?)ban.CreatedBy, ban.Reason, Unbanned = ban.Unban == null })
+                    .GroupBy(ban => new { ban.BanTime, CreatedBy = (Player?) ban.CreatedBy, ban.Reason, Unbanned = ban.Unban == null })
                     .Select(banGroup => banGroup)
                     .ToArray();
 
@@ -1674,6 +1595,38 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
         }
 
         #endregion
+
+        // SQLite returns DateTime as Kind=Unspecified, Npgsql actually knows for sure it's Kind=Utc.
+        // Normalize DateTimes here so they're always Utc. Thanks.
+        protected abstract DateTime NormalizeDatabaseTime(DateTime time);
+
+        [return: NotNullIfNotNull(nameof(time))]
+        protected DateTime? NormalizeDatabaseTime(DateTime? time)
+        {
+            return time != null ? NormalizeDatabaseTime(time.Value) : time;
+        }
+
+        public async Task<bool> HasPendingModelChanges()
+        {
+            await using var db = await GetDb();
+            return db.DbContext.Database.HasPendingModelChanges();
+        }
+
+        protected abstract Task<DbGuard> GetDb(
+            CancellationToken cancel = default,
+            [CallerMemberName] string? name = null);
+
+        protected void LogDbOp(string? name)
+        {
+            _opsLog.Verbose($"Running DB operation: {name ?? "unknown"}");
+        }
+
+        protected abstract class DbGuard : IAsyncDisposable
+        {
+            public abstract ServerDbContext DbContext { get; }
+
+            public abstract ValueTask DisposeAsync();
+        }
 
         #region Job Whitelists
 
@@ -1734,113 +1687,9 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
 
         #endregion
 
-        # region IPIntel
-
-        public async Task<bool> UpsertIPIntelCache(DateTime time, IPAddress ip, float score)
-        {
-            while (true)
-            {
-                try
-                {
-                    await using var db = await GetDb();
-
-                    var existing = await db.DbContext.IPIntelCache
-                        .Where(w => ip.Equals(w.Address))
-                        .SingleOrDefaultAsync();
-
-                    if (existing == null)
-                    {
-                        var newCache = new IPIntelCache
-                        {
-                            Time = time,
-                            Address = ip,
-                            Score = score,
-                        };
-                        db.DbContext.IPIntelCache.Add(newCache);
-                    }
-                    else
-                    {
-                        existing.Time = time;
-                        existing.Score = score;
-                    }
-
-                    await Task.Delay(5000);
-
-                    await db.DbContext.SaveChangesAsync();
-                    return true;
-                }
-                catch (DbUpdateException)
-                {
-                    _opsLog.Warning("IPIntel UPSERT failed with a db exception... retrying.");
-                }
-            }
-        }
-
-        public async Task<IPIntelCache?> GetIPIntelCache(IPAddress ip)
-        {
-            await using var db = await GetDb();
-
-            return await db.DbContext.IPIntelCache
-                .SingleOrDefaultAsync(w => ip.Equals(w.Address));
-        }
-
-        public async Task<bool> CleanIPIntelCache(TimeSpan range)
-        {
-            await using var db = await GetDb();
-
-            // Calculating this here cause otherwise sqlite whines.
-            var cutoffTime = DateTime.UtcNow.Subtract(range);
-
-            await db.DbContext.IPIntelCache
-                .Where(w => w.Time <= cutoffTime)
-                .ExecuteDeleteAsync();
-
-            await db.DbContext.SaveChangesAsync();
-            return true;
-        }
-
-        #endregion
-
-        // SQLite returns DateTime as Kind=Unspecified, Npgsql actually knows for sure it's Kind=Utc.
-        // Normalize DateTimes here so they're always Utc. Thanks.
-        protected abstract DateTime NormalizeDatabaseTime(DateTime time);
-
-        [return: NotNullIfNotNull(nameof(time))]
-        protected DateTime? NormalizeDatabaseTime(DateTime? time)
-        {
-            return time != null ? NormalizeDatabaseTime(time.Value) : time;
-        }
-
-        public async Task<bool> HasPendingModelChanges()
-        {
-            await using var db = await GetDb();
-            return db.DbContext.Database.HasPendingModelChanges();
-        }
-
-        protected abstract Task<DbGuard> GetDb(
-            CancellationToken cancel = default,
-            [CallerMemberName] string? name = null);
-
-        protected void LogDbOp(string? name)
-        {
-            _opsLog.Verbose($"Running DB operation: {name ?? "unknown"}");
-        }
-
-        protected abstract class DbGuard : IAsyncDisposable
-        {
-            public abstract ServerDbContext DbContext { get; }
-
-            public abstract ValueTask DisposeAsync();
-        }
-
-        protected void NotificationReceived(DatabaseNotification notification)
-        {
+        protected void NotificationReceived(DatabaseNotification notification) =>
             OnNotificationReceived?.Invoke(notification);
-        }
 
-        public virtual void Shutdown()
-        {
-
-        }
+        public virtual void Shutdown() { }
     }
 }

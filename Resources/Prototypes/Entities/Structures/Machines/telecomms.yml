@@ -21,12 +21,6 @@
           True: { visible: true }
           False: { visible: false }
   - type: Appearance
-  - type: AmbientOnPowered
-  - type: AmbientSound
-    volume: -9
-    range: 5
-    sound:
-      path: /Audio/Ambience/Objects/server_fans.ogg
   - type: WiresVisuals
   - type: Physics
     bodyType: Static
@@ -86,6 +80,7 @@
       - EncryptionKeySecurity
       - EncryptionKeyService
       - EncryptionKeyCommand
+      - EncryptionKeyJustice #DeltaV - Justice dept
 
 - type: entity
   parent: TelecomServer
@@ -146,6 +141,7 @@
     containers:
       key_slots:
       - EncryptionKeySecurity
+      - EncryptionKeyJustice #DeltaV - Justice dept
 
 - type: entity
   parent: TelecomServer
@@ -166,11 +162,3 @@
     containers:
       key_slots:
       - EncryptionKeyCommand
-
-- type: entity
-  parent: TelecomServer
-  id: TP14TelecomRelay
-  suffix: Tcomms Booster
-  components:
-  - type: Relay
-

@@ -12,6 +12,11 @@
     - Energy
     reflectProb: 0.2
     spread: 90
+  - type: DamageOtherOnHit
+    damage:
+      types:
+        Blunt: 16
+    staminaCost: 45
 
 - type: entity
   parent: CrateBaseWeldable
@@ -28,7 +33,12 @@
     containers:
     - entity_storage
   - type: StaticPrice
-    price: 100
+    price: 80
+  - type: DamageOtherOnHit
+    damage:
+      types:
+        Blunt: 10
+    staminaCost: 30
 
 - type: entity
   parent: CratePlastic
@@ -42,11 +52,6 @@
   - type: AntiRottingContainer
   - type: ExplosionResistance
     damageCoefficient: 0.50
-  - type: Construction
-    graph: CrateFreezer
-    node: done
-    containers:
-    - entity_storage
 
 - type: entity
   parent: CratePlastic
@@ -112,7 +117,7 @@
 - type: entity
   parent: CrateGenericSteel
   id: CrateScience
-  name: science crate
+  name: epistemics crate # DeltaV - Epistemics Department replacing Science
   components:
   - type: Icon
     sprite: Structures/Storage/Crates/science.rsi
@@ -176,7 +181,7 @@
 # Secure Crates
 
 - type: entity
-  parent: [ CrateBaseSecure, BaseRestrictedContraband ]
+  parent: CrateBaseSecure
   id: CrateSecgear
   name: secgear crate
   components:
@@ -236,7 +241,7 @@
 - type: entity
   parent: CrateBaseSecure
   id: CrateScienceSecure
-  name: secure science crate
+  name: secure epistemics crate # DeltaV - Epistemics Department replacing Science
   components:
   - type: Icon
     sprite: Structures/Storage/Crates/scicrate_secure.rsi
@@ -256,6 +261,18 @@
     sprite: Structures/Storage/Crates/plasma.rsi
   - type: AccessReader
     access: [["Engineering"], ["Research"], ["Chemistry"]]
+
+- type: entity
+  parent: CrateBaseSecure
+  id: CrateUranium
+  name: uranium crate
+  components:
+  - type: Icon
+    sprite: Structures/Storage/Crates/uranium.rsi
+  - type: Sprite
+    sprite: Structures/Storage/Crates/uranium.rsi
+  - type: AccessReader
+    access: [["Engineering"], ["Research"]]
 
 - type: entity
   parent: CrateBaseSecure
@@ -280,7 +297,7 @@
     access: [["Hydroponics"]]
 
 - type: entity
-  parent: CrateBaseSecure
+  parent: CrateBaseSecureReinforced
   id: CrateWeaponSecure
   name: secure weapon crate
   components:
@@ -292,8 +309,8 @@
     access: [["Armory"]]
 
 - type: entity
-  parent: [ CrateBaseSecure, BaseRestrictedContraband ]
-  suffix: Armory, Secure
+  parent: CrateBaseSecureReinforced
+  suffix: Armory, Secure, Reinforced
   id: CrateContrabandStorageSecure
   name: contraband storage crate
   description: An armory access locked crate for storing contraband confiscated from suspects or prisoners.
@@ -422,7 +439,7 @@
         layer:
         - LargeMobLayer
   - type: StaticPrice
-    price: 75
+    price: 60
 
 - type: entity
   parent: CrateGeneric

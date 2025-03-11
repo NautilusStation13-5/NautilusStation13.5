@@ -1,5 +1,4 @@
 using Content.Server.Shuttles.Components;
-using Content.Shared.CCVar;
 using Content.Shared.Shuttles.BUIStates;
 using Content.Shared.Shuttles.Components;
 using Content.Shared.Shuttles.Events;
@@ -13,31 +12,11 @@ public sealed partial class ShuttleSystem
         SubscribeLocalEvent<IFFConsoleComponent, AnchorStateChangedEvent>(OnIFFConsoleAnchor);
         SubscribeLocalEvent<IFFConsoleComponent, IFFShowIFFMessage>(OnIFFShow);
         SubscribeLocalEvent<IFFConsoleComponent, IFFShowVesselMessage>(OnIFFShowVessel);
-        SubscribeLocalEvent<GridSplitEvent>(OnGridSplit);
-    }
-
-    private void OnGridSplit(ref GridSplitEvent ev)
-    {
-        var splitMass = _cfg.GetCVar(CCVars.HideSplitGridsUnder);
-
-        if (splitMass < 0)
-            return;
-
-        foreach (var grid in ev.NewGrids)
-        {
-            if (!_physicsQuery.TryGetComponent(grid, out var physics) ||
-                physics.Mass > splitMass)
-            {
-                continue;
-            }
-
-            AddIFFFlag(grid, IFFFlags.HideLabel);
-        }
     }
 
     private void OnIFFShow(EntityUid uid, IFFConsoleComponent component, IFFShowIFFMessage args)
     {
-        if (!TryComp(uid, out TransformComponent? xform) || xform.GridUid == null ||
+        if (!TryComp<TransformComponent>(uid, out var xform) || xform.GridUid == null ||
             (component.AllowedFlags & IFFFlags.HideLabel) == 0x0)
         {
             return;
@@ -55,7 +34,7 @@ public sealed partial class ShuttleSystem
 
     private void OnIFFShowVessel(EntityUid uid, IFFConsoleComponent component, IFFShowVesselMessage args)
     {
-        if (!TryComp(uid, out TransformComponent? xform) || xform.GridUid == null ||
+        if (!TryComp<TransformComponent>(uid, out var xform) || xform.GridUid == null ||
             (component.AllowedFlags & IFFFlags.Hide) == 0x0)
         {
             return;
@@ -75,7 +54,7 @@ public sealed partial class ShuttleSystem
     {
         // If we anchor / re-anchor then make sure flags up to date.
         if (!args.Anchored ||
-            !TryComp(uid, out TransformComponent? xform) ||
+            !TryComp<TransformComponent>(uid, out var xform) ||
             !TryComp<IFFComponent>(xform.GridUid, out var iff))
         {
             _uiSystem.SetUiState(uid, IFFConsoleUiKey.Key, new IFFConsoleBoundUserInterfaceState()

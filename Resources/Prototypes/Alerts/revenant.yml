@@ -1,4 +1,4 @@
-- type: alert
+﻿- type: alert
   id: Essence
   category: Health #it's like ghostie health
   icons:
@@ -10,7 +10,7 @@
 
 - type: alert
   id: Corporeal
-  icons: [ /Textures/Mobs/Ghosts/revenant.rsi/icon.png ]
+  icons: [ /Textures/DeltaV/Mobs/Ghosts/revenant.rsi/icon.png ] # DeltaV - Custom revenant sprite
   name: alerts-revenant-corporeal-name
   description: alerts-revenant-corporeal-desc
 

@@ -22,6 +22,7 @@
       layers:
       - map: [ "enum.DamageStateVisualLayers.Base" ]
         state: alive
+    - type: Carriable # This one is for you, deltanedas o7
     - type: CombatMode
     - type: Physics
     - type: Fixtures
@@ -39,10 +40,7 @@
     - type: MobThresholds
       thresholds:
         0: Alive
-        40: Dead
-    - type: MovementSpeedModifier
-      baseWalkSpeed: 2.5
-      baseSprintSpeed: 3.5
+        50: Dead
     - type: Stamina
       critThreshold: 100
     - type: DamageStateVisuals
@@ -55,11 +53,8 @@
           BaseUnshaded: dead_mouth
     - type: Butcherable
       spawned:
-        - id: FoodMeatFishCarp
+        - id: FoodMeatFish
           amount: 2
-        - id: MaterialToothSpaceCarp1
-          amount: 1
-          maxAmount: 4
     - type: MeleeWeapon
       altDisarm: false
       angle: 0
@@ -68,14 +63,15 @@
         path: /Audio/Effects/bite.ogg
       damage:
         types:
-          Blunt: 5
-          Slash: 7
+          Piercing: 5
+          Slash: 10
     - type: TypingIndicator
       proto: alien
     - type: Tag
       tags:
         - Carp
         - DoorBumpOpener
+        - NoPaint
     - type: ReplacementAccent
       accent: genericAggressive
     - type: Speech
@@ -85,6 +81,20 @@
       interactFailureString: petting-failure-carp
       interactFailureSound:
         path: /Audio/Effects/bite.ogg
+    - type: Body # Shitmed - Adds carp organs.
+      prototype: Carp
+    - type: SurgeryTarget
+    - type: UserInterface
+      interfaces:
+        enum.SurgeryUIKey.Key:
+          type: SurgeryBui
+    - type: NightVision
+      isActive: true
+      toggleAction: null
+      color: "#808080"
+      activateSound: null
+      deactivateSound: null
+    - type: Fauna # Lavaland Change
 
 - type: entity
   parent: BaseMobCarp
@@ -224,7 +234,7 @@
     - type: MobThresholds
       thresholds:
         0: Alive
-        150: Dead
+        180: Dead
     - type: Stamina
       critThreshold: 150
     - type: DamageStateVisuals
@@ -240,16 +250,18 @@
       requiredLegs: 1
     - type: Butcherable
       spawned:
-        - id: FoodMeatFishCarp
+        - id: FoodMeatFish
           amount: 4
-        - id: MaterialToothSharkminnow1
-          amount: 1
-          maxAmount: 3
     - type: MeleeWeapon
       damage:
         types:
-          Slash: 10
+          Slash: 12
           Bloodloss: 5
+    - type: SurgeryTarget
+    - type: UserInterface
+      interfaces:
+        enum.SurgeryUIKey.Key:
+          type: SurgeryBui
 
 - type: entity
   id: MobSharkSalvage

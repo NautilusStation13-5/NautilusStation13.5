@@ -15,12 +15,12 @@
                ClipText="True"/>
         <customControls:VSeparator/>
         <Label Name="JobLabel"
-               SizeFlagsStretchRatio="2"
+               SizeFlagsStretchRatio="3"
                HorizontalExpand="True"
                ClipText="True"/>
         <customControls:VSeparator/>
         <Label Name="AntagonistLabel"
-               SizeFlagsStretchRatio="1"
+               SizeFlagsStretchRatio="2"
                HorizontalExpand="True"
                ClipText="True"/>
         <customControls:VSeparator/>
@@ -30,7 +30,7 @@
                ClipText="True"/>
         <customControls:VSeparator/>
         <Label Name="OverallPlaytimeLabel"
-               SizeFlagsStretchRatio="1"
+               SizeFlagsStretchRatio="2"
                HorizontalExpand="True"
                ClipText="True"/>
     </BoxContainer>

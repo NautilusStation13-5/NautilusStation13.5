@@ -1,9 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Content.Shared.Hands;
-using Content.Shared.Hands.Components;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Interaction;
-using Content.Shared.Interaction.Events;
 using Content.Shared.Inventory.Events;
 using Content.Shared.Item;
 using Content.Shared.Popups;
@@ -45,7 +43,6 @@ public abstract class SharedVirtualItemSystem : EntitySystem
         SubscribeLocalEvent<VirtualItemComponent, BeingUnequippedAttemptEvent>(OnBeingUnequippedAttempt);
 
         SubscribeLocalEvent<VirtualItemComponent, BeforeRangedInteractEvent>(OnBeforeRangedInteract);
-        SubscribeLocalEvent<VirtualItemComponent, GettingInteractedWithAttemptEvent>(OnGettingInteractedWithAttemptEvent);
     }
 
     /// <summary>
@@ -75,12 +72,6 @@ public abstract class SharedVirtualItemSystem : EntitySystem
         args.Handled = true;
     }
 
-    private void OnGettingInteractedWithAttemptEvent(Entity<VirtualItemComponent> ent, ref GettingInteractedWithAttemptEvent args)
-    {
-        // No interactions with a virtual item, please.
-        args.Cancelled = true;
-    }
-
     #region Hands
 
     /// <summary>
@@ -95,23 +86,20 @@ public abstract class SharedVirtualItemSystem : EntitySystem
     }
 
     /// <inheritdoc cref="TrySpawnVirtualItemInHand(Robust.Shared.GameObjects.EntityUid,Robust.Shared.GameObjects.EntityUid,bool)"/>
-    public bool TrySpawnVirtualItemInHand(EntityUid blockingEnt, EntityUid user, [NotNullWhen(true)] out EntityUid? virtualItem, bool dropOthers = false, Hand? empty = null)
+    public bool TrySpawnVirtualItemInHand(EntityUid blockingEnt, EntityUid user, [NotNullWhen(true)] out EntityUid? virtualItem, bool dropOthers = false)
     {
         virtualItem = null;
-        if (empty == null && !_handsSystem.TryGetEmptyHand(user, out empty))
+        if (!_handsSystem.TryGetEmptyHand(user, out var empty))
         {
             if (!dropOthers)
                 return false;
 
             foreach (var hand in _handsSystem.EnumerateHands(user))
             {
-                if (hand.HeldEntity is not { } held)
-                    continue;
-
-                if (held == blockingEnt)
-                    continue;
-
-                if (!_handsSystem.TryDrop(user, hand))
+                if (hand.HeldEntity is not { } held
+                    || held == blockingEnt
+                    || HasComp<VirtualItemComponent>(held)
+                    || !_handsSystem.TryDrop(user, hand))
                     continue;
 
                 if (!TerminatingOrDeleted(held))
@@ -122,10 +110,8 @@ public abstract class SharedVirtualItemSystem : EntitySystem
             }
         }
 
-        if (empty == null)
-            return false;
-
-        if (!TrySpawnVirtualItem(blockingEnt, user, out virtualItem))
+        if (empty == null
+            || !TrySpawnVirtualItem(blockingEnt, user, out virtualItem))
             return false;
 
         _handsSystem.DoPickup(user, empty, virtualItem.Value);
@@ -233,7 +219,7 @@ public abstract class SharedVirtualItemSystem : EntitySystem
 
         var pos = Transform(user).Coordinates;
         virtualItem = Spawn(VirtualItem, pos);
-        var virtualItemComp = Comp<VirtualItemComponent>(virtualItem.Value);
+        var virtualItemComp = EnsureComp<VirtualItemComponent>(virtualItem.Value); // Goobstation
         virtualItemComp.BlockingEntity = blockingEnt;
         Dirty(virtualItem.Value, virtualItemComp);
         return true;
@@ -244,16 +230,16 @@ public abstract class SharedVirtualItemSystem : EntitySystem
     /// </summary>
     public void DeleteVirtualItem(Entity<VirtualItemComponent> item, EntityUid user)
     {
-        var userEv = new VirtualItemDeletedEvent(item.Comp.BlockingEntity, user);
+        var userEv = new VirtualItemDeletedEvent(item.Comp.BlockingEntity, user, item.Owner); // Goobstation
         RaiseLocalEvent(user, userEv);
 
-        var targEv = new VirtualItemDeletedEvent(item.Comp.BlockingEntity, user);
+        var targEv = new VirtualItemDeletedEvent(item.Comp.BlockingEntity, user, item.Owner); // Goobstation
         RaiseLocalEvent(item.Comp.BlockingEntity, targEv);
 
         if (TerminatingOrDeleted(item))
             return;
 
-        _transformSystem.DetachEntity(item, Transform(item));
+        _transformSystem.DetachParentToNull(item, Transform(item));
         if (_netManager.IsServer)
             QueueDel(item);
     }

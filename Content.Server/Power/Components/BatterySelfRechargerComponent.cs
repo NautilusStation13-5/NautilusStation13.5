@@ -32,7 +32,5 @@ namespace Content.Server.Power.Components
         /// Do not auto recharge if this timestamp has yet to happen, set for the auto recharge pause system.
         /// </summary>
         [DataField] public TimeSpan NextAutoRecharge = TimeSpan.FromSeconds(0f);
-
-        [ViewVariables(VVAccess.ReadWrite)] [DataField("ignoreFull")] public bool IgnoreFull { get; set; }
     }
 }

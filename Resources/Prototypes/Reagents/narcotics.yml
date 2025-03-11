@@ -175,7 +175,8 @@
         - !type:HealthChange
           conditions:
           - !type:TotalDamage
-            min: 70 # only heals when you're more dead than alive
+            min: 70
+            max: 120 # you've got a chance to get out of crit
           damage: # heals at the same rate as tricordrazine, doesn't heal poison because if you OD'd I'm not giving you a safety net
             groups:
               Burn: -1
@@ -216,6 +217,11 @@
   plantMetabolism:
   - !type:PlantAdjustHealth
     amount: -5
+  metabolisms:
+    Narcotic:
+      effects:
+      - !type:ChemAddMoodlet
+        moodPrototype: NicotineBenefit
 
 # TODO: Replace these nonstandardized effects with generic brain damage
 - type: reagent
@@ -264,6 +270,17 @@
         type: Add
         time: 5
         refresh: false
+      - !type:ChemRerollPsionic #Nyano - Summary: lets the imbiber become psionic.
+        conditions:
+        - !type:ReagentThreshold
+          reagent: SpaceDrugs
+          min: 15
+      - !type:ChemAddMoodlet
+        moodPrototype: SpaceDrugsBenefit
+        conditions:
+        - !type:ReagentThreshold
+          reagent: SpaceDrugs
+          min: 5
 
 - type: reagent
   id: Bananadine
@@ -321,9 +338,6 @@
       - !type:GenericStatusEffect
         key: Muted
         component: Muted
-        type: Add
-        time: 10
-        refresh: false
 
 - type: reagent
   id: NorepinephricAcid
